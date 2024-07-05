@@ -6,12 +6,20 @@
     <artifactId>om-common</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>crm-om-common</name>
-    <description>crm-om-common</description>
+    <description>general function etc.</description>
 
     <parent>
         <groupId>cn.crm</groupId>
         <artifactId>om</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.27</version>
+        </dependency>
+    </dependencies>
 
 </project>

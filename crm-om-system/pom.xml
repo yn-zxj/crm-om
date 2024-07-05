@@ -6,7 +6,7 @@
     <artifactId>om-system</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>crm-om-system</name>
-    <description>crm-om-system</description>
+    <description>system management, including permissions, users, and roles</description>
 
     <parent>
         <groupId>cn.crm</groupId>
