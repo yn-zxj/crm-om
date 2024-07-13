@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="crm.om.mapper.ProdInfoMapper">
+    <!-- 动态表信息查询 -->
+    <select id="dynamicQryTable" parameterType="map" resultType="java.util.LinkedHashMap">
+        select *
+        from
+        ${tableName}
+        where
+        ${columnName} in
+        <foreach item="item" index="index" collection="columnValue" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="prodMax" resultType="java.util.Map">
+        select 'PD_PROD_DICT' as 'table_name', max(prod_id) 'max'
+        from
+            pd_prod_dict
+        where
+            prod_id like concat(?, '%')
+        union
+        select 'PD_RELEASE_DICT' as 'table_name', max(cast(release_id as unsigned)) 'max'
+        from
+            pd_release_dict
+        union
+        select 'PD_PRODPRCFEE_REL' as 'table_name', max(cast(prc_fee_id as unsigned)) 'max'
+        from
+            pd_prodprcfee_rel
+        union
+        select 'PD_PRODDETAIL_DICT' as 'table_name', max(element_id) 'max'
+        from
+            pd_proddetail_dict
+        where
+            element_id like concat(?, '%')
+    </select>
+</mapper>

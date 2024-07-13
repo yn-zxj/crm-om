@@ -6,12 +6,12 @@ import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
-import crm.om.common.enums.ResultCode;
-import crm.om.common.response.Result;
-import crm.om.common.utils.ApiBodyBuilder;
-import crm.om.dto.bss.BssReq;
-import crm.om.model.system.ConfigInfo;
+import crm.om.enums.ResultCode;
+import crm.om.model.ConfigInfo;
+import crm.om.param.BssParam;
 import crm.om.service.IConfigService;
+import crm.om.utils.ApiBodyBuilder;
+import crm.om.vo.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -51,24 +51,24 @@ public class ApiController {
     /**
      * 系统通用请求接口 Method-POST
      *
-     * @param bssReq 业务参数
+     * @param bssParam 业务参数
      * @return 响应结果
      */
     @PostMapping("/common")
     @Operation(summary = "通用接口")
-    public Result<Object> common(@RequestBody @Valid BssReq bssReq) {
+    public Result<Object> common(@RequestBody @Valid BssParam bssParam) {
         String apiUrl = "";
 
-        String api = bssReq.getApi();
-        Map<String, Object> reqParams = objectMapper.convertValue(bssReq.getParams(), new TypeReference<>() {
+        String api = bssParam.getApi();
+        Map<String, Object> reqParams = objectMapper.convertValue(bssParam.getParams(), new TypeReference<>() {
         });
-        String params = apiCommon.buildParamIn(bssReq.getTenantId(), bssReq.getLang(), reqParams);
+        String params = apiCommon.buildParamIn(bssParam.getTenantId(), bssParam.getLang(), reqParams);
         log.info("> Api 请求接口:{}, 入参:{}", api, params);
 
         Map<String, Object> map = new HashMap<>(4);
-        map.put("env", bssReq.getEnv());
-        map.put("platform", bssReq.getPlatform());
-        map.put("type", bssReq.getType());
+        map.put("env", bssParam.getEnv());
+        map.put("platform", bssParam.getPlatform());
+        map.put("type", bssParam.getType());
         List<ConfigInfo> configInfos = service.listByMap(map);
         // 数据库无配置
         if (configInfos.isEmpty()) {
@@ -105,23 +105,23 @@ public class ApiController {
     /**
      * 网元指令查询
      *
-     * @param bssReq 业务参数
+     * @param bssParam 业务参数
      * @return 响应结果
      */
     @PostMapping("/nocInfo")
     @Operation(summary = "网元指令")
-    public Result<Object> nocInfo(@RequestBody @Valid BssReq bssReq) {
+    public Result<Object> nocInfo(@RequestBody @Valid BssParam bssParam) {
         String apiUrl = "";
 
-        String api = bssReq.getApi();
-        Object reqParams = bssReq.getParams();
+        String api = bssParam.getApi();
+        Object reqParams = bssParam.getParams();
 
         log.info("> NocInfo Api 请求接口:{}, 入参:{}", api, reqParams);
 
         Map<String, Object> map = new HashMap<>(4);
-        map.put("env", bssReq.getEnv());
-        map.put("platform", bssReq.getPlatform());
-        map.put("type", bssReq.getType());
+        map.put("env", bssParam.getEnv());
+        map.put("platform", bssParam.getPlatform());
+        map.put("type", bssParam.getType());
         List<ConfigInfo> configInfos = service.listByMap(map);
         // 数据库无配置
         if (configInfos.isEmpty()) {

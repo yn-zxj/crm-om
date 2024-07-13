@@ -16,10 +16,12 @@
     <dependencies>
         <dependency>
             <groupId>cn.crm</groupId>
-            <artifactId>om-common</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>om-system</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>cn.crm</groupId>
+            <artifactId>om-business</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -54,5 +56,17 @@
             <version>3.2.4</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>crm.OmWebApplication</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
