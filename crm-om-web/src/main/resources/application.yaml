@@ -52,6 +52,11 @@ jwt:
   authPrefix: 'Bearer '
   authName: Authorization
 
+# 自定义参数
+custom:
+  dynamic:
+    enable: true
+
 # 开启增强
 knife4j:
   enable: true

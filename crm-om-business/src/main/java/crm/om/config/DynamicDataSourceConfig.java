@@ -11,6 +11,7 @@ import crm.om.service.IConfigService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -29,6 +30,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DynamicDataSourceConfig {
 
+    @Value("${custom.dynamic.enable}")
+    private Boolean dynamicDataSourceEnable;
+
     private final DataSource dataSource;
     private final IConfigService configService;
     private final DefaultDataSourceCreator dataSourceCreator;
@@ -40,12 +44,21 @@ public class DynamicDataSourceConfig {
     private final static String SHORT_LINE = "-";
 
     /**
+     * 根据配置文件配置项开启此功能
+     */
+    @PostConstruct
+    public void init() {
+        if (dynamicDataSourceEnable) {
+            addDataSource();
+        }
+    }
+
+    /**
      * 项目启动添加数据源<br/>
      * {@code String dataSourceName - 连接池名称}
      *
      * @see crm.om.service.impl.ProdServiceImpl#prodConfig(ConfigInfo, LinkedHashSet) 需要与此保持一致
      */
-    @PostConstruct
     public void addDataSource() {
         List<ConfigInfo> dataSourceInfo = configService.lambdaQuery()
                 .eq(ConfigInfo::getType, ConfigType.DATABASE)

@@ -324,6 +324,7 @@ public class ProdServiceImpl implements IProdService {
 
             // 切换后的数据源校验
             String newDataSource = DynamicDataSourceContextHolder.peek();
+            log.info("切换后数据源至: {}", newDataSource);
             if (!dataSourceName.equals(newDataSource)) {
                 throw new BaseException(ResultCode.DATASOURCE_ERROR);
             }
