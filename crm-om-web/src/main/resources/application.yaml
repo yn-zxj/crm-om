@@ -40,8 +40,6 @@ mybatis-plus:
 
 # logger 打印调整
 logging:
-  #  level:
-  #    com.zaxxer.hikari.HikariConfig: debug
   config: classpath:logback-spring.xml
 
 # JWT 配置
@@ -56,7 +54,7 @@ jwt:
 # 自定义参数
 custom:
   dynamic:
-    enable: true
+    enable: false
 
 # 开启增强
 knife4j:
