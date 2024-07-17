@@ -17,24 +17,32 @@
     </select>
 
     <select id="prodMax" resultType="java.util.Map">
-        select 'PD_PROD_DICT' as 'table_name', max(prod_id) 'max'
-        from
-            pd_prod_dict
-        where
-            prod_id like concat(?, '%')
+        select 'PD_PROD_DICT' as 'table_name', max(prod_id) as 'max'
+        from pd_prod_dict
+        where prod_id like concat(?, '%')
         union
-        select 'PD_RELEASE_DICT' as 'table_name', max(cast(release_id as unsigned)) 'max'
-        from
-            pd_release_dict
+        select 'PD_RELEASE_DICT' as 'table_name', max(cast(release_id as unsigned)) as 'max'
+        from pd_release_dict
         union
-        select 'PD_PRODPRCFEE_REL' as 'table_name', max(cast(prc_fee_id as unsigned)) 'max'
-        from
-            pd_prodprcfee_rel
+        select 'PD_PRODPRCFEE_REL' as 'table_name', max(cast(prc_fee_id as unsigned)) as 'max'
+        from pd_prodprcfee_rel
         union
-        select 'PD_PRODDETAIL_DICT' as 'table_name', max(element_id) 'max'
-        from
-            pd_proddetail_dict
-        where
-            element_id like concat(?, '%')
+        select 'PD_PRODDETAIL_DICT' as 'table_name', max(element_id) as 'max'
+        from pd_proddetail_dict
+        where element_id like concat(?, '%')
+    </select>
+
+    <select id="qryPrcTimeRule" parameterType="String" resultType="java.util.Map">
+        select *
+        from pd_timerule_dict
+        where offset_unit = #{offsetUnit}
+        order by offset_cycle
+    </select>
+
+    <select id="qryPrcAttrRule" parameterType="String" resultType="java.util.Map">
+        select *
+        from pd_attrval_dict
+        where element_id = #{elementId}
+        order by element_id
     </select>
 </mapper>

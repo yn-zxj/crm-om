@@ -25,22 +25,12 @@ public interface ProdInfoMapper {
     List<Map<String, Object>> dynamicQryTable(Map<String, Object> map);
 
     /**
-     * 基础域名国际化最大值列表
-     *
-     * @param code 国际化编码
-     * @return 国际化数据
-     */
-    @Select("select * from bs_i18n_config where `code` like concat(?, #{code}) order by `code` desc limit 100")
-    List<Map<String, Object>> baseMax(String code);
-
-    /**
      * 资费时间规则字典
      *
      * @param offsetUnit 偏移周期
      * @return 结果
      */
-    @Select("select * from pd_timerule_dict where offset_unit = #{offsetUnit} order by offset_cycle")
-    List<Map<String, Object>> pdTimeRule(String offsetUnit);
+    List<Map<String, Object>> qryPrcTimeRule(String offsetUnit);
 
     /**
      * 资费属性规则字典
@@ -48,8 +38,7 @@ public interface ProdInfoMapper {
      * @param elementId 属性ID
      * @return 结果
      */
-    @Select("select * from pd_attrval_dict where element_id = #{elementId} order by element_id")
-    List<Map<String, Object>> pdAttrRule(String elementId);
+    List<Map<String, Object>> qryPrcAttrRule(String elementId);
 
     /**
      * 产品库最大值
