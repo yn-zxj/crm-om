@@ -54,6 +54,7 @@ public class ProdController {
                 case Platform.BSS -> template = "prodConfig/bss.ftl";
                 case Platform.MVNE -> template = "prodConfig/mvne.ftl";
                 case Platform.MVNO -> template = "prodConfig/mvno.ftl";
+                case Platform.SGP -> template = "prodConfig/sgp.ftl";
                 default -> template = null;
             }
             if (template == null) {
