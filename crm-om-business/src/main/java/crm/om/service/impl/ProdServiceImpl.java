@@ -41,6 +41,10 @@ public class ProdServiceImpl implements IProdService {
     private final static String DATABASE_SUFFIX_CRM = "crmdb";
     private final static String DATABASE_SUFFIX_BASE = "basedb";
     private final static String DATABASE_SUFFIX_MARKET = "marketdb";
+    /**
+     * 国际化需要排除的表
+     */
+    private final static List<String> I18_EXCLUDE_TABLE = List.of("pd_prcattr_dict", "pd_proddetail_dict");
 
     /**
      * 全局变量存放产品ID集合
@@ -50,7 +54,7 @@ public class ProdServiceImpl implements IProdService {
     /**
      * 全局变量存放产品编码集合
      */
-    private final Set<String> baseCodeList = new LinkedHashSet<>();
+    private final Set<String> baseCodeList = new HashSet<>();
 
     @Override
     public Map<String, Object> baseInfo(Map<String, Object> map) {
@@ -141,15 +145,7 @@ public class ProdServiceImpl implements IProdService {
                     String tableName = table.getStr("tableName");
 
                     List<Map<String, Object>> mapList = queryBuilder(platform, env, database, tableName, columnName, elementBatchNoList);
-
-                    String columnStr = elementBatchNoList.stream().map(column -> "'" + column + "'").collect(Collectors.joining(", "));
-                    String select = sqlUtil.select(tableName, columnName, columnStr);
-                    String insert = sqlUtil.insert(tableName, mapList);
-
-                    if (StringUtils.isNotBlank(insert)) {
-                        selectSql.append(select).append(System.lineSeparator());
-                        insertSql.append(insert).append(System.lineSeparator());
-                    }
+                    conditionToStr(tableName, columnName, elementBatchNoList, insertSql, selectSql, mapList);
                 }
             }
         } else {
@@ -218,7 +214,7 @@ public class ProdServiceImpl implements IProdService {
                 String insert = sqlUtil.insert(tableName, result);
 
                 // 取国际化编码[排除属性表]
-                if (!"pd_prcattr_dict".equalsIgnoreCase(tableName)) {
+                if (!I18_EXCLUDE_TABLE.contains(tableName.toLowerCase())) {
                     baseCodeList.addAll(sqlUtil.regMatch(insert));
                 }
 
@@ -274,15 +270,7 @@ public class ProdServiceImpl implements IProdService {
                 List<Map<String, Object>> result = queryBuilder(platform, env, database, tableName, columnName, baseCodeList);
                 // 对 COED 进行排序
                 result = result.stream().sorted(Comparator.comparing(map -> (String) map.get("CODE"))).toList();
-
-                String columnStr = baseCodeList.stream().map(column -> "'" + column + "'").collect(Collectors.joining(", "));
-                String select = sqlUtil.select(tableName, columnName, columnStr);
-                String insert = sqlUtil.insert(tableName, result);
-
-                if (StringUtils.isNotBlank(insert)) {
-                    selectSql.append(select).append(System.lineSeparator());
-                    insertSql.append(insert).append(System.lineSeparator());
-                }
+                conditionToStr(tableName, columnName, baseCodeList, insertSql, selectSql, result);
             }
         } else {
             throw new BaseException(ResultCode.DATA_ERROR);
@@ -357,5 +345,26 @@ public class ProdServiceImpl implements IProdService {
             throw new BaseException(ResultCode.DATA_ERROR);
         }
         return tableInfos;
+    }
+
+    /**
+     * 脚本生成
+     *
+     * @param tableName     表名
+     * @param columnName    字段名
+     * @param conditionList 条件列表
+     * @param insertSql     insert脚本
+     * @param selectSql     select脚本
+     * @param mapList       插入脚本结果集
+     */
+    private void conditionToStr(String tableName, String columnName, Set<String> conditionList, StringBuilder insertSql, StringBuilder selectSql, List<Map<String, Object>> mapList) {
+        String columnStr = conditionList.stream().map(column -> "'" + column + "'").collect(Collectors.joining(", "));
+        String select = sqlUtil.select(tableName, columnName, columnStr);
+        String insert = sqlUtil.insert(tableName, mapList);
+
+        if (StringUtils.isNotBlank(insert)) {
+            selectSql.append(select).append(System.lineSeparator());
+            insertSql.append(insert).append(System.lineSeparator());
+        }
     }
 }

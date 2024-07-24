@@ -49,17 +49,16 @@ public class ProdController {
                 .build();
         Map<String, Object> result = prodService.prodConfig(info, prodParam.getPrcId());
         try {
-            String template;
-            switch (prodParam.getPlatform()) {
-                case Platform.BSS -> template = "prodConfig/bss.ftl";
-                case Platform.MVNE -> template = "prodConfig/mvne.ftl";
-                case Platform.MVNO -> template = "prodConfig/mvno.ftl";
-                case Platform.SGP -> template = "prodConfig/sgp.ftl";
-                default -> template = null;
-            }
-            if (template == null) {
-                throw new BaseException(ResultCode.TEMPLATE_NOT_FOUND);
-            }
+            String template = switch (prodParam.getPlatform()) {
+                case Platform.BSS -> "prodConfig/bss.ftl";
+                case Platform.MVNE -> "prodConfig/mvne.ftl";
+                case Platform.MVNO -> "prodConfig/mvno.ftl";
+                case Platform.SGP -> "prodConfig/sgp.ftl";
+                default -> {
+                    throw new BaseException(ResultCode.TEMPLATE_NOT_FOUND);
+                }
+            };
+
             String process = FreemarkerUtil.process(template, result);
             return Result.ok(process);
         } catch (Exception e) {
