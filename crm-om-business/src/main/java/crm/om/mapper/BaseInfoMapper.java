@@ -23,7 +23,7 @@ public interface BaseInfoMapper {
      * 基础域国际化信息查询
      *
      * @param code 国际化编码
-     * @return 订单报文
+     * @return 结果
      */
     List<Map<String, Object>> qryBaseInfo(String code);
 }

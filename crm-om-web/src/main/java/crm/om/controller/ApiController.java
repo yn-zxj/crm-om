@@ -9,10 +9,13 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.enums.ResultCode;
 import crm.om.model.ConfigInfo;
 import crm.om.param.BssParam;
+import crm.om.service.IBaseService;
 import crm.om.service.IConfigService;
+import crm.om.service.IOrderService;
 import crm.om.utils.ApiBodyBuilder;
 import crm.om.vo.Result;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +45,8 @@ public class ApiController {
     private final ApiBodyBuilder apiCommon;
     private final IConfigService service;
     private final ObjectMapper objectMapper;
+    private final IBaseService baseService;
+    private final IOrderService orderService;
 
     /**
      * 接口调用成功状态码
@@ -140,5 +145,47 @@ public class ApiController {
         log.info("< NocInfo Api 响应:{}", result);
 
         return Result.ok(result);
+    }
+
+    /**
+     * 基础域国际化查询
+     *
+     * @param code 国际化编码
+     * @return 结果
+     */
+    @GetMapping("/baseInfo")
+    @Operation(summary = "国际化配置数据查询", description = "单个基础域国际化编码数据查询")
+    @Parameter(name = "code", description = "国际化编码", required = true)
+    public Result<List<Map<String, Object>>> baseInfo(@RequestParam String code) {
+        List<Map<String, Object>> basedInfo = baseService.baseInfo(code);
+        return Result.ok(basedInfo);
+    }
+
+    /**
+     * 基础域国际化特定前120条逆序数据
+     *
+     * @param prefixCode 国际化编码前缀
+     * @return 数据
+     */
+    @GetMapping("/baseMaxInfo")
+    @Operation(summary = "指定前缀国际化数据查询", description = "基础域国际化特定前缀前120条逆序数据")
+    @Parameter(name = "code", description = "国际化编码", required = true)
+    public Result<List<Map<String, Object>>> baseMaxInfo(@RequestParam String prefixCode) {
+        List<Map<String, Object>> basedInfo = baseService.baseMaxInfo(prefixCode);
+        return Result.ok(basedInfo);
+    }
+
+    /**
+     * 订单信息
+     *
+     * @param orderLineId 订单行号
+     * @return 结果
+     */
+    @GetMapping("/orderInfo")
+    @Operation(summary = "订单信息")
+    @Parameter(name = "code", description = "订单行号", required = true)
+    public Result<Map<String, Object>> orderInfo(@RequestParam String orderLineId) {
+        Map<String, Object> orderInfo = orderService.orderInfo(orderLineId);
+        return Result.ok(orderInfo);
     }
 }

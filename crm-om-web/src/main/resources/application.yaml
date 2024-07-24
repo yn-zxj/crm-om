@@ -54,7 +54,7 @@ jwt:
 # 自定义参数
 custom:
   dynamic:
-    enable: true
+    enable: false
 
 # 开启增强
 knife4j:

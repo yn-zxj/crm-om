@@ -21,7 +21,6 @@ public interface ProdInfoMapper {
      * @return 表数据
      */
     @InterceptorIgnore(illegalSql = "true")
-    @MapKey("TABLE_DATA")
     List<Map<String, Object>> dynamicQryTable(Map<String, Object> map);
 
     /**
@@ -43,10 +42,9 @@ public interface ProdInfoMapper {
     /**
      * 产品库最大值
      *
-     * @param map
+     * @param map 条件
      * @return 结果
      */
-    @MapKey("TABLE_DATA")
     List<Map<String, Object>> prodMax(Map<String, Object> map);
 }
 
