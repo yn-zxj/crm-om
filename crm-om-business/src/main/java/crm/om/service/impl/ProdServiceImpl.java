@@ -1,5 +1,9 @@
 package crm.om.service.impl;
 
+import cn.hutool.extra.template.Template;
+import cn.hutool.extra.template.TemplateConfig;
+import cn.hutool.extra.template.TemplateEngine;
+import cn.hutool.extra.template.TemplateUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -8,6 +12,7 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import crm.om.config.DynamicDataSourceConfig;
 import crm.om.enums.ConfigType;
 import crm.om.enums.Env;
+import crm.om.enums.Platform;
 import crm.om.enums.ResultCode;
 import crm.om.exception.BaseException;
 import crm.om.mapper.ProdInfoMapper;
@@ -71,7 +76,7 @@ public class ProdServiceImpl implements IProdService {
      */
     @Override
     public Map<String, Object> prodConfig(ConfigInfo configInfo, LinkedHashSet<String> prcIdList) {
-        String platform = configInfo.getPlatform();
+        String platform = String.valueOf(configInfo.getPlatform());
         String env = configInfo.getEnv();
 
         List<ConfigInfo> configInfos = this.tableInfo(platform);
@@ -114,6 +119,25 @@ public class ProdServiceImpl implements IProdService {
         DynamicDataSourceContextHolder.clear();
 
         return result;
+    }
+
+    @Override
+    public String templateToStr(ConfigInfo configInfo, LinkedHashSet<String> prcIdList) {
+        Map<String, Object> result = prodConfig(configInfo, prcIdList);
+
+        String templateName = switch (configInfo.getPlatform()) {
+            case Platform.BSS -> "prodConfig/bss.ftl";
+            case Platform.MVNE -> "prodConfig/mvne.ftl";
+            case Platform.MVNO -> "prodConfig/mvno.ftl";
+            case Platform.SGP -> "prodConfig/sgp.ftl";
+            default -> {
+                throw new BaseException(ResultCode.TEMPLATE_NOT_FOUND);
+            }
+        };
+
+        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates/prodConfig", TemplateConfig.ResourceMode.CLASSPATH));
+        Template template = engine.getTemplate(templateName);
+        return template.render(result);
     }
 
     /**

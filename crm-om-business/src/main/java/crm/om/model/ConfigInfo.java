@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import crm.om.enums.Platform;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,9 +36,11 @@ public class ConfigInfo extends BaseInfo {
 
     /**
      * 系统平台
+     *
+     * @see Platform
      */
     @TableField(value = "platform")
-    private String platform;
+    private Platform platform;
 
     /**
      * 系统环境

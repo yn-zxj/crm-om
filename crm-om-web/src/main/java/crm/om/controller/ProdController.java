@@ -1,21 +1,18 @@
 package crm.om.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
-import crm.om.enums.Platform;
-import crm.om.enums.ResultCode;
-import crm.om.exception.BaseException;
 import crm.om.model.ConfigInfo;
 import crm.om.param.prod.ProdParam;
 import crm.om.service.IProdService;
-import crm.om.utils.FreemarkerUtil;
 import crm.om.vo.Result;
+import freemarker.template.TemplateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.io.IOException;
 
 /**
  * 产品配置相关接口
@@ -42,27 +39,13 @@ public class ProdController {
 
     @PostMapping("/configScript")
     @Operation(summary = "配置脚本")
-    public Result<String> prodConfig(@RequestBody ProdParam prodParam) {
+    public Result<String> prodConfig(@RequestBody ProdParam prodParam) throws TemplateException, IOException {
         ConfigInfo info = ConfigInfo.builder()
-                .platform(prodParam.getPlatform().getDesc())
+                .platform(prodParam.getPlatform())
                 .env(prodParam.getEnv().getCode())
                 .build();
-        Map<String, Object> result = prodService.prodConfig(info, prodParam.getPrcId());
-        try {
-            String template = switch (prodParam.getPlatform()) {
-                case Platform.BSS -> "prodConfig/bss.ftl";
-                case Platform.MVNE -> "prodConfig/mvne.ftl";
-                case Platform.MVNO -> "prodConfig/mvno.ftl";
-                case Platform.SGP -> "prodConfig/sgp.ftl";
-                default -> {
-                    throw new BaseException(ResultCode.TEMPLATE_NOT_FOUND);
-                }
-            };
 
-            String process = FreemarkerUtil.process(template, result);
-            return Result.ok(process);
-        } catch (Exception e) {
-            throw new BaseException(e.getMessage());
-        }
+        String result = prodService.templateToStr(info, prodParam.getPrcId());
+        return Result.ok(result);
     }
 }

@@ -8,5 +8,4 @@ import crm.om.model.UserInfo;
  * @version 1.0
  */
 public interface IUserService extends IService<UserInfo> {
-
 }
