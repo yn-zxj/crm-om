@@ -3,11 +3,10 @@ package crm.om.controller;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
-import crm.om.model.system.MenuInfo;
-import crm.om.model.system.UserRoleRel;
+import crm.om.model.MenuInfo;
+import crm.om.model.UserRoleRel;
 import crm.om.service.IMenuService;
 import crm.om.service.IUserRoleRelService;
-import crm.om.utils.JwtHelper;
 import crm.om.vo.Result;
 import crm.om.vo.menu.RouteVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,19 +32,15 @@ import java.util.List;
 @RequestMapping(value = "/route", produces = "application/json;charset=UTF-8")
 public class RouteController {
 
-    private final JwtHelper jwtHelper;
     private final IMenuService menuService;
     private final IUserRoleRelService roleRelService;
 
     @Operation(summary = "获取用户路由数据")
     @GetMapping("/getUserRoutes")
     public Result<List<RouteVO>> getUserRoutes(@RequestHeader("Authorization") String authorizationHeader) {
-        String token = jwtHelper.parseHeader(authorizationHeader);
-        String userId = jwtHelper.parseUserId(token);
-
         // 查询用户权限
         LambdaQueryWrapper<UserRoleRel> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserRoleRel::getUserid, userId);
+        wrapper.eq(UserRoleRel::getUserid, "");
         // todo
         List<UserRoleRel> list = roleRelService.list(wrapper);
 

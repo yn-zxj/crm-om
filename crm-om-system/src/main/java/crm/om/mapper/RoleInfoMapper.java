@@ -1,7 +1,7 @@
 package crm.om.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import crm.om.model.system.RoleInfo;
+import crm.om.model.RoleInfo;
 import org.springframework.stereotype.Repository;
 
 /**

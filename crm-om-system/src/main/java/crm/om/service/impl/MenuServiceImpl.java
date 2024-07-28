@@ -7,7 +7,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import crm.om.mapper.MenuInfoMapper;
-import crm.om.model.system.MenuInfo;
+import crm.om.model.MenuInfo;
 import crm.om.service.IMenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

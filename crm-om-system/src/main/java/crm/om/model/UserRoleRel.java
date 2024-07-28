@@ -1,10 +1,9 @@
-package crm.om.model.system;
+package crm.om.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import crm.om.model.BaseInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serial;
 
 /**
- * 菜单与角色关系表
+ * 用户与角色关系表
  *
  * @author zhangxiaojun
  * @version 1.0
@@ -24,23 +23,22 @@ import java.io.Serial;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@TableName(value = "menu_role_rel")
-public class MenuRoleRel extends BaseInfo {
+@TableName(value = "sys_user_role")
+public class UserRoleRel extends BaseInfo {
 
     @Serial
-    private static final long serialVersionUID = -3090914989371542279L;
+    private static final long serialVersionUID = -5401926395266157204L;
 
     /**
-     * id
+     * 主键
      */
     @TableId(value = "uuid", type = IdType.ASSIGN_ID)
     private String uuid;
-
     /**
-     * 菜单id
+     * 用户id
      */
-    @TableField(value = "menuId")
-    private String menuId;
+    @TableField(value = "userId")
+    private String userid;
 
     /**
      * 角色id

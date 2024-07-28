@@ -1,7 +1,7 @@
 package crm.om.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import crm.om.model.system.RoleInfo;
+import crm.om.model.RoleInfo;
 
 /**
  * @author zhangxiaojun

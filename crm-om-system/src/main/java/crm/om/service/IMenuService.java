@@ -2,7 +2,7 @@ package crm.om.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import crm.om.model.system.MenuInfo;
+import crm.om.model.MenuInfo;
 
 /**
  * @author zhangxiaojun

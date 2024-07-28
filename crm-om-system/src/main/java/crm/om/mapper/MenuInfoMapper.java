@@ -1,7 +1,7 @@
 package crm.om.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import crm.om.model.system.MenuInfo;
+import crm.om.model.MenuInfo;
 import org.springframework.stereotype.Repository;
 
 /**

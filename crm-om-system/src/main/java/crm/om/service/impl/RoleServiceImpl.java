@@ -2,7 +2,7 @@ package crm.om.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import crm.om.mapper.RoleInfoMapper;
-import crm.om.model.system.RoleInfo;
+import crm.om.model.RoleInfo;
 import crm.om.service.IRoleService;
 import org.springframework.stereotype.Service;
 
