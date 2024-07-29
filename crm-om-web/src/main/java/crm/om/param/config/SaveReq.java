@@ -1,5 +1,6 @@
 package crm.om.param.config;
 
+import crm.om.enums.Platform;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -13,7 +14,7 @@ import lombok.Data;
 public class SaveReq {
     @Schema(description = "系统平台")
     @NotBlank(message = "系统平台不能为空")
-    private String platform;
+    private Platform platform;
 
     @Schema(description = "系统环境")
     @NotBlank(message = "系统环境不能为空")

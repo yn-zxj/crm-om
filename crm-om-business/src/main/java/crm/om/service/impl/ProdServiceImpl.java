@@ -76,7 +76,7 @@ public class ProdServiceImpl implements IProdService {
      */
     @Override
     public Map<String, Object> prodConfig(ConfigInfo configInfo, LinkedHashSet<String> prcIdList) {
-        String platform = String.valueOf(configInfo.getPlatform());
+        String platform = String.valueOf(configInfo.getPlatform().getDesc());
         String env = configInfo.getEnv();
 
         List<ConfigInfo> configInfos = this.tableInfo(platform);
@@ -135,7 +135,7 @@ public class ProdServiceImpl implements IProdService {
             }
         };
 
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates/prodConfig", TemplateConfig.ResourceMode.CLASSPATH));
+        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates/", TemplateConfig.ResourceMode.CLASSPATH));
         Template template = engine.getTemplate(templateName);
         return template.render(result);
     }
@@ -222,6 +222,9 @@ public class ProdServiceImpl implements IProdService {
                     if ("prod_id".equalsIgnoreCase(column)) {
                         columnName = split[0];
                         columnValue = prodIdList;
+                    } else if ("prod_prcid".equalsIgnoreCase(column)) {
+                        columnName = split[0];
+                        columnValue = prcIdList;
                     }
                 }
 
