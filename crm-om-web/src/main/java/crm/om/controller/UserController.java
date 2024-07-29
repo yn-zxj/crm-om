@@ -1,6 +1,7 @@
 package crm.om.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.enums.ResultCode;
@@ -45,10 +46,19 @@ public class UserController {
     @PostMapping("/login")
     public Result<TokenVO> login(@Valid @RequestBody LoginReq loginReq) {
         LambdaQueryWrapper<UserInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserInfo::getUserName, loginReq.getUserName());
+        wrapper.eq(UserInfo::getUserName, loginReq.getUserName())
+                .eq(UserInfo::getPassword, SecureUtil.md5(loginReq.getPassword()));
+
         UserInfo login = userService.getOne(wrapper);
-        StpUtil.login(login.getUserId());
-        return Result.ok(new TokenVO());
+        if (login != null) {
+            StpUtil.login(login.getUserId());
+            String tokenValue = StpUtil.getTokenInfo().tokenValue;
+            TokenVO token = new TokenVO();
+            token.setToken(tokenValue);
+            token.setRefreshToken(tokenValue);
+            return Result.ok(token);
+        }
+        throw new BaseException(ResultCode.NO_USER);
     }
 
     /**
@@ -92,8 +102,8 @@ public class UserController {
      */
     @Operation(summary = "注销登录")
     @GetMapping("/logout")
-    public Result<TokenVO> logout() {
+    public Result<Object> logout() {
         StpUtil.logout();
-        return null;
+        return Result.ok();
     }
 }

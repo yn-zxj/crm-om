@@ -80,7 +80,6 @@ public class Result<T> {
      * @return 成功信息
      */
     public static <T> Result<T> ok(T data) {
-        Result<T> result = build(data);
         return build(data, ResultCode.SUCCESS);
     }
 
@@ -102,7 +101,6 @@ public class Result<T> {
      * @return 失败信息
      */
     public static <T> Result<T> fail(T data) {
-        Result<T> result = build(data);
         return build(data, ResultCode.FAIL);
     }
 
