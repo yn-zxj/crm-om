@@ -76,8 +76,8 @@ public class ProdServiceImpl implements IProdService {
      */
     @Override
     public Map<String, Object> prodConfig(ConfigInfo configInfo, LinkedHashSet<String> prcIdList) {
-        String platform = String.valueOf(configInfo.getPlatform().getDesc());
-        String env = configInfo.getEnv();
+        String platform = String.valueOf(configInfo.getPlatform().getCode());
+        String env = configInfo.getEnv().getCode();
 
         List<ConfigInfo> configInfos = this.tableInfo(platform);
 
@@ -130,9 +130,6 @@ public class ProdServiceImpl implements IProdService {
             case Platform.MVNE -> "prodConfig/mvne.ftl";
             case Platform.MVNO -> "prodConfig/mvno.ftl";
             case Platform.SGP -> "prodConfig/sgp.ftl";
-            default -> {
-                throw new BaseException(ResultCode.TEMPLATE_NOT_FOUND);
-            }
         };
 
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates/", TemplateConfig.ResourceMode.CLASSPATH));

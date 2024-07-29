@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import crm.om.enums.ConfigType;
+import crm.om.enums.Env;
 import crm.om.enums.Platform;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,9 +46,11 @@ public class ConfigInfo extends BaseInfo {
 
     /**
      * 系统环境
+     *
+     * @see Env
      */
     @TableField(value = "env")
-    private String env;
+    private Env env;
 
     /**
      * 配置类型
@@ -56,9 +60,11 @@ public class ConfigInfo extends BaseInfo {
 
     /**
      * 参数类型
+     *
+     * @see ConfigType
      */
     @TableField(value = "type")
-    private Integer type;
+    private ConfigType type;
 
     /**
      * 参数名

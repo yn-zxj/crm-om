@@ -69,7 +69,7 @@ public class DynamicDataSourceConfig {
             DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
             for (ConfigInfo configInfo : dataSourceInfo) {
                 // 数据源与连接池名称 eg: mvne-prod-basedb
-                String dataSourceName = configInfo.getPlatform().getDesc() + SHORT_LINE + configInfo.getEnv() + SHORT_LINE + configInfo.getParamKey();
+                String dataSourceName = configInfo.getPlatform().getCode() + SHORT_LINE + configInfo.getEnv() + SHORT_LINE + configInfo.getParamKey();
 
                 JSON dataBaseInfo = JSONUtil.parse(configInfo.getParamValue());
                 DataSourceProperty dataSourceProperty = new DataSourceProperty();

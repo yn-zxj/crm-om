@@ -1,5 +1,6 @@
 package crm.om.param.config;
 
+import crm.om.enums.Env;
 import crm.om.enums.Platform;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -18,7 +19,7 @@ public class SaveReq {
 
     @Schema(description = "系统环境")
     @NotBlank(message = "系统环境不能为空")
-    private String env;
+    private Env env;
 
     @Schema(description = "配置类型")
     @NotBlank(message = "配置类型不能为空")

@@ -5,14 +5,11 @@ import crm.om.model.ConfigInfo;
 import crm.om.param.prod.ProdParam;
 import crm.om.service.IProdService;
 import crm.om.vo.Result;
-import freemarker.template.TemplateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 /**
  * 产品配置相关接口
@@ -39,10 +36,10 @@ public class ProdController {
 
     @PostMapping("/configScript")
     @Operation(summary = "配置脚本")
-    public Result<String> prodConfig(@RequestBody ProdParam prodParam) throws TemplateException, IOException {
+    public Result<String> prodConfig(@RequestBody ProdParam prodParam) {
         ConfigInfo info = ConfigInfo.builder()
                 .platform(prodParam.getPlatform())
-                .env(prodParam.getEnv().getCode())
+                .env(prodParam.getEnv())
                 .build();
 
         String result = prodService.templateToStr(info, prodParam.getPrcId());

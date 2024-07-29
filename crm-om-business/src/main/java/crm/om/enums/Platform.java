@@ -13,12 +13,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Platform {
     // 系统平台枚举
-    BSS(1, "bss"),
-    MVNE(2, "mvne"),
-    MVNO(3, "mvno"),
-    SGP(4, "sgp");
+    BSS("bss", "bss"),
+    MVNE("mvne", "mvne"),
+    MVNO("mvno", "mvno"),
+    SGP("sgp", "sgp");
 
-    private final Integer code;
+    private final String code;
     @EnumValue
     @JsonValue
     private final String desc;
