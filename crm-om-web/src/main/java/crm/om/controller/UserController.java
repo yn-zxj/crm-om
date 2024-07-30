@@ -72,7 +72,8 @@ public class UserController {
     public Result<?> register(@Valid @RequestBody RegisterReq registerInfo) {
         // 校验用户是否存在
         LambdaQueryWrapper<UserInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserInfo::getUserName, registerInfo.getUserName());
+        wrapper.eq(UserInfo::getUserName, registerInfo.getUserName())
+                .eq(UserInfo::getPassword, SecureUtil.md5(registerInfo.getPassword()));
         UserInfo newUser = userService.getOne(wrapper);
         if (newUser != null) {
             throw new BaseException(ResultCode.ALREADY_USER);
@@ -82,9 +83,11 @@ public class UserController {
         UserInfo userInfo = UserInfo.builder()
                 .userName(registerInfo.getUserName())
                 .userGender(registerInfo.getUserGender())
+                .nickName(registerInfo.getNickName())
                 .userPhone(registerInfo.getUserPhone())
                 .userEmail(registerInfo.getUserEmail())
-                .password(registerInfo.getPassword())
+                .password(SecureUtil.md5(registerInfo.getPassword()))
+                .createBy("system")
                 .build();
         boolean save = userService.save(userInfo);
         if (save) {
