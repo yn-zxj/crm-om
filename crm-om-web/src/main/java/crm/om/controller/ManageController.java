@@ -2,10 +2,14 @@ package crm.om.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import crm.om.exception.BaseException;
 import crm.om.model.RoleInfo;
 import crm.om.model.UserInfo;
+import crm.om.param.role.RoleParam;
+import crm.om.param.role.RoleUpdateParam;
 import crm.om.service.IRoleService;
 import crm.om.service.IUserService;
 import crm.om.vo.PageVO;
@@ -57,7 +61,7 @@ public class ManageController {
             @RequestParam(required = false) String nickName,
             @RequestParam(required = false) String userPhone,
             @RequestParam(required = false) String userEmail,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Boolean status,
             @RequestParam Integer current,
             @RequestParam Integer size) {
         LambdaQueryWrapper<UserInfo> wrapper = new LambdaQueryWrapper<>();
@@ -66,28 +70,117 @@ public class ManageController {
                 .eq(StringUtils.isNotBlank(nickName), UserInfo::getNickName, nickName)
                 .eq(StringUtils.isNotBlank(userPhone), UserInfo::getUserPhone, userPhone)
                 .eq(StringUtils.isNotBlank(userEmail), UserInfo::getUserEmail, userEmail)
-                .in(UserInfo::getStatus, StringUtils.isNotBlank(status) ? status : "0,1");
+                .eq(status != null, UserInfo::getStatus, status)
+                .orderByDesc(UserInfo::getCreateTime);
 
         Page<UserInfo> infoPage = userService.page(new Page<>(current, size), wrapper);
 
-        List<UserInfoVO> UserInfoVO = BeanUtil.copyToList(infoPage.getRecords(), UserInfoVO.class);
+        List<UserInfoVO> userInfoVO = BeanUtil.copyToList(infoPage.getRecords(), UserInfoVO.class);
         PageVO<UserInfoVO> pageRes = PageVO.<UserInfoVO>builder()
                 .pages(infoPage.getPages())
                 .total(infoPage.getTotal())
-                .records(UserInfoVO)
+                .records(userInfoVO)
                 .build();
         return Result.ok(pageRes);
     }
 
-    @GetMapping("/getAllRoles")
-    @Operation(summary = "获取所有角色")
-    public Result<List<RoleVO>> getAllRoles() {
+    /**
+     * 新增角色类型
+     *
+     * @param roleParam 角色类型参数
+     * @return 角色信息
+     */
+    @PostMapping("/save")
+    @Operation(summary = "新增角色类型", description = "角色类型一般很少新增，新增代码枚举需要一起维护")
+    public Result<RoleVO> insert(@RequestBody RoleParam roleParam) {
+        RoleInfo roleInfo = RoleInfo.builder()
+                .roleCode(roleParam.getRoleCode())
+                .roleDesc(roleParam.getRoleDesc())
+                .roleName(roleParam.getRoleName())
+                .createBy("system")
+                .status(true)
+                .build();
+        // 成功添加
+        boolean save = roleService.save(roleInfo);
+        if (save) {
+            RoleVO roleVO = BeanUtil.copyProperties(roleInfo, RoleVO.class);
+            return Result.ok(roleVO);
+        }
+        throw new BaseException("角色新增失败");
+    }
+
+    /**
+     * 删除角色
+     *
+     * @param id 角色ID
+     * @return 默认返回成功
+     */
+    @DeleteMapping("/del/role/{id}")
+    @Operation(summary = "删除角色")
+    @Parameter(name = "id", description = "角色ID", required = true, example = "181828")
+    public Result<Boolean> delete(@PathVariable String id) {
+        boolean result = roleService.removeById(id);
+        return Result.ok(result);
+    }
+
+    /**
+     * 更新角色信息
+     *
+     * @param roleUpdateParam 角色更新信息
+     * @return 更新结果
+     */
+    @PostMapping("/role/update")
+    @Operation(summary = "更新角色信息")
+    public Result<Boolean> update(@RequestBody RoleUpdateParam roleUpdateParam) {
+        LambdaUpdateWrapper<RoleInfo> wrapper = new LambdaUpdateWrapper<>();
+
+        wrapper.set(StringUtils.isNotBlank(roleUpdateParam.getRoleName()), RoleInfo::getRoleName, roleUpdateParam.getRoleName())
+                .set(StringUtils.isNotBlank(roleUpdateParam.getRoleCode()), RoleInfo::getRoleCode, roleUpdateParam.getRoleCode())
+                .set(StringUtils.isNotBlank(roleUpdateParam.getRoleDesc()), RoleInfo::getRoleDesc, roleUpdateParam.getRoleDesc())
+                .set(roleUpdateParam.getStatus() != null, RoleInfo::getStatus, roleUpdateParam.getStatus())
+                .eq(RoleInfo::getRoleId, roleUpdateParam.getRoleId());
+
+        boolean result = roleService.update(wrapper);
+        return Result.ok(result);
+    }
+
+    /**
+     * 查询角色信息
+     *
+     * @param roleId   角色ID
+     * @param roleName 角色名称
+     * @param status   角色状态
+     * @param current  当前页
+     * @param size     每页显示条数
+     * @return 角色信息
+     */
+    @GetMapping("/roleInfo")
+    @Operation(summary = "查询角色信息", description = "区分:<br/>1.角色状态可选;<br/>2.分页。")
+    @Parameters({
+            @Parameter(name = "roleId", description = "角色ID", example = "181828"),
+            @Parameter(name = "roleCode", description = "角色CODE", example = "ROLE_COMMON"),
+            @Parameter(name = "current", description = "当前页", required = true, example = "1"),
+            @Parameter(name = "size", description = "每页显示条数", required = true, example = "10")
+    })
+    public Result<PageVO<RoleVO>> roleList(
+            @RequestParam(required = false) String roleId,
+            @RequestParam(required = false) String roleCode,
+            @RequestParam(required = false) Boolean status,
+            @RequestParam Integer current,
+            @RequestParam Integer size) {
         LambdaQueryWrapper<RoleInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(RoleInfo::getStatus, "1");
+        wrapper.eq(StringUtils.isNotBlank(roleId), RoleInfo::getRoleId, roleId)
+                .eq(StringUtils.isNotBlank(roleCode), RoleInfo::getRoleCode, roleCode)
+                .eq(status != null, RoleInfo::getStatus, status)
+                .orderByDesc(RoleInfo::getCreateTime);
 
-        List<RoleInfo> list = roleService.list(wrapper);
-        List<RoleVO> roleResList = BeanUtil.copyToList(list, RoleVO.class);
-
-        return Result.ok(roleResList);
+        Page<RoleInfo> infoPage = roleService.page(new Page<>(current, size), wrapper);
+        List<RoleVO> userInfoVO = BeanUtil.copyToList(infoPage.getRecords(), RoleVO.class);
+        PageVO<RoleVO> pageRes = PageVO.<RoleVO>builder()
+                .pages(infoPage.getPages())
+                .total(infoPage.getTotal())
+                .records(userInfoVO)
+                .build();
+        return Result.ok(pageRes);
     }
 }

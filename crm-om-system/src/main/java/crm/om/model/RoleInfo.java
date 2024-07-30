@@ -47,7 +47,7 @@ public class RoleInfo extends BaseInfo {
      * @see Role
      */
     @TableField(value = "roleCode")
-    private Role roleCode;
+    private String roleCode;
 
     /**
      * 角色描述
