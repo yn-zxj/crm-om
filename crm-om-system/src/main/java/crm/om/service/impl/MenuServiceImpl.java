@@ -46,7 +46,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuInfoMapper, MenuInfo> imple
         // 最大递归深度
         treeNodeConfig.setDeep(3);
         treeNodeConfig.setChildrenKey("children");
-
+        
         //转换器 (含义:找出父节点为字符串零的所有子节点, 并递归查找对应的子节点, 深度最多为 3)
         List<Tree<String>> build = TreeUtil.build(menuList, "0", treeNodeConfig,
                 (treeNode, tree) -> {

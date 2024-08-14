@@ -157,7 +157,7 @@ public class ApiController {
     @Operation(summary = "国际化配置数据查询", description = "单个基础域国际化编码数据查询")
     @Parameter(name = "code", description = "国际化编码", required = true)
     public Result<List<Map<String, Object>>> baseInfo(@RequestParam String code) {
-        List<Map<String, Object>> basedInfo = baseService.baseInfo(code);
+        List<Map<String, Object>> basedInfo = baseService.baseInfo("bss-test-basedb", code);
         return Result.ok(basedInfo);
     }
 
@@ -169,9 +169,9 @@ public class ApiController {
      */
     @GetMapping("/baseMaxInfo")
     @Operation(summary = "指定前缀国际化数据查询", description = "基础域国际化特定前缀前120条逆序数据")
-    @Parameter(name = "code", description = "国际化编码", required = true)
+    @Parameter(name = "prefixCode", description = "国际化编码", required = true)
     public Result<List<Map<String, Object>>> baseMaxInfo(@RequestParam String prefixCode) {
-        List<Map<String, Object>> basedInfo = baseService.baseMaxInfo(prefixCode);
+        List<Map<String, Object>> basedInfo = baseService.baseMaxInfo("bss-test-basedb", prefixCode);
         return Result.ok(basedInfo);
     }
 
@@ -183,9 +183,12 @@ public class ApiController {
      */
     @GetMapping("/orderInfo")
     @Operation(summary = "订单信息")
-    @Parameter(name = "code", description = "订单行号", required = true)
+    @Parameter(name = "orderLineId", description = "订单行号", required = true)
     public Result<Map<String, Object>> orderInfo(@RequestParam String orderLineId) {
-        Map<String, Object> orderInfo = orderService.orderInfo(orderLineId);
+        Map<String, Object> orderInfo = orderService.orderInfo("bss-test-obtsdb2", orderLineId);
         return Result.ok(orderInfo);
     }
 }
+
+
+

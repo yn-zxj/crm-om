@@ -40,11 +40,13 @@ mybatis-plus:
 
 # logger 打印调整
 logging:
-  config: classpath:logback-spring.xml
+  level:
+    com.zaxxer.hikari.HikariConfig: debug
+#  config: classpath:logback-spring-a.xml
 
 sa-token:
   # token 名称
-  token-name: Authorization、
+  token-name: Authorization
   # token前缀
   token-prefix: Bearer
   # token 有效期（单位：秒） 默认30天，-1 代表永久有效
@@ -63,7 +65,7 @@ sa-token:
 # 自定义参数
 custom:
   dynamic:
-    enable: false
+    enable: true
 
 # 开启增强
 knife4j:

@@ -11,14 +11,6 @@ import java.util.Map;
  */
 public interface IProdService {
     /**
-     * 产品基本信息
-     *
-     * @param map 参数
-     * @return 数据
-     */
-    Map<String, Object> baseInfo(Map<String, Object> map);
-
-    /**
      * 获取产品配置脚本信息
      *
      * @param configInfo 系统环境信息

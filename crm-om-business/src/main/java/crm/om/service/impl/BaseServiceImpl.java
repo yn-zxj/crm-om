@@ -21,12 +21,12 @@ public class BaseServiceImpl implements IBaseService {
     private final BaseInfoMapper baseInfoMapper;
 
     @Override
-    public List<Map<String, Object>> baseInfo(String code) {
+    public List<Map<String, Object>> baseInfo(String dataSource, String code) {
         return baseInfoMapper.qryBaseInfo(code);
     }
 
     @Override
-    public List<Map<String, Object>> baseMaxInfo(String prefixCode) {
+    public List<Map<String, Object>> baseMaxInfo(String dataSource, String prefixCode) {
         return baseInfoMapper.qryBaseMax(prefixCode);
     }
 }

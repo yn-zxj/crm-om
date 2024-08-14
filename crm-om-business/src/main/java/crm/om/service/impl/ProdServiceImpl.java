@@ -61,11 +61,6 @@ public class ProdServiceImpl implements IProdService {
      */
     private final Set<String> baseCodeList = new HashSet<>();
 
-    @Override
-    public Map<String, Object> baseInfo(Map<String, Object> map) {
-        return Map.of();
-    }
-
     /**
      * 数据源名称 {@code String dataSourceName}
      *
@@ -204,12 +199,12 @@ public class ProdServiceImpl implements IProdService {
                 String tableName = table.getStr("tableName");
 
                 // 第一次查询使用资费ID，取值赋值给prodIdList，之后根据字段需要进行赋值
-                Set<String> columnValue;
+                Set<String> columnValue = new HashSet<>();
                 List<String> keys = List.of("cata_item_id", "prod_id");
                 if (keys.contains(columnName) && !prodIdList.isEmpty()) {
-                    columnValue = prodIdList;
+                    columnValue.addAll(prodIdList);
                 } else {
-                    columnValue = prcIdList;
+                    columnValue.addAll(prcIdList);
                 }
 
                 // 特殊处理 eg:code_value.prod_id 拆分 前者为查询字段，后者为查询值说明
@@ -218,10 +213,10 @@ public class ProdServiceImpl implements IProdService {
                     String column = split[1];
                     if ("prod_id".equalsIgnoreCase(column)) {
                         columnName = split[0];
-                        columnValue = prodIdList;
+                        columnValue.addAll(prodIdList);
                     } else if ("prod_prcid".equalsIgnoreCase(column)) {
                         columnName = split[0];
-                        columnValue = prcIdList;
+                        columnValue.addAll(prcIdList);
                     }
                 }
 
@@ -283,21 +278,23 @@ public class ProdServiceImpl implements IProdService {
         StringBuilder selectSql = new StringBuilder();
         StringBuilder insertSql = new StringBuilder();
 
-        String database = info.getParamKey();
-        if (checkHelper.isValidJson(info.getParamValue())) {
-            JSONArray tableInfos = JSONUtil.parseArray(info.getParamValue());
-            for (Object tableInfo : tableInfos) {
-                JSONObject table = (JSONObject) tableInfo;
-                String columnName = table.getStr("columnName");
-                String tableName = table.getStr("tableName");
+        if (!baseCodeList.isEmpty()) {
+            String database = info.getParamKey();
+            if (checkHelper.isValidJson(info.getParamValue())) {
+                JSONArray tableInfos = JSONUtil.parseArray(info.getParamValue());
+                for (Object tableInfo : tableInfos) {
+                    JSONObject table = (JSONObject) tableInfo;
+                    String columnName = table.getStr("columnName");
+                    String tableName = table.getStr("tableName");
 
-                List<Map<String, Object>> result = queryBuilder(platform, env, database, tableName, columnName, baseCodeList);
-                // 对 COED 进行排序
-                result = result.stream().sorted(Comparator.comparing(map -> (String) map.get("CODE"))).toList();
-                conditionToStr(tableName, columnName, baseCodeList, insertSql, selectSql, result);
+                    List<Map<String, Object>> result = queryBuilder(platform, env, database, tableName, columnName, baseCodeList);
+                    // 对 COED 进行排序
+                    result = result.stream().sorted(Comparator.comparing(map -> (String) map.get("CODE"))).toList();
+                    conditionToStr(tableName, columnName, baseCodeList, insertSql, selectSql, result);
+                }
+            } else {
+                throw new BaseException(ResultCode.DATA_ERROR);
             }
-        } else {
-            throw new BaseException(ResultCode.DATA_ERROR);
         }
 
         // 值返回

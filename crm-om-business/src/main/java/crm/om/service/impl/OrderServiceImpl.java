@@ -21,21 +21,20 @@ public class OrderServiceImpl implements IOrderService {
     private final OrderInfoMapper orderInfoMapper;
 
     @Override
-    public Map<String, Object> orderInfo(String orderLineId) {
+    public Map<String, Object> orderInfo(String dataSource, String orderLineId) {
         Map<String, Object> resultMap = new HashMap<>(8);
         // 查询正常订单
+        resultMap.put("type", "A");
         Map<String, Object> orderMap = orderInfoMapper.qryNormalOrder(orderLineId);
-        if (orderMap.isEmpty()) {
+        if (orderMap == null || orderMap.isEmpty()) {
             // 无数据查询异常订单
             orderMap = orderInfoMapper.qryAbnormalOrder(orderLineId);
             // 异常类型
-            resultMap.put("type","E");
+            resultMap.put("type", "E");
         }
-        // 正常类型
-        resultMap.put("type","A");
-        resultMap.put("bizcont_key",orderMap.get("bizcont_key"));
-        resultMap.put("bizcont_value",orderMap.get("bizcont_value"));
-        resultMap.put("create_time",orderMap.get("create_time"));
+        resultMap.put("bizcont_key", orderMap.get("bizcont_key"));
+        resultMap.put("bizcont_value", orderMap.get("bizcont_value"));
+        resultMap.put("create_time", orderMap.get("create_time"));
         return resultMap;
     }
 }

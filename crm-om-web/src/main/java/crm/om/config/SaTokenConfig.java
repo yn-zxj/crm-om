@@ -1,7 +1,9 @@
 package crm.om.config;
 
 import cn.dev33.satoken.interceptor.SaInterceptor;
+import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,6 +16,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class SaTokenConfig implements WebMvcConfigurer {
+    @Value("${custom.dynamic.enable}")
+    private Boolean dynamicDataSourceEnable;
 
     /**
      * 注册Sa-Token拦截器
@@ -23,8 +27,11 @@ public class SaTokenConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册 Sa-Token 拦截器，校验规则为 StpUtil.checkLogin() 登录校验
-        registry.addInterceptor(new SaInterceptor(handle -> StpUtil.checkLogin()))
-                .addPathPatterns("/**")
+        registry.addInterceptor(new SaInterceptor(handle -> {
+                    SaRouter.match("/**", rule -> StpUtil.checkLogin());
+                    // 动态数据源需要开启
+                    SaRouter.match("/prodConfig/**");
+                }))
                 // 允许对于网站静态资源的无授权访问(api文档地址)
                 .excludePathPatterns("/favicon.ico", "/webjars/**", "/doc.html", "/v3/api-docs/**", "/error")
                 // 允许匿名访问

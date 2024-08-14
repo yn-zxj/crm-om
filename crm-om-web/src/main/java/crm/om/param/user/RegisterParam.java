@@ -12,7 +12,7 @@ import java.util.List;
  * @version 1.0
  */
 @Data
-public class RegisterReq {
+public class RegisterParam {
     @Schema(description = "用户名")
     private String userName;
 

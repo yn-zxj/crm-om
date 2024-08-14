@@ -69,16 +69,19 @@ public class DynamicDataSourceConfig {
             DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
             for (ConfigInfo configInfo : dataSourceInfo) {
                 // 数据源与连接池名称 eg: mvne-prod-basedb
-                String dataSourceName = configInfo.getPlatform().getCode() + SHORT_LINE + configInfo.getEnv() + SHORT_LINE + configInfo.getParamKey();
+                String dataSourceName = configInfo.getPlatform().getCode() + SHORT_LINE + configInfo.getEnv().getCode() + SHORT_LINE + configInfo.getParamKey();
 
                 JSON dataBaseInfo = JSONUtil.parse(configInfo.getParamValue());
+                // 数据库名
+                String database = (String) dataBaseInfo.getByPath("database");
                 DataSourceProperty dataSourceProperty = new DataSourceProperty();
                 String url = MYSQL_PREFIX + dataBaseInfo.getByPath("url") + SPLIT_SLASH + dataBaseInfo.getByPath("database") + MYSQL_SUFFIX;
                 dataSourceProperty.setUrl(url);
                 dataSourceProperty.setUsername((String) dataBaseInfo.getByPath("username"));
                 dataSourceProperty.setPassword((String) dataBaseInfo.getByPath("password"));
                 dataSourceProperty.setDriverClassName(MYSQL_DRIVER_NAME);
-                dataSourceProperty.setPoolName(dataSourceName);
+                // 取 param_value 中的 database 库名
+                dataSourceProperty.setPoolName(configInfo.getPlatform().getCode() + SHORT_LINE + configInfo.getEnv().getCode() + SHORT_LINE + database);
 
                 DataSource dataSource = dataSourceCreator.createDataSource(dataSourceProperty);
                 ds.addDataSource(dataSourceName, dataSource);

@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @Schema(description = "登录参数")
-public class LoginReq {
+public class LoginParam {
     @NotBlank(message = "用户名不能为空")
     @Schema(description = "用户名")
     private String userName;
