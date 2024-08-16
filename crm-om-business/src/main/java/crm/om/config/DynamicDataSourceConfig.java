@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
+import crm.om.enums.BusinessConst;
 import crm.om.enums.ConfigType;
 import crm.om.model.ConfigInfo;
 import crm.om.service.IConfigService;
@@ -40,8 +41,6 @@ public class DynamicDataSourceConfig {
     private final static String MYSQL_PREFIX = "jdbc:mysql://";
     private final static String MYSQL_SUFFIX = "?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8";
     private final static String MYSQL_DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
-    private final static String SPLIT_SLASH = "/";
-    private final static String SHORT_LINE = "-";
 
     /**
      * 根据配置文件配置项开启此功能
@@ -69,19 +68,21 @@ public class DynamicDataSourceConfig {
             DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
             for (ConfigInfo configInfo : dataSourceInfo) {
                 // 数据源与连接池名称 eg: mvne-prod-basedb
-                String dataSourceName = configInfo.getPlatform().getCode() + SHORT_LINE + configInfo.getEnv().getCode() + SHORT_LINE + configInfo.getParamKey();
+                String dataSourceName =
+                        configInfo.getPlatform().getCode() + BusinessConst.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConst.Symbol.SHORT_LINE + configInfo.getParamKey();
 
                 JSON dataBaseInfo = JSONUtil.parse(configInfo.getParamValue());
                 // 数据库名
                 String database = (String) dataBaseInfo.getByPath("database");
                 DataSourceProperty dataSourceProperty = new DataSourceProperty();
-                String url = MYSQL_PREFIX + dataBaseInfo.getByPath("url") + SPLIT_SLASH + dataBaseInfo.getByPath("database") + MYSQL_SUFFIX;
+                String url =
+                        MYSQL_PREFIX + dataBaseInfo.getByPath("url") + BusinessConst.Symbol.SPLIT_SLASH + dataBaseInfo.getByPath("database") + MYSQL_SUFFIX;
                 dataSourceProperty.setUrl(url);
                 dataSourceProperty.setUsername((String) dataBaseInfo.getByPath("username"));
                 dataSourceProperty.setPassword((String) dataBaseInfo.getByPath("password"));
                 dataSourceProperty.setDriverClassName(MYSQL_DRIVER_NAME);
                 // 取 param_value 中的 database 库名
-                dataSourceProperty.setPoolName(configInfo.getPlatform().getCode() + SHORT_LINE + configInfo.getEnv().getCode() + SHORT_LINE + database);
+                dataSourceProperty.setPoolName(configInfo.getPlatform().getCode() + BusinessConst.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConst.Symbol.SHORT_LINE + database);
 
                 DataSource dataSource = dataSourceCreator.createDataSource(dataSourceProperty);
                 ds.addDataSource(dataSourceName, dataSource);

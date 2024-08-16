@@ -10,10 +10,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import crm.om.config.DynamicDataSourceConfig;
-import crm.om.enums.ConfigType;
-import crm.om.enums.Env;
-import crm.om.enums.Platform;
-import crm.om.enums.ResultCode;
+import crm.om.enums.*;
 import crm.om.exception.BaseException;
 import crm.om.mapper.ProdInfoMapper;
 import crm.om.model.ConfigInfo;
@@ -41,11 +38,6 @@ public class ProdServiceImpl implements IProdService {
     private final CheckHelper checkHelper;
     private final ProdInfoMapper prodInfoMapper;
 
-    private final static String SHORT_LINE = "-";
-    private final static String DATABASE_SUFFIX_PROD = "proddb";
-    private final static String DATABASE_SUFFIX_CRM = "crmdb";
-    private final static String DATABASE_SUFFIX_BASE = "basedb";
-    private final static String DATABASE_SUFFIX_MARKET = "marketdb";
     /**
      * 国际化需要排除的表
      */
@@ -89,7 +81,7 @@ public class ProdServiceImpl implements IProdService {
         for (ConfigInfo info : configInfos) {
             String database = info.getParamKey();
             // 产品库、用户库使用 prod_prcid 和 prod_id 查询数据 [判断数据库前缀]
-            if (database.startsWith(DATABASE_SUFFIX_PROD) || database.startsWith(DATABASE_SUFFIX_CRM)) {
+            if (database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_PROD) || database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_CRM)) {
                 Map<String, Object> prodMap = prodHandler(platform, env, info, prcIdList);
                 if (prodMap != null) {
                     result.putAll(prodMap);
@@ -100,11 +92,11 @@ public class ProdServiceImpl implements IProdService {
         // 基础库、营销库配置
         for (ConfigInfo info : configInfos) {
             String database = info.getParamKey();
-            if (database.startsWith(DATABASE_SUFFIX_BASE)) {
+            if (database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_BASE)) {
                 result.putAll(baseHandler(platform, env, info, baseCodeList));
             }
 
-            if (database.startsWith(DATABASE_SUFFIX_MARKET)) {
+            if (database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_MARKET)) {
                 result.putAll(marketHandler(platform, env, info, prcIdList));
             }
         }
@@ -127,7 +119,8 @@ public class ProdServiceImpl implements IProdService {
             case Platform.SGP -> "prodConfig/sgp.ftl";
         };
 
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates/", TemplateConfig.ResourceMode.CLASSPATH));
+        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates/",
+                TemplateConfig.ResourceMode.CLASSPATH));
         Template template = engine.getTemplate(templateName);
         return template.render(result);
     }
@@ -141,7 +134,8 @@ public class ProdServiceImpl implements IProdService {
      * @param prcIdList 资费ID
      * @return 营销库配置
      */
-    private Map<String, Object> marketHandler(String platform, String env, ConfigInfo info, LinkedHashSet<String> prcIdList) {
+    private Map<String, Object> marketHandler(String platform, String env, ConfigInfo info,
+                                              LinkedHashSet<String> prcIdList) {
         StringBuilder selectSql = new StringBuilder();
         StringBuilder insertSql = new StringBuilder();
 
@@ -150,8 +144,10 @@ public class ProdServiceImpl implements IProdService {
         // 校验格式
         if (checkHelper.isValidJson(info.getParamValue())) {
             // 查询 element_batch_no
-            List<Map<String, Object>> result = queryBuilder(platform, env, database, "mk_meanscontent_info", "element_par_value", prcIdList);
-            Set<String> elementBatchNoList = result.stream().map(out -> out.get("ELEMENT_BATCH_NO").toString()).collect(Collectors.toSet());
+            List<Map<String, Object>> result = queryBuilder(platform, env, database, "mk_meanscontent_info",
+                    "element_par_value", prcIdList);
+            Set<String> elementBatchNoList =
+                    result.stream().map(out -> out.get("ELEMENT_BATCH_NO").toString()).collect(Collectors.toSet());
 
             if (!elementBatchNoList.isEmpty()) {
                 JSONArray tableInfos = JSONUtil.parseArray(info.getParamValue());
@@ -160,7 +156,8 @@ public class ProdServiceImpl implements IProdService {
                     String columnName = table.getStr("columnName");
                     String tableName = table.getStr("tableName");
 
-                    List<Map<String, Object>> mapList = queryBuilder(platform, env, database, tableName, columnName, elementBatchNoList);
+                    List<Map<String, Object>> mapList = queryBuilder(platform, env, database, tableName, columnName,
+                            elementBatchNoList);
                     conditionToStr(tableName, columnName, elementBatchNoList, insertSql, selectSql, mapList);
                 }
             }
@@ -185,7 +182,8 @@ public class ProdServiceImpl implements IProdService {
      * @param prcIdList 资费ID集合
      * @return 产品、资费相关脚本
      */
-    public Map<String, Object> prodHandler(String platform, String env, ConfigInfo prodInfo, LinkedHashSet<String> prcIdList) {
+    public Map<String, Object> prodHandler(String platform, String env, ConfigInfo prodInfo,
+                                           LinkedHashSet<String> prcIdList) {
         StringBuilder selectSql = new StringBuilder();
         StringBuilder insertSql = new StringBuilder();
 
@@ -221,14 +219,17 @@ public class ProdServiceImpl implements IProdService {
                 }
 
                 // 数据查询
-                List<Map<String, Object>> result = queryBuilder(platform, env, database, tableName, columnName, columnValue);
+                List<Map<String, Object>> result = queryBuilder(platform, env, database, tableName, columnName,
+                        columnValue);
 
                 // 取 pd_prc_dict 中的 prod_id (特殊处理)
                 if ("prod_prcid".equalsIgnoreCase(columnName) && "pd_prc_dict".equalsIgnoreCase(tableName)) {
                     prodIdList = result.stream().map(out -> out.get("PROD_ID").toString()).collect(Collectors.toSet());
                 }
 
-                String columnStr = columnValue.stream().map(column -> "'" + column + "'").collect(Collectors.joining(", "));
+                String columnStr =
+                        columnValue.stream().map(column -> BusinessConst.Symbol.SINGLE_QUOTE + column + BusinessConst.Symbol.SINGLE_QUOTE)
+                                .collect(Collectors.joining(BusinessConst.Symbol.COMMA + BusinessConst.Symbol.SPACE));
                 String select = sqlUtil.select(tableName, columnName, columnStr);
                 String insert = sqlUtil.insert(tableName, result);
 
@@ -238,8 +239,8 @@ public class ProdServiceImpl implements IProdService {
                 }
 
                 if (StringUtils.isNotBlank(insert)) {
-                    selectSql.append(select).append(System.lineSeparator());
-                    insertSql.append(insert).append(System.lineSeparator());
+                    selectSql.append(select).append(BusinessConst.Symbol.NEW_LINE);
+                    insertSql.append(insert).append(BusinessConst.Symbol.NEW_LINE);
                 }
             }
         } else {
@@ -253,7 +254,7 @@ public class ProdServiceImpl implements IProdService {
         JSONArray tableInfos = JSONUtil.parseArray(prodInfo.getParamValue());
         JSONObject firstItem = (JSONObject) tableInfos.getFirst();
         String columnName = firstItem.getStr("columnName");
-        if (database.startsWith(DATABASE_SUFFIX_PROD)) {
+        if (database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_PROD)) {
             keyName = columnName.toLowerCase().contains("prod_prcid") ? "prc" : "prod";
         } else {
             keyName = columnName.toLowerCase().contains("prod_prcid") ? "crmPrc" : "crmProd";
@@ -287,7 +288,8 @@ public class ProdServiceImpl implements IProdService {
                     String columnName = table.getStr("columnName");
                     String tableName = table.getStr("tableName");
 
-                    List<Map<String, Object>> result = queryBuilder(platform, env, database, tableName, columnName, baseCodeList);
+                    List<Map<String, Object>> result = queryBuilder(platform, env, database, tableName, columnName,
+                            baseCodeList);
                     // 对 COED 进行排序
                     result = result.stream().sorted(Comparator.comparing(map -> (String) map.get("CODE"))).toList();
                     conditionToStr(tableName, columnName, baseCodeList, insertSql, selectSql, result);
@@ -315,7 +317,8 @@ public class ProdServiceImpl implements IProdService {
      * @param columnValue 条件值
      * @return 数据
      */
-    private List<Map<String, Object>> queryBuilder(String platform, String env, String database, String tableName, String columnName, Object columnValue) {
+    private List<Map<String, Object>> queryBuilder(String platform, String env, String database, String tableName,
+                                                   String columnName, Object columnValue) {
         // 查询条件
         Map<String, Object> map = new HashMap<>(4);
         map.put("tableName", tableName);
@@ -323,7 +326,8 @@ public class ProdServiceImpl implements IProdService {
         map.put("columnValue", columnValue);
 
         // 手动切换数据源
-        String dataSourceName = platform + SHORT_LINE + env + SHORT_LINE + database;
+        String dataSourceName =
+                platform + BusinessConst.Symbol.SHORT_LINE + env + BusinessConst.Symbol.SHORT_LINE + database;
         // 获取当前数据源名称
         String peek = DynamicDataSourceContextHolder.peek();
         // 即将切换数据源与目前不一致则进行切换
@@ -378,14 +382,17 @@ public class ProdServiceImpl implements IProdService {
      * @param selectSql     select脚本
      * @param mapList       插入脚本结果集
      */
-    private void conditionToStr(String tableName, String columnName, Set<String> conditionList, StringBuilder insertSql, StringBuilder selectSql, List<Map<String, Object>> mapList) {
-        String columnStr = conditionList.stream().map(column -> "'" + column + "'").collect(Collectors.joining(", "));
+    private void conditionToStr(String tableName, String columnName, Set<String> conditionList,
+                                StringBuilder insertSql, StringBuilder selectSql, List<Map<String, Object>> mapList) {
+        String columnStr =
+                conditionList.stream().map(column -> BusinessConst.Symbol.SINGLE_QUOTE + column + BusinessConst.Symbol.SINGLE_QUOTE)
+                        .collect(Collectors.joining(BusinessConst.Symbol.COMMA + BusinessConst.Symbol.SPACE));
         String select = sqlUtil.select(tableName, columnName, columnStr);
         String insert = sqlUtil.insert(tableName, mapList);
 
         if (StringUtils.isNotBlank(insert)) {
-            selectSql.append(select).append(System.lineSeparator());
-            insertSql.append(insert).append(System.lineSeparator());
+            selectSql.append(select).append(BusinessConst.Symbol.NEW_LINE);
+            insertSql.append(insert).append(BusinessConst.Symbol.NEW_LINE);
         }
     }
 }

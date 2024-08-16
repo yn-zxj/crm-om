@@ -2,6 +2,7 @@ package crm.om.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import crm.om.enums.Const;
 import crm.om.exception.BaseException;
 import org.springframework.stereotype.Component;
 
@@ -22,21 +23,6 @@ import java.util.stream.Collectors;
  */
 @Component
 public class SqlUtil {
-
-    private final static String BACKQUOTE = "`";
-    private final static String COMMA = ",";
-    private final static String IN = "IN";
-    private final static String INSERT_INTO = "INSERT INTO";
-    private final static String SELECT_ALL_FROM = "SELECT * FROM";
-    private final static String WHERE = "WHERE";
-    private final static String VALUES = "VALUES";
-    private final static String SPACE = " ";
-    private final static String SINGLE_QUOTE = "'";
-    private final static String SEMICOLON = ";";
-    private final static String LEFT_BRACKET = "(";
-    private final static String RIGHT_BRACKET = ")";
-    private final static String NEW_LINE = System.lineSeparator();
-
     /**
      * 查询语句拼接 <br/>
      * 自行保证条件值格式正确
@@ -47,9 +33,7 @@ public class SqlUtil {
      * @return 拼接后的 SQL 语句
      */
     public String select(String tableName, String conditionKey, String conditionValue) {
-        return SELECT_ALL_FROM + SPACE + BACKQUOTE + tableName.toUpperCase() + BACKQUOTE + SPACE + WHERE +
-                SPACE + BACKQUOTE + conditionKey.toUpperCase() + BACKQUOTE + SPACE + IN + SPACE + LEFT_BRACKET +
-                conditionValue + RIGHT_BRACKET + SEMICOLON;
+        return Const.Sql.SELECT_ALL_FROM + Const.Symbol.SPACE + Const.Symbol.BACKQUOTE + tableName.toUpperCase() + Const.Symbol.BACKQUOTE + Const.Symbol.SPACE + Const.Sql.WHERE + Const.Symbol.SPACE + Const.Symbol.BACKQUOTE + conditionKey.toUpperCase() + Const.Symbol.BACKQUOTE + Const.Symbol.SPACE + Const.Sql.IN + Const.Symbol.SPACE + Const.Symbol.LEFT_BRACKET + conditionValue + Const.Symbol.RIGHT_BRACKET + Const.Symbol.SEMICOLON;
     }
 
     /**
@@ -71,34 +55,34 @@ public class SqlUtil {
         String[] columns = firstRow.keySet().toArray(new String[0]);
 
         // 构建INSERT语句
-        sql.append(INSERT_INTO).append(SPACE).append(BACKQUOTE).append(tableName.toUpperCase()).append(BACKQUOTE).append(SPACE).append("(");
+        sql.append(Const.Sql.INSERT_INTO).append(Const.Symbol.SPACE).append(Const.Symbol.BACKQUOTE).append(tableName.toUpperCase()).append(Const.Symbol.BACKQUOTE).append(Const.Symbol.SPACE).append(Const.Symbol.LEFT_BRACKET);
         for (String column : columns) {
-            sql.append(BACKQUOTE).append(column.toUpperCase()).append(BACKQUOTE).append(COMMA).append(SPACE);
+            sql.append(Const.Symbol.BACKQUOTE).append(column.toUpperCase()).append(Const.Symbol.BACKQUOTE).append(Const.Symbol.COMMA).append(Const.Symbol.SPACE);
         }
         // 删除最后的逗号和空格
         sql.setLength(sql.length() - 2);
-        sql.append(RIGHT_BRACKET).append(SPACE).append(VALUES).append(NEW_LINE);
+        sql.append(Const.Symbol.RIGHT_BRACKET).append(Const.Symbol.SPACE).append(Const.Sql.VALUES).append(Const.Symbol.NEW_LINE);
 
         // 构建VALUES部分
         for (Map<String, Object> row : dataList) {
-            sql.append(LEFT_BRACKET);
+            sql.append(Const.Symbol.LEFT_BRACKET);
             for (String column : columns) {
                 Object value = row.get(column);
                 if (value instanceof String) {
-                    sql.append(SINGLE_QUOTE).append(value).append(SINGLE_QUOTE).append(COMMA).append(SPACE);
+                    sql.append(Const.Symbol.SINGLE_QUOTE).append(value).append(Const.Symbol.SINGLE_QUOTE).append(Const.Symbol.COMMA).append(Const.Symbol.SPACE);
                 } else if (value instanceof LocalDateTime) {
-                    sql.append(SINGLE_QUOTE).append(((LocalDateTime) value).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append(SINGLE_QUOTE).append(COMMA).append(SPACE);
+                    sql.append(Const.Symbol.SINGLE_QUOTE).append(((LocalDateTime) value).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append(Const.Symbol.SINGLE_QUOTE).append(Const.Symbol.COMMA).append(Const.Symbol.SPACE);
                 } else {
-                    sql.append(value).append(COMMA).append(SPACE);
+                    sql.append(value).append(Const.Symbol.COMMA).append(Const.Symbol.SPACE);
                 }
             }
             // 删除最后的逗号和空格
             sql.setLength(sql.length() - 2);
-            sql.append(RIGHT_BRACKET).append(COMMA).append(NEW_LINE);
+            sql.append(Const.Symbol.RIGHT_BRACKET).append(Const.Symbol.COMMA).append(Const.Symbol.NEW_LINE);
         }
         // 删除最后的逗号和换行符
         sql.setLength(sql.length() - 2);
-        sql.append(SEMICOLON);
+        sql.append(Const.Symbol.SEMICOLON);
 
         return sql.toString();
     }
@@ -137,8 +121,6 @@ public class SqlUtil {
         // 创建Matcher对象
         Matcher matcher = pattern.matcher(str);
         // 使用Stream API提取匹配到的值并加入到Set中
-        return matcher.results()
-                .map(matchResult -> matchResult.group(1))
-                .collect(Collectors.toSet());
+        return matcher.results().map(matchResult -> matchResult.group(1)).collect(Collectors.toSet());
     }
 }
