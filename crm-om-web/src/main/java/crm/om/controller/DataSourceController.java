@@ -42,7 +42,7 @@ public class DataSourceController {
      *
      * @return 数据源名称列表
      */
-    @Operation(summary = "获取全部数据源名称")
+    @Operation(summary = "获取全部数据源")
     @GetMapping("/all")
     public Result<Set<String>> getAllDataSources() {
         DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
