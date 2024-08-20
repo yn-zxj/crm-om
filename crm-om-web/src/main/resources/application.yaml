@@ -17,7 +17,7 @@ spring:
       # 设置默认的数据源(默认master)
       primary: master
       # 严格匹配数据源(默认false)
-      strict: false
+      strict: true
       datasource:
         master:
           driver-class-name: com.mysql.cj.jdbc.Driver
