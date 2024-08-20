@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
+import com.baomidou.dynamic.datasource.creator.hikaricp.HikariCpConfig;
 import crm.om.enums.BusinessConst;
 import crm.om.enums.ConfigType;
 import crm.om.model.ConfigInfo;
@@ -34,12 +35,18 @@ public class DynamicDataSourceConfig {
     @Value("${custom.dynamic.enable}")
     private Boolean dynamicDataSourceEnable;
 
+    @Value("${spring.datasource.dynamic.datasource.master.hikari.idleTimeout}")
+    private Long idleTimeout;
+    @Value("${spring.datasource.dynamic.datasource.master.hikari.maxLifetime}")
+    private Long maxLifetime;
+
     private final DataSource dataSource;
     private final IConfigService configService;
     private final DefaultDataSourceCreator dataSourceCreator;
 
     private final static String MYSQL_PREFIX = "jdbc:mysql://";
-    private final static String MYSQL_SUFFIX = "?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8";
+    private final static String MYSQL_SUFFIX = "?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8" +
+            "&autoReconnect=true";
     private final static String MYSQL_DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
 
     /**
@@ -83,6 +90,11 @@ public class DynamicDataSourceConfig {
                 dataSourceProperty.setDriverClassName(MYSQL_DRIVER_NAME);
                 // 取 param_value 中的 database 库名
                 dataSourceProperty.setPoolName(configInfo.getPlatform().getCode() + BusinessConst.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConst.Symbol.SHORT_LINE + database);
+
+                HikariCpConfig hikariCpConfig = new HikariCpConfig();
+                hikariCpConfig.setMaxLifetime(maxLifetime);
+                hikariCpConfig.setIdleTimeout(idleTimeout);
+                dataSourceProperty.setHikari(hikariCpConfig);
 
                 DataSource dataSource = dataSourceCreator.createDataSource(dataSourceProperty);
                 ds.addDataSource(dataSourceName, dataSource);
