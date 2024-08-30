@@ -2,6 +2,7 @@ package crm.om.controller;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.model.MenuInfo;
 import crm.om.model.UserRoleRel;
@@ -36,6 +37,7 @@ public class RouteController {
     private final IUserRoleRelService roleRelService;
 
     @Operation(summary = "获取用户路由数据")
+    @ApiOperationSupport(order = 110)
     @GetMapping("/getUserRoutes")
     public Result<List<RouteVO>> getUserRoutes(@RequestHeader("Authorization") String authorizationHeader) {
         // 查询用户权限
@@ -58,6 +60,7 @@ public class RouteController {
      * @return 常量路由
      */
     @Operation(summary = "获取固定的路由数据")
+    @ApiOperationSupport(order = 105)
     @GetMapping("/getConstantRoutes")
     public Result<List<RouteVO>> getConstantRoutes() {
         // 查询已启用的常量路由

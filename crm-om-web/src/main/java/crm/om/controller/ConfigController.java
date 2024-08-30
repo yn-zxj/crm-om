@@ -7,6 +7,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.model.ConfigInfo;
 import crm.om.param.config.ConfigReq;
@@ -52,6 +53,7 @@ public class ConfigController {
      */
     @Operation(summary = "获取配置参数信息")
     @GetMapping("/all")
+    @ApiOperationSupport(order = 405)
     @Parameters({
             @Parameter(name = "platform", description = "系统平台", example = "bss"),
             @Parameter(name = "env", description = "环境", example = "test"),
@@ -94,6 +96,7 @@ public class ConfigController {
      * @return 操作反馈
      */
     @Operation(summary = "删除配置信息")
+    @ApiOperationSupport(order = 420)
     @DeleteMapping("/del/{id}")
     @Parameter(name = "id", description = "参数ID", required = true, example = "1")
     public Result<Boolean> fetchById(@PathVariable("id") String id) {
@@ -108,6 +111,7 @@ public class ConfigController {
      * @return 操作反馈
      */
     @Operation(summary = "新增配置信息")
+    @ApiOperationSupport(order = 410)
     @PostMapping("/save")
     public Result<Boolean> save(@Valid @RequestBody SaveReq saveReq) {
         ConfigInfo build = ConfigInfo.builder()
@@ -133,11 +137,13 @@ public class ConfigController {
      * @return 操作反馈
      */
     @Operation(summary = "更新配置信息")
+    @ApiOperationSupport(order = 415)
     @PutMapping("/update")
     public Result<Boolean> update(@Valid @RequestBody UpdateReq updateReq) {
         LambdaUpdateWrapper<ConfigInfo> wrapper = new LambdaUpdateWrapper<>();
         wrapper.set(StringUtils.isNotBlank(updateReq.getParamKey()), ConfigInfo::getParamKey, updateReq.getParamKey())
-                .set(StringUtils.isNotBlank(updateReq.getParamValue()), ConfigInfo::getParamValue, updateReq.getParamValue())
+                .set(StringUtils.isNotBlank(updateReq.getParamValue()), ConfigInfo::getParamValue,
+                        updateReq.getParamValue())
                 .set(updateReq.getStatus() != null, ConfigInfo::getStatus, updateReq.getStatus())
                 // todo 从头部取用户信息
                 .set(ConfigInfo::getUpdateBy, "system")

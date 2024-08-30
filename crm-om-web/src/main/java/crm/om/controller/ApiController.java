@@ -5,6 +5,7 @@ import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.enums.ResultCode;
 import crm.om.model.ConfigInfo;
@@ -60,6 +61,7 @@ public class ApiController {
      * @return 响应结果
      */
     @PostMapping("/common")
+    @ApiOperationSupport(order = 505)
     @Operation(summary = "通用接口")
     public Result<Object> common(@RequestBody @Valid BssParam bssParam) {
         String apiUrl = "";
@@ -82,7 +84,8 @@ public class ApiController {
         for (ConfigInfo configInfo : configInfos) {
             String paramKey = configInfo.getParamKey();
             if ("api_url".equals(paramKey)) {
-                apiUrl = configInfo.getParamValue().endsWith("/") ? configInfo.getParamValue() : configInfo.getParamValue() + "/";
+                apiUrl = configInfo.getParamValue().endsWith("/") ? configInfo.getParamValue() :
+                        configInfo.getParamValue() + "/";
             }
         }
 
@@ -114,6 +117,7 @@ public class ApiController {
      * @return 响应结果
      */
     @PostMapping("/nocInfo")
+    @ApiOperationSupport(order = 510)
     @Operation(summary = "网元指令")
     public Result<Object> nocInfo(@RequestBody @Valid BssParam bssParam) {
         String apiUrl = "";
@@ -133,7 +137,8 @@ public class ApiController {
             return Result.build(null, ResultCode.CONFIG_NOTFOUND);
         }
         for (ConfigInfo configInfo : configInfos) {
-            apiUrl = configInfo.getParamValue().endsWith("/") ? configInfo.getParamValue() : configInfo.getParamValue() + "/";
+            apiUrl = configInfo.getParamValue().endsWith("/") ? configInfo.getParamValue() :
+                    configInfo.getParamValue() + "/";
         }
 
         // apiUrl 值不存在
@@ -154,6 +159,7 @@ public class ApiController {
      * @return 结果
      */
     @GetMapping("/baseInfo")
+    @ApiOperationSupport(order = 515)
     @Operation(summary = "国际化配置数据查询", description = "单个基础域国际化编码数据查询")
     @Parameter(name = "code", description = "国际化编码", required = true)
     public Result<List<Map<String, Object>>> baseInfo(@RequestParam String code) {
@@ -168,6 +174,7 @@ public class ApiController {
      * @return 数据
      */
     @GetMapping("/baseMaxInfo")
+    @ApiOperationSupport(order = 520)
     @Operation(summary = "指定前缀国际化数据查询", description = "基础域国际化特定前缀前120条逆序数据")
     @Parameter(name = "prefixCode", description = "国际化编码", required = true)
     public Result<List<Map<String, Object>>> baseMaxInfo(@RequestParam String prefixCode) {
@@ -182,6 +189,7 @@ public class ApiController {
      * @return 结果
      */
     @GetMapping("/orderInfo")
+    @ApiOperationSupport(order = 525)
     @Operation(summary = "订单信息")
     @Parameter(name = "orderLineId", description = "订单行号", required = true)
     public Result<Map<String, Object>> orderInfo(@RequestParam String orderLineId) {

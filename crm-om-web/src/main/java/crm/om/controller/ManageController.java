@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.exception.BaseException;
 import crm.om.model.RoleInfo;
@@ -44,6 +45,7 @@ public class ManageController {
     private final IUserService userService;
 
     @GetMapping("/getUserList")
+    @ApiOperationSupport(order = 305)
     @Operation(summary = "获取用户列表")
     @Parameters({
             @Parameter(name = "userName", description = "用户名"),
@@ -91,6 +93,7 @@ public class ManageController {
      * @return 角色信息
      */
     @PostMapping("/save")
+    @ApiOperationSupport(order = 310)
     @Operation(summary = "新增角色类型", description = "角色类型一般很少新增，新增代码枚举需要一起维护")
     public Result<RoleVO> insert(@RequestBody RoleParam roleParam) {
         RoleInfo roleInfo = RoleInfo.builder()
@@ -116,6 +119,7 @@ public class ManageController {
      * @return 默认返回成功
      */
     @DeleteMapping("/del/role/{id}")
+    @ApiOperationSupport(order = 320)
     @Operation(summary = "删除角色")
     @Parameter(name = "id", description = "角色ID", required = true, example = "181828")
     public Result<Boolean> delete(@PathVariable String id) {
@@ -130,13 +134,17 @@ public class ManageController {
      * @return 更新结果
      */
     @PostMapping("/role/update")
+    @ApiOperationSupport(order = 315)
     @Operation(summary = "更新角色信息")
     public Result<Boolean> update(@RequestBody RoleUpdateParam roleUpdateParam) {
         LambdaUpdateWrapper<RoleInfo> wrapper = new LambdaUpdateWrapper<>();
 
-        wrapper.set(StringUtils.isNotBlank(roleUpdateParam.getRoleName()), RoleInfo::getRoleName, roleUpdateParam.getRoleName())
-                .set(StringUtils.isNotBlank(roleUpdateParam.getRoleCode()), RoleInfo::getRoleCode, roleUpdateParam.getRoleCode())
-                .set(StringUtils.isNotBlank(roleUpdateParam.getRoleDesc()), RoleInfo::getRoleDesc, roleUpdateParam.getRoleDesc())
+        wrapper.set(StringUtils.isNotBlank(roleUpdateParam.getRoleName()), RoleInfo::getRoleName,
+                        roleUpdateParam.getRoleName())
+                .set(StringUtils.isNotBlank(roleUpdateParam.getRoleCode()), RoleInfo::getRoleCode,
+                        roleUpdateParam.getRoleCode())
+                .set(StringUtils.isNotBlank(roleUpdateParam.getRoleDesc()), RoleInfo::getRoleDesc,
+                        roleUpdateParam.getRoleDesc())
                 .set(roleUpdateParam.getStatus() != null, RoleInfo::getStatus, roleUpdateParam.getStatus())
                 .eq(RoleInfo::getRoleId, roleUpdateParam.getRoleId());
 
@@ -155,6 +163,7 @@ public class ManageController {
      * @return 角色信息
      */
     @GetMapping("/roleInfo")
+    @ApiOperationSupport(order = 307)
     @Operation(summary = "查询角色信息", description = "区分:<br/>1.角色状态可选;<br/>2.分页。")
     @Parameters({
             @Parameter(name = "roleId", description = "角色ID", example = "181828"),

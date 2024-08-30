@@ -3,6 +3,7 @@ package crm.om.controller;
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.param.datasource.DataSourceParam;
 import crm.om.vo.Result;
@@ -43,6 +44,7 @@ public class DataSourceController {
      * @return 数据源名称列表
      */
     @Operation(summary = "获取全部数据源")
+    @ApiOperationSupport(order = 201)
     @GetMapping("/all")
     public Result<Set<String>> getAllDataSources() {
         DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
@@ -56,6 +58,7 @@ public class DataSourceController {
      * @return 数据源名称列表
      */
     @Operation(summary = "添加数据源")
+    @ApiOperationSupport(order = 205)
     @PostMapping("/add")
     public Result<Set<String>> add(@Validated @RequestBody DataSourceParam dataSourceParam) {
         DataSourceProperty dataSourceProperty = new DataSourceProperty();
@@ -73,6 +76,7 @@ public class DataSourceController {
      * @return 成功
      */
     @Operation(summary = "删除数据源")
+    @ApiOperationSupport(order = 210)
     @DeleteMapping("/remove/{name}")
     public Result<Objects> remove(@PathVariable String name) {
         DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;

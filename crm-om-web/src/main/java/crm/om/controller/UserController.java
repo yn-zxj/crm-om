@@ -1,9 +1,11 @@
 package crm.om.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.enums.ResultCode;
 import crm.om.enums.Role;
@@ -17,6 +19,7 @@ import crm.om.service.IUserRoleRelService;
 import crm.om.service.IUserService;
 import crm.om.vo.Result;
 import crm.om.vo.user.TokenVO;
+import crm.om.vo.user.UserInfoVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +41,7 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @Tag(name = "用户管理")
-@ApiSupport(order = 200)
+@ApiSupport(order = 600)
 @RequiredArgsConstructor
 @RequestMapping(value = "/auth", produces = "application/json;charset=UTF-8")
 public class UserController {
@@ -53,6 +56,7 @@ public class UserController {
      * @return 登录结果
      */
     @Operation(summary = "登录", description = "用户名+密码")
+    @ApiOperationSupport(order = 605)
     @PostMapping("/login")
     public Result<TokenVO> login(@Valid @RequestBody LoginParam loginParam) {
         LambdaQueryWrapper<UserInfo> wrapper = new LambdaQueryWrapper<>();
@@ -78,6 +82,7 @@ public class UserController {
      * @return 注册结果
      */
     @Operation(summary = "用户注册")
+    @ApiOperationSupport(order = 620)
     @PostMapping("/register")
     public Result<?> register(@Valid @RequestBody RegisterParam registerInfo) {
         // 校验用户是否存在
@@ -127,6 +132,7 @@ public class UserController {
      * @return 删除结果
      */
     @Operation(summary = "用户删除")
+    @ApiOperationSupport(order = 630)
     @DeleteMapping("/del/{id}")
     @Parameter(name = "id", description = "用户id")
     public Result<Boolean> delUser(@PathVariable String id) {
@@ -146,6 +152,7 @@ public class UserController {
      * @return 更新结果
      */
     @Operation(summary = "用户更新")
+    @ApiOperationSupport(order = 625)
     @PutMapping("/update/user")
     public Result<Boolean> updateUser(@Valid @RequestBody UpdateUserParam userInfo) {
         LambdaUpdateWrapper<UserInfo> wrapper = new LambdaUpdateWrapper<>();
@@ -177,12 +184,29 @@ public class UserController {
         return Result.ok(result);
     }
 
+    @Operation(summary = "用户信息")
+    @ApiOperationSupport(order = 615)
+    @GetMapping("/getUserInfo")
+    public Result<UserInfoVO> getUserInfo() {
+        UserInfoVO userInfoVO = new UserInfoVO();
+        String loginId = (String) StpUtil.getTokenInfo().loginId;
+        if (loginId != null) {
+            System.out.println("loginId = " + loginId);
+            LambdaUpdateWrapper<UserInfo> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.eq(UserInfo::getUserId, loginId);
+            UserInfo userInfo = userService.getOne(wrapper);
+            userInfoVO = BeanUtil.copyProperties(userInfo, UserInfoVO.class);
+        }
+        return Result.ok(userInfoVO);
+    }
+
     /**
      * 退出登录
      *
      * @return 退出结果
      */
     @Operation(summary = "注销登录")
+    @ApiOperationSupport(order = 610)
     @GetMapping("/logout")
     public Result<Object> logout() {
         StpUtil.logout();

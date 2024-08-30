@@ -1,5 +1,6 @@
 package crm.om.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.model.ConfigInfo;
 import crm.om.param.prod.ProdParam;
@@ -29,12 +30,14 @@ public class ProdController {
     private final IProdService prodService;
 
     @PostMapping("/baseInfo")
+    @ApiOperationSupport(order = 910)
     @Operation(summary = "基础信息")
     public Result<Object> baseInfo() {
         return null;
     }
 
     @PostMapping("/configScript")
+    @ApiOperationSupport(order = 905)
     @Operation(summary = "配置脚本")
     public Result<String> prodConfig(@RequestBody ProdParam prodParam) {
         ConfigInfo info = ConfigInfo.builder()
