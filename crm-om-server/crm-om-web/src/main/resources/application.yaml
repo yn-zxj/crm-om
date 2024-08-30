@@ -1,0 +1,75 @@
+# 运行端口
+server:
+  port: 8848
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# 数据源
+spring:
+  application:
+    name: crm-om
+  datasource:
+    # 多数据源配置
+    dynamic:
+      # 设置默认的数据源(默认master)
+      primary: master
+      # 严格匹配数据源(默认false)
+      strict: true
+      datasource:
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://rm-bp1fodey2m8m8390cto.mysql.rds.aliyuncs.com:3306/icu?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+          username: learn
+          password: Learn_MySQL
+          hikari:
+            # 池中维护的最小空闲连接数
+            minimum-idle: 10
+            # 池中最大连接数，包括闲置和使用中的连接
+            maximum-pool-size: 20
+            idleTimeout: 7200
+            maxLifetime: 7200
+
+# mybatis plus配置
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    call-setters-on-nulls: true
+
+# logger 打印调整
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: debug
+#  config: classpath:logback-spring-a.xml
+
+sa-token:
+  # token 名称
+  token-name: Authorization
+  # token前缀
+  token-prefix: Bearer
+  # token 有效期（单位：秒） 默认30天，-1 代表永久有效
+  timeout: 2592000
+  # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
+  active-timeout: -1
+  # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
+  is-share: true
+  # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: true
+
+# 自定义参数
+custom:
+  dynamic:
+    enable: false
+
+# 开启增强
+knife4j:
+  enable: true
+  setting:
+    enable-swagger-models: true
+    swagger-model-name: 参数模型
