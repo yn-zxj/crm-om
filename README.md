@@ -18,43 +18,55 @@ crm-om
 ##### crm-om-web
 
 &#8195;&#8195;前台框架使用了 [Soybean Admin](https://github.com/soybeanjs/soybean-admin.git)
-作为支持，开源项目作者会对其进行维护更新，但是开发之中想同步最新的代码，就需要做如下设置：
+作为支持，开源项目作者会对其进行维护更新，但是开发之中想同步最新的代码，此处使用 `git subtree` 进行管理。
 
-① 进入前台目录 `cd crm-om-web`
-
-② 查询当前远程仓库
+① 新增远程仓库 URL
 
 ```shell
-git remote -v
+$ git remote add -f web https://github.com/soybeanjs/soybean-admin.git
 
-# 返回
-origin  https://github.com/soybeanjs/soybean-admin.git (fetch)
-origin  https://github.com/soybeanjs/soybean-admin.git (push)
+# 查看
+$ git remote show
+> origin
+> web
 ```
 
-③ 添加自己的 git 源地址
+② 将 web 项目合并到本地 Git 项目
 
 ```shell
-git remote add om-web https://github.com/yn-zxj/crm-om.git
+$ git subtree add --prefix=crm-om-web web main --squash
+> git fetch web main
+> From https://github.com/soybeanjs/soybean-admin
+>  * branch              main       -> FETCH_HEAD
+> Added dir 'crm-om-web'
 ```
 
-④ 提交代码到自己的 git
+③ 提交更改至主仓库
 
 ```shell
-# 往自己仓库推代码
-git push om-web main
-
-# 同步最新代码(往本地拉取)
-git pull om-web main
+$ git push origin main
 ```
 
-⑤ 同步开源最新代码
+④ 同步更新与修改
 
 ```shell
-git pull origin main
+$ git subtree pull --prefix=crm-om-web web main --squash
+
+# 当前无更新
+> From https://github.com/soybeanjs/soybean-admin
+> * branch              main       -> FETCH_HEAD
+>Subtree is already at commit 9c012c7d13516ba52ed7a6acb03b9695d95271b5.
 ```
 
-> 注意：
->
-> ① 如有需要先同步开源最新代码，遇到冲突先解决在合并;
-> ② 确保远程开源地址正确，且
+⑤ 启动前台
+
+```shell
+# 进入前台目录
+cd crm-om-web
+
+# 加载依赖
+pnpm i
+
+# 运行启动
+pnpm run dev
+```
