@@ -1,6 +1,5 @@
 package crm.om.param.user;
 
-import crm.om.enums.Gender;
 import crm.om.enums.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class RegisterParam {
     private String userName;
 
     @Schema(description = "用户性别")
-    private Gender userGender;
+    private String userGender;
 
     @Schema(description = "用户昵称")
     private String nickName;

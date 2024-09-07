@@ -37,5 +37,5 @@ public class RoleVO {
     public LocalDateTime updateTime;
 
     @Schema(description = "状态")
-    private Boolean status;
+    private String status;
 }

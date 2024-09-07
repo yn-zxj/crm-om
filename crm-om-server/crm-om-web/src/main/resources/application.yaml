@@ -11,6 +11,10 @@ server:
 spring:
   application:
     name: crm-om
+  jackson:
+    #  格式化返回时间 yyyy-MM-dd HH:mm:ss
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   datasource:
     # 多数据源配置
     dynamic:

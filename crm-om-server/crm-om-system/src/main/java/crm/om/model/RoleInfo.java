@@ -59,5 +59,5 @@ public class RoleInfo extends BaseInfo {
      * 状态(0-弃用 1-启用)
      */
     @TableField(value = "status")
-    private Boolean status;
+    private String status;
 }

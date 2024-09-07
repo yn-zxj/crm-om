@@ -45,7 +45,7 @@ public class UserInfoVO {
     public LocalDateTime updateTime;
 
     @Schema(description = "状态")
-    private Boolean status;
+    private String status;
 
     @Schema(description = "用户角色集合")
     private List<String> userRoles;

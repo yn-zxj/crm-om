@@ -13,7 +13,7 @@ import lombok.Data;
 @Schema(description = "配置信息")
 public class ConfigReq {
     @Schema(description = "配置ID")
-    private Integer configId;
+    private String configId;
 
     @Schema(description = "系统平台")
     private String platform;

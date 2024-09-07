@@ -1,6 +1,5 @@
 package crm.om.param.role;
 
-import crm.om.enums.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -23,4 +22,8 @@ public class RoleParam {
     @NotBlank(message = "角色描述不能为空")
     @Schema(description = "角色描述")
     private String roleDesc;
+
+    @NotBlank(message = "角色状态不能为空")
+    @Schema(description = "角色状态")
+    private String status;
 }

@@ -49,7 +49,7 @@ public class UserInfo extends BaseInfo {
      * @see Gender
      */
     @TableField(value = "userGender")
-    private Gender userGender;
+    private String userGender;
 
     /**
      * 昵称
@@ -76,7 +76,7 @@ public class UserInfo extends BaseInfo {
     private String password;
 
     /**
-     * 状态(0-正常 1-禁用)
+     * 状态(1-正常 0-禁用)
      */
     @TableField(value = "status")
     private String status;
