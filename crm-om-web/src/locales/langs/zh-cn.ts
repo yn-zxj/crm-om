@@ -1,6 +1,6 @@
 const local: App.I18n.Schema = {
   system: {
-    title: 'Soybean 管理系统',
+    title: 'CRM 运维管理系统',
     updateTitle: '系统版本更新通知',
     updateContent: '检测到系统有新版本发布，是否立即刷新页面？',
     updateConfirm: '立即刷新',
@@ -47,7 +47,8 @@ const local: App.I18n.Schema = {
     yesOrNo: {
       yes: '是',
       no: '否'
-    }
+    },
+    env: '环境'
   },
   request: {
     logout: '请求失败后登出用户',
@@ -154,7 +155,23 @@ const local: App.I18n.Schema = {
     404: '页面不存在',
     500: '服务器错误',
     'iframe-page': '外链页面',
-    home: '首页'
+    home: '首页',
+    other: '小工具',
+    other_data: '流量换算',
+    other_string: '字符串压缩',
+    'prod-config': '产品配置',
+    'prod-config_config-script': '配置脚本',
+    operation: '运维管理',
+    'operation_abnormal-order': '异常订单',
+    'operation_noc-info': '网元指令',
+    'operation_order-info': '订单查询',
+    'user-center': '个人中心',
+    about: '关于',
+    manage: '系统管理',
+    manage_user: '用户管理',
+    'manage_user-detail': '用户详情',
+    manage_role: '角色管理',
+    manage_menu: '菜单管理'
   },
   page: {
     login: {
@@ -204,8 +221,6 @@ const local: App.I18n.Schema = {
       }
     },
     home: {
-      branchDesc:
-        '为了方便大家开发和更新合并，我们对main分支的代码进行了精简，只保留了首页菜单，其余内容已移至example分支进行维护。预览地址显示的内容即为example分支的内容。',
       greeting: '早安，{userName}, 今天又是充满活力的一天!',
       weatherDesc: '今日多云转晴，20℃ - 25℃!',
       projectCount: '项目数',
@@ -231,6 +246,137 @@ const local: App.I18n.Schema = {
         desc5: 'Soybean 刚才把工作台页面随便写了一些，凑合能看了！'
       },
       creativity: '创意'
+    },
+    about: {
+      title: '关于',
+      introduction: `SoybeanAdmin 是一个优雅且功能强大的后台管理模板，基于最新的前端技术栈，包括 Vue3, Vite5, TypeScript, Pinia 和 UnoCSS。它内置了丰富的主题配置和组件，代码规范严谨，实现了自动化的文件路由系统。此外，它还采用了基于 ApiFox 的在线Mock数据方案。SoybeanAdmin 为您提供了一站式的后台管理解决方案，无需额外配置，开箱即用。同样是一个快速学习前沿技术的最佳实践。`,
+      projectInfo: {
+        title: '项目信息',
+        version: '版本',
+        latestBuildTime: '最新构建时间',
+        githubLink: 'Github 地址',
+        previewLink: '预览地址'
+      },
+      prdDep: '生产依赖',
+      devDep: '开发依赖'
+    },
+    manage: {
+      common: {
+        status: {
+          enable: '启用',
+          disable: '禁用'
+        }
+      },
+      role: {
+        title: '角色列表',
+        roleName: '角色名称',
+        roleCode: '角色编码',
+        roleStatus: '角色状态',
+        roleDesc: '角色描述',
+        menuAuth: '菜单权限',
+        buttonAuth: '按钮权限',
+        form: {
+          roleName: '请输入角色名称',
+          roleCode: '请输入角色编码',
+          roleStatus: '请选择角色状态',
+          roleDesc: '请输入角色描述'
+        },
+        addRole: '新增角色',
+        editRole: '编辑角色'
+      },
+      user: {
+        title: '用户列表',
+        userName: '用户名',
+        userGender: '性别',
+        nickName: '昵称',
+        userPhone: '手机号',
+        userEmail: '邮箱',
+        userStatus: '用户状态',
+        userRole: '用户角色',
+        form: {
+          userName: '请输入用户名',
+          userGender: '请选择性别',
+          nickName: '请输入昵称',
+          userPhone: '请输入手机号',
+          userEmail: '请输入邮箱',
+          userStatus: '请选择用户状态',
+          userRole: '请选择用户角色'
+        },
+        addUser: '新增用户',
+        editUser: '编辑用户',
+        gender: {
+          male: '男',
+          female: '女'
+        }
+      },
+      menu: {
+        home: '首页',
+        title: '菜单列表',
+        id: 'ID',
+        parentId: '父级菜单ID',
+        menuType: '菜单类型',
+        menuName: '菜单名称',
+        routeName: '路由名称',
+        routePath: '路由路径',
+        pathParam: '路径参数',
+        layout: '布局',
+        page: '页面组件',
+        i18nKey: '国际化key',
+        icon: '图标',
+        localIcon: '本地图标',
+        iconTypeTitle: '图标类型',
+        order: '排序',
+        constant: '常量路由',
+        keepAlive: '缓存路由',
+        href: '外链',
+        hideInMenu: '隐藏菜单',
+        activeMenu: '高亮的菜单',
+        multiTab: '支持多页签',
+        fixedIndexInTab: '固定在页签中的序号',
+        query: '路由参数',
+        button: '按钮',
+        buttonCode: '按钮编码',
+        buttonDesc: '按钮描述',
+        menuStatus: '菜单状态',
+        form: {
+          home: '请选择首页',
+          menuType: '请选择菜单类型',
+          menuName: '请输入菜单名称',
+          routeName: '请输入路由名称',
+          routePath: '请输入路由路径',
+          pathParam: '请输入路径参数',
+          page: '请选择页面组件',
+          layout: '请选择布局组件',
+          i18nKey: '请输入国际化key',
+          icon: '请输入图标',
+          localIcon: '请选择本地图标',
+          order: '请输入排序',
+          keepAlive: '请选择是否缓存路由',
+          href: '请输入外链',
+          hideInMenu: '请选择是否隐藏菜单',
+          activeMenu: '请选择高亮的菜单的路由名称',
+          multiTab: '请选择是否支持多标签',
+          fixedInTab: '请选择是否固定在页签中',
+          fixedIndexInTab: '请输入固定在页签中的序号',
+          queryKey: '请输入路由参数Key',
+          queryValue: '请输入路由参数Value',
+          button: '请选择是否按钮',
+          buttonCode: '请输入按钮编码',
+          buttonDesc: '请输入按钮描述',
+          menuStatus: '请选择菜单状态'
+        },
+        addMenu: '新增菜单',
+        editMenu: '编辑菜单',
+        addChildMenu: '新增子菜单',
+        type: {
+          directory: '目录',
+          menu: '菜单'
+        },
+        iconType: {
+          iconify: 'iconify图标',
+          local: '本地图标'
+        }
+      }
     }
   },
   form: {

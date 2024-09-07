@@ -249,6 +249,31 @@ export function getNaiveTheme(colors: App.Theme.ThemeColor, recommended = false)
     },
     Tag: {
       borderRadius: '6px'
+    },
+    // 主题自定义
+    Select: {
+      peers: {
+        InternalSelection: {
+          borderRadius: 'calc(var(--n-height) / 2)'
+        }
+      }
+    },
+    DatePicker: {
+      peers: {
+        Input: {
+          borderRadius: 'calc(var(--n-height) / 2)'
+        }
+      }
+    },
+    TimePicker: {
+      peers: {
+        Input: {
+          borderRadius: 'calc(var(--n-height) / 2)'
+        }
+      }
+    },
+    DataTable: {
+      fontSizeSmall: '12px'
     }
   };
 

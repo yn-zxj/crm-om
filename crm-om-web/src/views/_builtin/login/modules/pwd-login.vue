@@ -77,7 +77,7 @@ async function handleAccountLogin(account: Account) {
 <template>
   <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
     <NFormItem path="userName">
-      <NInput v-model:value="model.userName" :placeholder="$t('page.login.common.userNamePlaceholder')" />
+      <NInput v-model:value="model.userName" :placeholder="$t('page.login.common.userNamePlaceholder')" round />
     </NFormItem>
     <NFormItem path="password">
       <NInput
@@ -85,6 +85,8 @@ async function handleAccountLogin(account: Account) {
         type="password"
         show-password-on="click"
         :placeholder="$t('page.login.common.passwordPlaceholder')"
+        round
+        @keyup.enter="handleSubmit"
       />
     </NFormItem>
     <NSpace vertical :size="24">

@@ -166,9 +166,25 @@ const routeMap: RouteMap = {
   "403": "/403",
   "404": "/404",
   "500": "/500",
+  "about": "/about",
   "home": "/home",
   "iframe-page": "/iframe-page/:url",
-  "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?"
+  "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?",
+  "manage": "/manage",
+  "manage_menu": "/manage/menu",
+  "manage_role": "/manage/role",
+  "manage_user": "/manage/user",
+  "manage_user-detail": "/manage/user-detail/:id",
+  "operation": "/operation",
+  "operation_abnormal-order": "/operation/abnormal-order",
+  "operation_noc-info": "/operation/noc-info",
+  "operation_order-info": "/operation/order-info",
+  "other": "/other",
+  "other_data": "/other/data",
+  "other_string": "/other/string",
+  "prod-config": "/prod-config",
+  "prod-config_config-script": "/prod-config/config-script",
+  "user-center": "/user-center"
 };
 
 /**

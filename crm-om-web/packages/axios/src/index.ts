@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 import type { AxiosResponse, CreateAxiosDefaults, InternalAxiosRequestConfig } from 'axios';
 import axiosRetry from 'axios-retry';
 import { nanoid } from '@sa/utils';
+import { createDiscreteApi } from 'naive-ui';
 import { createAxiosConfig, createDefaultOptions, createRetryOptions } from './options';
 import { BACKEND_ERROR_CODE, REQUEST_ID_KEY } from './constant';
 import type {
@@ -12,6 +13,8 @@ import type {
   RequestOption,
   ResponseType
 } from './type';
+
+const { loadingBar } = createDiscreteApi(['loadingBar']);
 
 function createCommonRequest<ResponseData = any>(
   axiosConfig?: CreateAxiosDefaults,
@@ -30,6 +33,8 @@ function createCommonRequest<ResponseData = any>(
 
   instance.interceptors.request.use(conf => {
     const config: InternalAxiosRequestConfig = { ...conf };
+
+    loadingBar.start();
 
     // set request id
     const requestId = nanoid();
@@ -53,6 +58,7 @@ function createCommonRequest<ResponseData = any>(
       const responseType: ResponseType = (response.config?.responseType as ResponseType) || 'json';
 
       if (responseType !== 'json' || opts.isBackendSuccess(response)) {
+        loadingBar.finish();
         return Promise.resolve(response);
       }
 
@@ -69,11 +75,13 @@ function createCommonRequest<ResponseData = any>(
         response
       );
 
+      loadingBar.error();
       await opts.onError(backendError);
 
       return Promise.reject(backendError);
     },
     async (error: AxiosError<ResponseData>) => {
+      loadingBar.error();
       await opts.onError(error);
 
       return Promise.reject(error);

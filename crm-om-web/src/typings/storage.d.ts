@@ -35,5 +35,9 @@ declare namespace StorageType {
       layout: UnionKey.ThemeLayoutMode;
       siderCollapse: boolean;
     };
+
+    // 环境模式
+    platform: string;
+    env: string;
   }
 }
