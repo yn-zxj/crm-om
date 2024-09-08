@@ -1,10 +1,42 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from 'vue';
+import { useMagicKeys, whenever } from '@vueuse/core';
 import { localStg } from '@/utils/storage';
 import { useSvgIcon } from '@/hooks/common/icon';
 
 defineOptions({
   name: 'GlobalEnv'
+});
+
+const mode = ref(`${localStg.get('platform') || 'bss'}-${localStg.get('env') || 'test'}`);
+
+const keys = useMagicKeys();
+
+/**
+ * 环境按键复制
+ *
+ * @param platform 平台
+ * @param env 环境
+ */
+const handleSwitchEnv = (platform: string, env: string) => {
+  localStg.set('platform', platform);
+  localStg.set('env', env);
+  mode.value = `${platform}-${env}`;
+};
+
+/** 快捷键配置 */
+const keyBindings = [
+  { key: 'Shift+KeyB+KeyT', platform: 'bss', env: 'test' },
+  { key: 'Shift+KeyB+KeyP', platform: 'bss', env: 'prod' },
+  { key: 'Shift+KeyE+KeyT', platform: 'mvne', env: 'test' },
+  { key: 'Shift+KeyE+KeyP', platform: 'mvne', env: 'prod' },
+  { key: 'Shift+KeyO+KeyT', platform: 'mvno', env: 'test' },
+  { key: 'Shift+KeyO+KeyP', platform: 'mvno', env: 'prod' }
+];
+
+/** 按键绑定 */
+keyBindings.forEach(({ key, platform, env }) => {
+  whenever(keys[key]!, () => handleSwitchEnv(platform, env));
 });
 
 const { SvgIconVNode } = useSvgIcon();
@@ -62,8 +94,6 @@ const envOptions = [
     ]
   }
 ];
-
-const mode = ref(`${localStg.get('platform') || 'bss'}-${localStg.get('env') || 'test'}`);
 
 const envSelect = (key: string) => {
   mode.value = key;

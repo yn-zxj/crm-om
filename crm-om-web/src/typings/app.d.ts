@@ -330,6 +330,7 @@ declare namespace App {
           no: string;
         };
         env: string;
+        api_document: string;
       };
       request: {
         logout: string;

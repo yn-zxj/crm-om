@@ -48,7 +48,8 @@ const local: App.I18n.Schema = {
       yes: '是',
       no: '否'
     },
-    env: '环境'
+    env: '环境',
+    api_document: '接口协议'
   },
   request: {
     logout: '请求失败后登出用户',
