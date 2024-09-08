@@ -28,7 +28,7 @@ public class Meta {
     private String href;
 
     @Schema(description = "国际化的展示文本，优先级高于title")
-    private String i18NKey;
+    private String i18nKey;
 
     @Schema(description = "iconify图标，可用于菜单和面包屑中")
     private String icon;

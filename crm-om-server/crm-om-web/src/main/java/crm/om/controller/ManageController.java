@@ -18,7 +18,7 @@ import crm.om.service.IRoleService;
 import crm.om.service.IUserService;
 import crm.om.vo.PageVO;
 import crm.om.vo.Result;
-import crm.om.vo.menu.RouteVO;
+import crm.om.vo.menu.Route;
 import crm.om.vo.role.RoleVO;
 import crm.om.vo.user.UserInfoVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -229,13 +229,13 @@ public class ManageController {
     @Operation(summary = "获取菜单树")
     @ApiOperationSupport(order = 310)
     @GetMapping("/getMenuTree")
-    public Result<List<RouteVO>> getMenuTree() {
+    public Result<List<Route>> getMenuTree() {
         // 查询已启用的常量路由
         LambdaQueryWrapper<MenuInfo> menuWrapper = new LambdaQueryWrapper<>();
         menuWrapper.eq(MenuInfo::getConstant, true);
         menuWrapper.eq(MenuInfo::getStatus, true);
         String trees = menuService.qryMenu(menuWrapper);
 
-        return Result.ok(JSONUtil.toList(trees, RouteVO.class));
+        return Result.ok(JSONUtil.toList(trees, Route.class));
     }
 }

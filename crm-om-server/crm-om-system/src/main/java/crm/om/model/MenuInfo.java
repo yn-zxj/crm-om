@@ -75,6 +75,12 @@ public class MenuInfo extends BaseInfo {
     private String component;
 
     /**
+     * 路由属性
+     */
+    @TableField(value = "props")
+    private String props;
+
+    /**
      * 状态(0-弃用 1-启用)
      */
     @TableField(value = "status")

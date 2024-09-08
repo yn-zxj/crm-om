@@ -10,11 +10,13 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.enums.ResultCode;
 import crm.om.enums.Role;
 import crm.om.exception.BaseException;
+import crm.om.model.RoleInfo;
 import crm.om.model.UserInfo;
 import crm.om.model.UserRoleRel;
 import crm.om.param.user.LoginParam;
 import crm.om.param.user.RegisterParam;
 import crm.om.param.user.UpdateUserParam;
+import crm.om.service.IRoleService;
 import crm.om.service.IUserRoleRelService;
 import crm.om.service.IUserService;
 import crm.om.vo.Result;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户接口
@@ -47,6 +50,7 @@ import java.util.List;
 public class UserController {
 
     private final IUserService userService;
+    private final IRoleService roleService;
     private final IUserRoleRelService userRoleRelService;
 
     /**
@@ -188,15 +192,33 @@ public class UserController {
     @ApiOperationSupport(order = 615)
     @GetMapping("/getUserInfo")
     public Result<UserInfoVO> getUserInfo() {
-        UserInfoVO userInfoVO = new UserInfoVO();
+        List<String> roles = new ArrayList<>();
+        List<String> buttons = new ArrayList<>();
+
         String loginId = (String) StpUtil.getTokenInfo().loginId;
-        if (loginId != null) {
-            System.out.println("loginId = " + loginId);
-            LambdaUpdateWrapper<UserInfo> wrapper = new LambdaUpdateWrapper<>();
-            wrapper.eq(UserInfo::getUserId, loginId);
-            UserInfo userInfo = userService.getOne(wrapper);
-            userInfoVO = BeanUtil.copyProperties(userInfo, UserInfoVO.class);
+
+        // 查询用户信息
+        LambdaQueryWrapper<UserInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserInfo::getUserId, loginId);
+        UserInfo userInfo = userService.getOne(wrapper);
+        UserInfoVO userInfoVO = BeanUtil.copyProperties(userInfo, UserInfoVO.class);
+
+        // 查询用户具有的角色信息
+        LambdaQueryWrapper<UserRoleRel> roleWrapper = new LambdaQueryWrapper<>();
+        roleWrapper.eq(UserRoleRel::getUserid, loginId);
+        List<UserRoleRel> roleList = userRoleRelService.list(roleWrapper);
+
+        // 查询角色说明
+        LambdaQueryWrapper<RoleInfo> infoWrapper = new LambdaQueryWrapper<>();
+        infoWrapper.in(RoleInfo::getRoleId, roleList.stream().map(UserRoleRel::getRoleId).collect(Collectors.toList()));
+        List<RoleInfo> list = roleService.list(infoWrapper);
+
+        if (!list.isEmpty()) {
+            roles = list.stream().map(RoleInfo::getRoleCode).collect(Collectors.toList());
         }
+        
+        userInfoVO.setRoles(roles);
+        userInfoVO.setButtons(buttons);
         return Result.ok(userInfoVO);
     }
 

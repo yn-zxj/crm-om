@@ -48,5 +48,8 @@ public class UserInfoVO {
     private String status;
 
     @Schema(description = "用户角色集合")
-    private List<String> userRoles;
+    private List<String> roles;
+
+    @Schema(description = "权限按钮集合")
+    private List<String> buttons;
 }

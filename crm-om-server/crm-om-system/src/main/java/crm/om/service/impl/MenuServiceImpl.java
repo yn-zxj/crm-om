@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import crm.om.mapper.MenuInfoMapper;
 import crm.om.model.MenuInfo;
 import crm.om.service.IMenuService;
+import crm.om.utils.CheckHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MenuServiceImpl extends ServiceImpl<MenuInfoMapper, MenuInfo> implements IMenuService {
 
+    private final CheckHelper checkHelper;
     private final MenuInfoMapper menuInfoMapper;
 
     @Override
@@ -46,7 +48,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuInfoMapper, MenuInfo> imple
         // 最大递归深度
         treeNodeConfig.setDeep(3);
         treeNodeConfig.setChildrenKey("children");
-        
+
         //转换器 (含义:找出父节点为字符串零的所有子节点, 并递归查找对应的子节点, 深度最多为 3)
         List<Tree<String>> build = TreeUtil.build(menuList, "0", treeNodeConfig,
                 (treeNode, tree) -> {
@@ -54,11 +56,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuInfoMapper, MenuInfo> imple
                     tree.setParentId(treeNode.getParentId());
                     tree.putExtra("name", treeNode.getRouteName());
                     tree.putExtra("path", treeNode.getRoutePath());
+                    tree.putExtra("props", checkHelper.isValidJson(treeNode.getProps()) ? JSONUtil.parse(treeNode.getProps()) : treeNode.getProps());
                     tree.putExtra("component", treeNode.getComponent());
                     Map<String, Object> meta = new HashMap<>(16);
                     meta.put("hideInMenu", treeNode.getHideInMenu());
                     meta.put("href", treeNode.getHref());
-                    meta.put("i18NKey", treeNode.getI18nKey());
+                    meta.put("i18nKey", treeNode.getI18nKey());
                     meta.put("icon", treeNode.getIcon());
                     meta.put("keepAlive", treeNode.getKeepAlive());
                     meta.put("layout", treeNode.getComponent());
