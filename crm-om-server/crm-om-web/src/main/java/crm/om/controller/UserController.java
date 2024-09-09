@@ -10,15 +10,11 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.enums.ResultCode;
 import crm.om.enums.Role;
 import crm.om.exception.BaseException;
-import crm.om.model.RoleInfo;
-import crm.om.model.UserInfo;
-import crm.om.model.UserRoleRel;
+import crm.om.model.*;
 import crm.om.param.user.LoginParam;
 import crm.om.param.user.RegisterParam;
 import crm.om.param.user.UpdateUserParam;
-import crm.om.service.IRoleService;
-import crm.om.service.IUserRoleRelService;
-import crm.om.service.IUserService;
+import crm.om.service.*;
 import crm.om.vo.Result;
 import crm.om.vo.user.TokenVO;
 import crm.om.vo.user.UserInfoVO;
@@ -51,7 +47,9 @@ public class UserController {
 
     private final IUserService userService;
     private final IRoleService roleService;
+    private final IMenuService menuService;
     private final IUserRoleRelService userRoleRelService;
+    private final IMenuRoleRelService menuRoleRelService;
 
     /**
      * 登录验证
@@ -207,16 +205,30 @@ public class UserController {
         LambdaQueryWrapper<UserRoleRel> roleWrapper = new LambdaQueryWrapper<>();
         roleWrapper.eq(UserRoleRel::getUserid, loginId);
         List<UserRoleRel> roleList = userRoleRelService.list(roleWrapper);
+        List<String> roleListResult = roleList.stream().map(UserRoleRel::getRoleId).collect(Collectors.toList());
 
         // 查询角色说明
         LambdaQueryWrapper<RoleInfo> infoWrapper = new LambdaQueryWrapper<>();
-        infoWrapper.in(RoleInfo::getRoleId, roleList.stream().map(UserRoleRel::getRoleId).collect(Collectors.toList()));
+        infoWrapper.in(RoleInfo::getRoleId, roleListResult);
         List<RoleInfo> list = roleService.list(infoWrapper);
 
         if (!list.isEmpty()) {
             roles = list.stream().map(RoleInfo::getRoleCode).collect(Collectors.toList());
         }
-        
+
+        // 查询可操作的按钮权限
+        LambdaQueryWrapper<MenuRoleRel> roleRelWrapper = new LambdaQueryWrapper<>();
+        roleRelWrapper.in(MenuRoleRel::getRoleId, roleListResult);
+        List<MenuRoleRel> menuRoleRelList = menuRoleRelService.list(roleRelWrapper);
+        if (!menuRoleRelList.isEmpty()) {
+            LambdaQueryWrapper<MenuInfo> buttonWrapper = new LambdaQueryWrapper<>();
+            buttonWrapper.eq(MenuInfo::getMenuType, "2");
+            buttonWrapper.in(MenuInfo::getMenuId,
+                    menuRoleRelList.stream().map(MenuRoleRel::getMenuId).collect(Collectors.toList()));
+            List<MenuInfo> buttonList = menuService.list(buttonWrapper);
+            buttons = buttonList.stream().map(MenuInfo::getProps).collect(Collectors.toList());
+        }
+
         userInfoVO.setRoles(roles);
         userInfoVO.setButtons(buttons);
         return Result.ok(userInfoVO);

@@ -37,10 +37,10 @@ public class MenuInfo extends BaseInfo {
     private String menuId;
 
     /**
-     * 菜单类型 (0-目录 1-菜单)
+     * 菜单类型 (0-目录 1-菜单 2-按钮)
      */
     @TableField(value = "menuType")
-    private Boolean menuType;
+    private String menuType;
 
     /**
      * 菜单名称

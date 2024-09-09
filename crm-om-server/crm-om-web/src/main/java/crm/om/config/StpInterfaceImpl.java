@@ -2,13 +2,18 @@ package crm.om.config;
 
 import cn.dev33.satoken.stp.StpInterface;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import crm.om.model.MenuInfo;
+import crm.om.model.MenuRoleRel;
 import crm.om.model.RoleInfo;
 import crm.om.model.UserRoleRel;
+import crm.om.service.IMenuRoleRelService;
+import crm.om.service.IMenuService;
 import crm.om.service.IRoleService;
 import crm.om.service.IUserRoleRelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,9 +26,11 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class StpInterfaceImpl implements StpInterface {
-    
+
     private final IRoleService roleService;
+    private final IMenuService menuService;
     private final IUserRoleRelService userRoleRelService;
+    private final IMenuRoleRelService menuRoleRelService;
 
     /**
      * 返回指定账号id所拥有的权限码集合
@@ -34,7 +41,28 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        return List.of();
+        List<String> buttons = new ArrayList<>();
+
+        // 查询用户具有的角色信息
+        LambdaQueryWrapper<UserRoleRel> roleWrapper = new LambdaQueryWrapper<>();
+        roleWrapper.eq(UserRoleRel::getUserid, loginId);
+        List<UserRoleRel> roleList = userRoleRelService.list(roleWrapper);
+        List<String> roleListResult = roleList.stream().map(UserRoleRel::getRoleId).collect(Collectors.toList());
+
+        // 查询可操作的按钮权限
+        LambdaQueryWrapper<MenuRoleRel> roleRelWrapper = new LambdaQueryWrapper<>();
+        roleRelWrapper.in(MenuRoleRel::getRoleId, roleListResult);
+        List<MenuRoleRel> menuRoleRelList = menuRoleRelService.list(roleRelWrapper);
+        if (!menuRoleRelList.isEmpty()) {
+            LambdaQueryWrapper<MenuInfo> buttonWrapper = new LambdaQueryWrapper<>();
+            buttonWrapper.eq(MenuInfo::getMenuType, "2");
+            buttonWrapper.in(MenuInfo::getMenuId,
+                    menuRoleRelList.stream().map(MenuRoleRel::getMenuId).collect(Collectors.toList()));
+            List<MenuInfo> buttonList = menuService.list(buttonWrapper);
+
+            buttons = buttonList.stream().map(MenuInfo::getProps).collect(Collectors.toList());
+        }
+        return buttons;
     }
 
     /**

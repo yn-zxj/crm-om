@@ -64,6 +64,8 @@ public class RouteController {
             if (!menuRoleRel.isEmpty()) {
                 // 查询菜单
                 LambdaQueryWrapper<MenuInfo> menuWrapper = new LambdaQueryWrapper<>();
+                // 2-按钮(排除)
+                menuWrapper.ne(MenuInfo::getMenuType, "2");
                 menuWrapper.in(MenuInfo::getMenuId,
                         menuRoleRel.stream().map(MenuRoleRel::getMenuId).collect(Collectors.toList()));
                 String trees = menuService.qryMenu(menuWrapper);
@@ -96,6 +98,8 @@ public class RouteController {
         LambdaQueryWrapper<MenuInfo> menuWrapper = new LambdaQueryWrapper<>();
         menuWrapper.eq(MenuInfo::getConstant, true);
         menuWrapper.eq(MenuInfo::getStatus, true);
+        // 2-按钮(排除)
+        menuWrapper.ne(MenuInfo::getMenuType, "2");
         String trees = menuService.qryMenu(menuWrapper);
 
         log.info("Constant Routes:{}", trees);
