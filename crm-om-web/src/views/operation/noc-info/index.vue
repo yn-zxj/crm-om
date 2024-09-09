@@ -20,12 +20,20 @@ const selectOptions = ref([
     value: 'pcrf'
   },
   {
+    label: 'PCRF_PSRV',
+    value: 'pcrf_psrv'
+  },
+  {
     label: 'NP',
     value: 'np'
   },
   {
     label: 'SMSC',
     value: 'smsc'
+  },
+  {
+    label: 'SACP',
+    value: 'sacp'
   }
 ]);
 
@@ -74,10 +82,41 @@ async function fetchNocInfo() {
     <NCard title="网元指令查询" :bordered="false" size="small" class="card-wrapper" hoverable>
       <NForm label-placement="left" :label-width="80">
         <NGrid responsive="screen" item-responsive>
-          <NFormItemGi show-require-mark span="24 s:12 m:6" size="small" label="网元" class="pr-24px">
-            <NSelect v-model:value="option" class="w-25" :options="selectOptions" />
+          <NFormItemGi show-require-mark span="24 s:12 m:5" size="small" label="网元" class="pr-24px">
+            <NSelect v-model:value="option" :options="selectOptions" />
           </NFormItemGi>
-          <NFormItemGi show-require-mark span="24 s:12 m:12" size="small" label="IMSI" :rule="imsiRule" class="pr-24px">
+          <NFormItemGi
+            v-if="option !== 'smsc' && option !== 'sacp'"
+            show-require-mark
+            span="24 s:12 m:12"
+            size="small"
+            label="IMSI"
+            :rule="imsiRule"
+            class="pr-24px"
+          >
+            <NInput v-model:value="imsi" placeholder="请输入..." round clearable @keypress.enter="fetchNocInfo" />
+          </NFormItemGi>
+
+          <NFormItemGi
+            v-if="option === 'smsc' || option === 'sacp'"
+            show-require-mark
+            span="24 s:12 m:6"
+            size="small"
+            label="香港号码"
+            :rule="imsiRule"
+            class="pr-24px"
+          >
+            <NInput v-model:value="isdn" placeholder="请输入..." round clearable @keypress.enter="fetchNocInfo" />
+          </NFormItemGi>
+          <NFormItemGi
+            v-if="option === 'smsc'"
+            show-require-mark
+            span="24 s:12 m:6"
+            size="small"
+            label="内地号码"
+            :rule="imsiRule"
+            class="pr-24px"
+          >
             <NInput v-model:value="imsi" placeholder="请输入..." round clearable @keypress.enter="fetchNocInfo" />
           </NFormItemGi>
 

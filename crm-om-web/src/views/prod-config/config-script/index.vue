@@ -18,7 +18,7 @@ const prcScript = ref({
 
 // 配置脚本查询
 async function fetchPrcInfo() {
-  message.loading('正在获取产品脚本,请稍等...', { duration: 10000 });
+  message.loading('正在获取产品脚本,请稍等...', { duration: 30000 });
 
   const result = await request({
     url: '/prodConfig/configScript',
@@ -32,6 +32,9 @@ async function fetchPrcInfo() {
   });
 
   if (result?.data) {
+    // 数据查询结束,销户提示
+    message.destroyAll();
+
     orderCardShow.value = true;
     prcScript.value.out = result.data;
     prcScript.value.fileName = `${ref_prc.value.replace(',', '-')}-总执行_回滚脚本.sql`;
@@ -51,7 +54,7 @@ async function fetchPrcInfo() {
           <NFormItemGi show-require-mark span="24 s:12 m:12" size="small" label="资费ID" class="pr-24px">
             <NInput
               v-model:value="ref_prc"
-              placeholder="支持批量查询，如：'AA','BB','CC'..."
+              placeholder="支持批量查询，如：AA,BB,CC..."
               clearable
               round
               @keypress.enter="fetchPrcInfo"
