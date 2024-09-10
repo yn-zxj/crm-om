@@ -1,13 +1,19 @@
 package crm.om.aspect;
 
+import ch.qos.logback.core.util.StringUtil;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.http.HttpStatus;
 import cn.hutool.json.JSONUtil;
 import crm.om.annotation.Log;
+import crm.om.filter.PropertyPreExcludeFilter;
 import crm.om.model.LogInfo;
 import crm.om.service.ILogService;
+import crm.om.utils.IpUtils;
+import crm.om.utils.ServletUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -15,7 +21,13 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.core.NamedThreadLocal;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * 操作日志记录处理
@@ -28,12 +40,19 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class LogAspect {
+
+    /** 排除敏感属性字段 */
+    public static final String[] EXCLUDE_PROPERTIES = { "password", "oldPassword", "newPassword", "confirmPassword" };
+
     /**
      * 计算操作消耗时间
      */
-    private static final ThreadLocal<Long> TIME_THREADLOCAL = new NamedThreadLocal<Long>("Cost Time");
+    private static final ThreadLocal<Long> TIME_THREADLOCAL = new NamedThreadLocal<>("Cost Time");
 
     private final ILogService logService;
+
+    private final static Integer SUCCESS = 0;
+    private final static Integer EXCEPTION = 1;
 
     /**
      * 处理请求前执行
@@ -48,9 +67,9 @@ public class LogAspect {
      *
      * @param joinPoint 切点
      */
-    @AfterReturning(pointcut = "@annotation(controllerLog)", returning = "jsonResult")
-    public void doAfterReturning(JoinPoint joinPoint, Log controllerLog, Object jsonResult) {
-        handleLog(joinPoint, controllerLog, null, jsonResult);
+    @AfterReturning(pointcut = "@annotation(controllerLog)", returning = "opResult")
+    public void doAfterReturning(JoinPoint joinPoint, Log controllerLog, Object opResult) {
+        handleLog(joinPoint, controllerLog, null, opResult);
     }
 
     /**
@@ -64,32 +83,39 @@ public class LogAspect {
         handleLog(joinPoint, controllerLog, e, null);
     }
 
-    protected void handleLog(final JoinPoint joinPoint, Log controllerLog, final Exception e, Object jsonResult) {
+    /**
+     * 日志写表
+     *
+     * @param joinPoint     切点
+     * @param controllerLog 拦截注解
+     * @param e             异常
+     * @param opResult      结果
+     */
+    protected void handleLog(final JoinPoint joinPoint, Log controllerLog, final Exception e, Object opResult) {
         try {
             LogInfo opLogin = new LogInfo();
-            opLogin.setStatus(HttpStatus.HTTP_OK);
-            // 请求的地址 TODO
-            opLogin.setOpIp("");
-            // TODO getRequest().getRequestURI()
-            opLogin.setOpUrl("");
-            String username = StpUtil.getTokenInfo().tokenName;
-            if (StringUtils.isNotBlank(username)) {
-                opLogin.setOpName(username);
+            opLogin.setStatus(SUCCESS);
+            // 请求的地址
+            opLogin.setOpIp(IpUtils.getIpAddr());
+            opLogin.setOpUrl(StringUtils.substring(ServletUtils.getRequest().getRequestURI(), 0, 255));
+            String userid = (String) StpUtil.getLoginId();
+            if (StringUtils.isNotBlank(userid)) {
+                opLogin.setOpName(userid);
             }
 
             if (e != null) {
-                opLogin.setStatus(HttpStatus.HTTP_PRECON_FAILED);
+                opLogin.setStatus(EXCEPTION);
                 opLogin.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
             }
             // 设置方法名称
             String className = joinPoint.getTarget().getClass().getName();
             String methodName = joinPoint.getSignature().getName();
             opLogin.setMethod(className + "." + methodName + "()");
-            // 设置请求方式 TODO ServletUtils.getRequest().getMethod()
-            opLogin.setRequestMethod("");
+            // 设置请求方式
+            opLogin.setRequestMethod(ServletUtils.getRequest().getMethod());
             // 处理设置注解上的参数
-            getControllerMethodDescription(joinPoint, controllerLog, opLogin, jsonResult);
-            // 设置消耗时间
+            getControllerMethodDescription(joinPoint, controllerLog, opLogin, opResult);
+            // 设置消耗时间(毫秒)
             opLogin.setCostTime(System.currentTimeMillis() - TIME_THREADLOCAL.get());
             // 保存数据库
             logService.save(opLogin);
@@ -104,11 +130,11 @@ public class LogAspect {
     /**
      * 获取注解中对方法的描述信息 用于Controller层注解
      *
-     * @param log     日志
-     * @param opLogin 操作日志
-     * @throws Exception
+     * @param log      日志
+     * @param opLogin  操作日志
+     * @param opResult 返回结果
      */
-    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, LogInfo opLogin, Object jsonResult) throws Exception {
+    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, LogInfo opLogin, Object opResult) throws Exception {
         // 设置action动作
         opLogin.setBusinessType(log.businessType().ordinal());
         // 设置标题
@@ -121,20 +147,80 @@ public class LogAspect {
             setRequestValue(joinPoint, opLogin, log.excludeParamNames());
         }
         // 是否需要保存response，参数和值
-        if (log.isSaveResponseData() && jsonResult != null) {
-            opLogin.setOpResult(StringUtils.substring(JSONUtil.toJsonStr(jsonResult), 0, 2000));
+        if (log.isSaveResponseData() && opResult != null) {
+            opLogin.setOpResult(StringUtils.substring(JSONUtil.toJsonStr(opResult), 0, 2000));
         }
     }
+
 
     /**
      * 获取请求的参数，放到log中
      *
-     * @param opLogin 操作日志
+     * @param operLog 操作日志
      * @throws Exception 异常
      */
-    private void setRequestValue(JoinPoint joinPoint, LogInfo opLogin, String[] excludeParamNames) throws Exception {
-        String requestMethod = opLogin.getRequestMethod();
-        // TODO ServletUtils.getParamMap(ServletUtils.getRequest());
-        opLogin.setOpParam("");
+    private void setRequestValue(JoinPoint joinPoint, LogInfo opLog, String[] excludeParamNames) throws Exception {
+        String requestMethod = opLog.getRequestMethod();
+        Map<?, ?> paramsMap = ServletUtils.getParamMap(ServletUtils.getRequest());
+        if (StringUtils.isEmpty(paramsMap)
+                && (HttpMethod.PUT.name().equals(requestMethod) || HttpMethod.POST.name().equals(requestMethod))) {
+            String params = argsArrayToString(joinPoint.getArgs(), excludeParamNames);
+            opLog.setOpParam(StringUtils.substring(params, 0, 2000));
+        } else {
+            opLog.setOpParam(StringUtils.substring(JSON.toJSONString(paramsMap, excludePropertyPreFilter(excludeParamNames)), 0, 2000));
+        }
+    }
+
+    /**
+     * 参数拼装
+     */
+    private String argsArrayToString(Object[] paramsArray, String[] excludeParamNames) {
+        StringBuilder params = new StringBuilder();
+        if (paramsArray != null) {
+            for (Object o : paramsArray) {
+                if (!StringUtil.isNullOrEmpty((String) o) && !isFilterObject(o)) {
+                    try {
+                        String jsonObj = JSONUtil.toJsonStr(o, excludePropertyPreFilter(excludeParamNames));
+                        params.append(jsonObj).append(" ");
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+        return params.toString().trim();
+    }
+
+    /**
+     * 忽略敏感属性
+     */
+    public PropertyPreExcludeFilter excludePropertyPreFilter(String[] excludeParamNames) {
+        return new PropertyPreExcludeFilter().addExcludes(ArrayUtils.addAll(EXCLUDE_PROPERTIES, excludeParamNames));
+    }
+
+    /**
+     * 判断是否需要过滤的对象。
+     *
+     * @param o 对象信息。
+     * @return 如果是需要过滤的对象，则返回true；否则返回false。
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean isFilterObject(final Object o) {
+        Class<?> clazz = o.getClass();
+        if (clazz.isArray()) {
+            return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
+        } else if (Collection.class.isAssignableFrom(clazz)) {
+            Collection collection = (Collection) o;
+            for (Object value : collection) {
+                return value instanceof MultipartFile;
+            }
+        } else if (Map.class.isAssignableFrom(clazz)) {
+            Map map = (Map) o;
+            for (Object value : map.entrySet()) {
+                Map.Entry entry = (Map.Entry) value;
+                return entry.getValue() instanceof MultipartFile;
+            }
+        }
+        return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse
+                || o instanceof BindingResult;
     }
 }

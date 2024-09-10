@@ -6,7 +6,7 @@ import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
 import com.baomidou.dynamic.datasource.creator.hikaricp.HikariCpConfig;
-import crm.om.enums.BusinessConst;
+import crm.om.enums.BusinessConstant;
 import crm.om.enums.ConfigType;
 import crm.om.model.ConfigInfo;
 import crm.om.service.IConfigService;
@@ -76,20 +76,20 @@ public class DynamicDataSourceConfig {
             for (ConfigInfo configInfo : dataSourceInfo) {
                 // 数据源与连接池名称 eg: mvne-prod-basedb
                 String dataSourceName =
-                        configInfo.getPlatform().getCode() + BusinessConst.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConst.Symbol.SHORT_LINE + configInfo.getParamKey();
+                        configInfo.getPlatform().getCode() + BusinessConstant.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConstant.Symbol.SHORT_LINE + configInfo.getParamKey();
 
                 JSON dataBaseInfo = JSONUtil.parse(configInfo.getParamValue());
                 // 数据库名
                 String database = (String) dataBaseInfo.getByPath("database");
                 DataSourceProperty dataSourceProperty = new DataSourceProperty();
                 String url =
-                        MYSQL_PREFIX + dataBaseInfo.getByPath("url") + BusinessConst.Symbol.SPLIT_SLASH + dataBaseInfo.getByPath("database") + MYSQL_SUFFIX;
+                        MYSQL_PREFIX + dataBaseInfo.getByPath("url") + BusinessConstant.Symbol.SPLIT_SLASH + dataBaseInfo.getByPath("database") + MYSQL_SUFFIX;
                 dataSourceProperty.setUrl(url);
                 dataSourceProperty.setUsername((String) dataBaseInfo.getByPath("username"));
                 dataSourceProperty.setPassword((String) dataBaseInfo.getByPath("password"));
                 dataSourceProperty.setDriverClassName(MYSQL_DRIVER_NAME);
                 // 取 param_value 中的 database 库名
-                dataSourceProperty.setPoolName(configInfo.getPlatform().getCode() + BusinessConst.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConst.Symbol.SHORT_LINE + database);
+                dataSourceProperty.setPoolName(configInfo.getPlatform().getCode() + BusinessConstant.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConstant.Symbol.SHORT_LINE + database);
 
                 HikariCpConfig hikariCpConfig = new HikariCpConfig();
                 hikariCpConfig.setMaxLifetime(maxLifetime);

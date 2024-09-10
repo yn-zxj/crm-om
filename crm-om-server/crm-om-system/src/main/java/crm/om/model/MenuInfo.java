@@ -61,14 +61,6 @@ public class MenuInfo extends BaseInfo {
     private String routePath;
 
     /**
-     * 路由角色
-     *
-     * @see Role
-     */
-    @TableField(value = "routeRole", exist = false)
-    private List<Role> routeRole;
-
-    /**
      * 组件:layout.base-公共布局 layout.blank-空白布局
      */
     @TableField(value = "component")

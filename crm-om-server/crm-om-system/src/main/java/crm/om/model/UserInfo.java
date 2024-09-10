@@ -80,12 +80,4 @@ public class UserInfo extends BaseInfo {
      */
     @TableField(value = "status")
     private String status;
-
-    /**
-     * 角色名称
-     *
-     * @see Role
-     */
-    @TableField(exist = false)
-    private List<Role> roleName;
 }

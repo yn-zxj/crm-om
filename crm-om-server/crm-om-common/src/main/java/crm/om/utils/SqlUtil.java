@@ -2,7 +2,7 @@ package crm.om.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import crm.om.enums.Const;
+import crm.om.enums.Constant;
 import crm.om.exception.BaseException;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ public class SqlUtil {
      * @return 拼接后的 SQL 语句
      */
     public String select(String tableName, String conditionKey, String conditionValue) {
-        return Const.Sql.SELECT_ALL_FROM + Const.Symbol.SPACE + Const.Symbol.BACKQUOTE + tableName.toUpperCase() + Const.Symbol.BACKQUOTE + Const.Symbol.SPACE + Const.Sql.WHERE + Const.Symbol.SPACE + Const.Symbol.BACKQUOTE + conditionKey.toUpperCase() + Const.Symbol.BACKQUOTE + Const.Symbol.SPACE + Const.Sql.IN + Const.Symbol.SPACE + Const.Symbol.LEFT_BRACKET + conditionValue + Const.Symbol.RIGHT_BRACKET + Const.Symbol.SEMICOLON;
+        return Constant.Sql.SELECT_ALL_FROM + Constant.Symbol.SPACE + Constant.Symbol.BACKQUOTE + tableName.toUpperCase() + Constant.Symbol.BACKQUOTE + Constant.Symbol.SPACE + Constant.Sql.WHERE + Constant.Symbol.SPACE + Constant.Symbol.BACKQUOTE + conditionKey.toUpperCase() + Constant.Symbol.BACKQUOTE + Constant.Symbol.SPACE + Constant.Sql.IN + Constant.Symbol.SPACE + Constant.Symbol.LEFT_BRACKET + conditionValue + Constant.Symbol.RIGHT_BRACKET + Constant.Symbol.SEMICOLON;
     }
 
     /**
@@ -55,34 +55,34 @@ public class SqlUtil {
         String[] columns = firstRow.keySet().toArray(new String[0]);
 
         // 构建INSERT语句
-        sql.append(Const.Sql.INSERT_INTO).append(Const.Symbol.SPACE).append(Const.Symbol.BACKQUOTE).append(tableName.toUpperCase()).append(Const.Symbol.BACKQUOTE).append(Const.Symbol.SPACE).append(Const.Symbol.LEFT_BRACKET);
+        sql.append(Constant.Sql.INSERT_INTO).append(Constant.Symbol.SPACE).append(Constant.Symbol.BACKQUOTE).append(tableName.toUpperCase()).append(Constant.Symbol.BACKQUOTE).append(Constant.Symbol.SPACE).append(Constant.Symbol.LEFT_BRACKET);
         for (String column : columns) {
-            sql.append(Const.Symbol.BACKQUOTE).append(column.toUpperCase()).append(Const.Symbol.BACKQUOTE).append(Const.Symbol.COMMA).append(Const.Symbol.SPACE);
+            sql.append(Constant.Symbol.BACKQUOTE).append(column.toUpperCase()).append(Constant.Symbol.BACKQUOTE).append(Constant.Symbol.COMMA).append(Constant.Symbol.SPACE);
         }
         // 删除最后的逗号和空格
         sql.setLength(sql.length() - 2);
-        sql.append(Const.Symbol.RIGHT_BRACKET).append(Const.Symbol.SPACE).append(Const.Sql.VALUES).append(Const.Symbol.NEW_LINE);
+        sql.append(Constant.Symbol.RIGHT_BRACKET).append(Constant.Symbol.SPACE).append(Constant.Sql.VALUES).append(Constant.Symbol.NEW_LINE);
 
         // 构建VALUES部分
         for (Map<String, Object> row : dataList) {
-            sql.append(Const.Symbol.LEFT_BRACKET);
+            sql.append(Constant.Symbol.LEFT_BRACKET);
             for (String column : columns) {
                 Object value = row.get(column);
                 if (value instanceof String) {
-                    sql.append(Const.Symbol.SINGLE_QUOTE).append(value).append(Const.Symbol.SINGLE_QUOTE).append(Const.Symbol.COMMA).append(Const.Symbol.SPACE);
+                    sql.append(Constant.Symbol.SINGLE_QUOTE).append(value).append(Constant.Symbol.SINGLE_QUOTE).append(Constant.Symbol.COMMA).append(Constant.Symbol.SPACE);
                 } else if (value instanceof LocalDateTime) {
-                    sql.append(Const.Symbol.SINGLE_QUOTE).append(((LocalDateTime) value).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append(Const.Symbol.SINGLE_QUOTE).append(Const.Symbol.COMMA).append(Const.Symbol.SPACE);
+                    sql.append(Constant.Symbol.SINGLE_QUOTE).append(((LocalDateTime) value).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append(Constant.Symbol.SINGLE_QUOTE).append(Constant.Symbol.COMMA).append(Constant.Symbol.SPACE);
                 } else {
-                    sql.append(value).append(Const.Symbol.COMMA).append(Const.Symbol.SPACE);
+                    sql.append(value).append(Constant.Symbol.COMMA).append(Constant.Symbol.SPACE);
                 }
             }
             // 删除最后的逗号和空格
             sql.setLength(sql.length() - 2);
-            sql.append(Const.Symbol.RIGHT_BRACKET).append(Const.Symbol.COMMA).append(Const.Symbol.NEW_LINE);
+            sql.append(Constant.Symbol.RIGHT_BRACKET).append(Constant.Symbol.COMMA).append(Constant.Symbol.NEW_LINE);
         }
         // 删除最后的逗号和换行符
         sql.setLength(sql.length() - 2);
-        sql.append(Const.Symbol.SEMICOLON);
+        sql.append(Constant.Symbol.SEMICOLON);
 
         return sql.toString();
     }

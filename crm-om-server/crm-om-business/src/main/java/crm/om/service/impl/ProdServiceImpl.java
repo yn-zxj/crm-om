@@ -81,7 +81,7 @@ public class ProdServiceImpl implements IProdService {
         for (ConfigInfo info : configInfos) {
             String database = info.getParamKey();
             // 产品库、用户库使用 prod_prcid 和 prod_id 查询数据 [判断数据库前缀]
-            if (database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_PROD) || database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_CRM)) {
+            if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_PROD) || database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_CRM)) {
                 Map<String, Object> prodMap = prodHandler(platform, env, info, prcIdList);
                 if (prodMap != null) {
                     result.putAll(prodMap);
@@ -92,11 +92,11 @@ public class ProdServiceImpl implements IProdService {
         // 基础库、营销库配置
         for (ConfigInfo info : configInfos) {
             String database = info.getParamKey();
-            if (database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_BASE)) {
+            if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_BASE)) {
                 result.putAll(baseHandler(platform, env, info, baseCodeList));
             }
 
-            if (database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_MARKET)) {
+            if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_MARKET)) {
                 result.putAll(marketHandler(platform, env, info, prcIdList));
             }
         }
@@ -228,8 +228,8 @@ public class ProdServiceImpl implements IProdService {
                 }
 
                 String columnStr =
-                        columnValue.stream().map(column -> BusinessConst.Symbol.SINGLE_QUOTE + column + BusinessConst.Symbol.SINGLE_QUOTE)
-                                .collect(Collectors.joining(BusinessConst.Symbol.COMMA + BusinessConst.Symbol.SPACE));
+                        columnValue.stream().map(column -> BusinessConstant.Symbol.SINGLE_QUOTE + column + BusinessConstant.Symbol.SINGLE_QUOTE)
+                                .collect(Collectors.joining(BusinessConstant.Symbol.COMMA + BusinessConstant.Symbol.SPACE));
                 String select = sqlUtil.select(tableName, columnName, columnStr);
                 String insert = sqlUtil.insert(tableName, result);
 
@@ -239,8 +239,8 @@ public class ProdServiceImpl implements IProdService {
                 }
 
                 if (StringUtils.isNotBlank(insert)) {
-                    selectSql.append(select).append(BusinessConst.Symbol.NEW_LINE);
-                    insertSql.append(insert).append(BusinessConst.Symbol.NEW_LINE);
+                    selectSql.append(select).append(BusinessConstant.Symbol.NEW_LINE);
+                    insertSql.append(insert).append(BusinessConstant.Symbol.NEW_LINE);
                 }
             }
         } else {
@@ -254,7 +254,7 @@ public class ProdServiceImpl implements IProdService {
         JSONArray tableInfos = JSONUtil.parseArray(prodInfo.getParamValue());
         JSONObject firstItem = (JSONObject) tableInfos.getFirst();
         String columnName = firstItem.getStr("columnName");
-        if (database.startsWith(BusinessConst.DataBase.DATABASE_SUFFIX_PROD)) {
+        if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_PROD)) {
             keyName = columnName.toLowerCase().contains("prod_prcid") ? "prc" : "prod";
         } else {
             keyName = columnName.toLowerCase().contains("prod_prcid") ? "crmPrc" : "crmProd";
@@ -327,7 +327,7 @@ public class ProdServiceImpl implements IProdService {
 
         // 手动切换数据源
         String dataSourceName =
-                platform + BusinessConst.Symbol.SHORT_LINE + env + BusinessConst.Symbol.SHORT_LINE + database;
+                platform + BusinessConstant.Symbol.SHORT_LINE + env + BusinessConstant.Symbol.SHORT_LINE + database;
         // 获取当前数据源名称
         String peek = DynamicDataSourceContextHolder.peek();
         // 即将切换数据源与目前不一致则进行切换
@@ -385,14 +385,14 @@ public class ProdServiceImpl implements IProdService {
     private void conditionToStr(String tableName, String columnName, Set<String> conditionList,
                                 StringBuilder insertSql, StringBuilder selectSql, List<Map<String, Object>> mapList) {
         String columnStr =
-                conditionList.stream().map(column -> BusinessConst.Symbol.SINGLE_QUOTE + column + BusinessConst.Symbol.SINGLE_QUOTE)
-                        .collect(Collectors.joining(BusinessConst.Symbol.COMMA + BusinessConst.Symbol.SPACE));
+                conditionList.stream().map(column -> BusinessConstant.Symbol.SINGLE_QUOTE + column + BusinessConstant.Symbol.SINGLE_QUOTE)
+                        .collect(Collectors.joining(BusinessConstant.Symbol.COMMA + BusinessConstant.Symbol.SPACE));
         String select = sqlUtil.select(tableName, columnName, columnStr);
         String insert = sqlUtil.insert(tableName, mapList);
 
         if (StringUtils.isNotBlank(insert)) {
-            selectSql.append(select).append(BusinessConst.Symbol.NEW_LINE);
-            insertSql.append(insert).append(BusinessConst.Symbol.NEW_LINE);
+            selectSql.append(select).append(BusinessConstant.Symbol.NEW_LINE);
+            insertSql.append(insert).append(BusinessConstant.Symbol.NEW_LINE);
         }
     }
 }

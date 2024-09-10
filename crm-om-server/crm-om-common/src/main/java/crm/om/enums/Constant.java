@@ -6,7 +6,7 @@ package crm.om.enums;
  * @author zhangxiaojun
  * @version v1.0
  */
-public class Const {
+public class Constant {
     /**
      * 符号常量
      */

@@ -67,7 +67,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuInfoMapper, MenuInfo> imple
                     meta.put("layout", treeNode.getComponent());
                     meta.put("multiTab", treeNode.getMultiTab());
                     meta.put("order", treeNode.getPriority());
-                    meta.put("roles", treeNode.getRouteRole());
                     meta.put("title", treeNode.getMenuName());
                     meta.put("constant", treeNode.getConstant());
                     tree.putExtra("meta", meta);

@@ -6,7 +6,7 @@ package crm.om.enums;
  * @author zhangxiaojun
  * @version v1.0
  */
-public class BusinessConst extends Const {
+public class BusinessConstant extends Constant {
     /**
      * 数据库库名(业务)
      */
