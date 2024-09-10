@@ -23,8 +23,13 @@ declare module "@elegant-router/types" {
     "about": "/about";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
+    "log": "/log";
+    "log_login": "/log/login";
+    "log_op": "/log/op";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
     "manage": "/manage";
+    "manage_config": "/manage/config";
+    "manage_dict": "/manage/dict";
     "manage_menu": "/manage/menu";
     "manage_role": "/manage/role";
     "manage_user": "/manage/user";
@@ -76,6 +81,7 @@ declare module "@elegant-router/types" {
     | "about"
     | "home"
     | "iframe-page"
+    | "log"
     | "login"
     | "manage"
     | "operation"
@@ -105,6 +111,10 @@ declare module "@elegant-router/types" {
     | "login"
     | "about"
     | "home"
+    | "log_login"
+    | "log_op"
+    | "manage_config"
+    | "manage_dict"
     | "manage_menu"
     | "manage_role"
     | "manage_user-detail"

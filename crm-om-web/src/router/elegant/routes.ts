@@ -73,6 +73,35 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'log',
+    path: '/log',
+    component: 'layout.base',
+    meta: {
+      title: 'log',
+      i18nKey: 'route.log'
+    },
+    children: [
+      {
+        name: 'log_login',
+        path: '/log/login',
+        component: 'view.log_login',
+        meta: {
+          title: 'log_login',
+          i18nKey: 'route.log_login'
+        }
+      },
+      {
+        name: 'log_op',
+        path: '/log/op',
+        component: 'view.log_op',
+        meta: {
+          title: 'log_op',
+          i18nKey: 'route.log_op'
+        }
+      }
+    ]
+  },
+  {
     name: 'login',
     path: '/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?',
     component: 'layout.blank$view.login',
@@ -93,6 +122,24 @@ export const generatedRoutes: GeneratedRoute[] = [
       i18nKey: 'route.manage'
     },
     children: [
+      {
+        name: 'manage_config',
+        path: '/manage/config',
+        component: 'view.manage_config',
+        meta: {
+          title: 'manage_config',
+          i18nKey: 'route.manage_config'
+        }
+      },
+      {
+        name: 'manage_dict',
+        path: '/manage/dict',
+        component: 'view.manage_dict',
+        meta: {
+          title: 'manage_dict',
+          i18nKey: 'route.manage_dict'
+        }
+      },
       {
         name: 'manage_menu',
         path: '/manage/menu',

@@ -46,6 +46,8 @@ public class ConfigController {
     private final CheckHelper checkHelper;
     private final IConfigService configService;
 
+    private static final String FIELD_NAME = "paramValue";
+
     /**
      * 获取全部参数配置信息
      *
@@ -73,7 +75,7 @@ public class ConfigController {
         // 判断类型属于json格式进行类型转换
         CopyOptions copyOptions = new CopyOptions();
         copyOptions.setFieldValueEditor((fieldName, fieldValue) -> {
-            if ("paramValue".equals(fieldName) && checkHelper.isValidJson(fieldValue.toString())) {
+            if (FIELD_NAME.equals(fieldName) && checkHelper.isValidJson(fieldValue.toString())) {
                 return JSONUtil.parse(fieldValue);
             }
             return fieldValue;
