@@ -1,6 +1,7 @@
 package crm.om.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -38,13 +39,13 @@ public class LogInfo implements Serializable {
     /**
      * 操作模块
      */
-    @TableId(value = "title")
+    @TableField(value = "title")
     private String title;
 
     /**
      * 业务类型（0其它 1新增 2修改 3删除）
      */
-    @TableId(value = "business_type")
+    @TableField(value = "business_type")
     private Integer businessType;
 
     /**
@@ -55,72 +56,72 @@ public class LogInfo implements Serializable {
     /**
      * 请求方法
      */
-    @TableId(value = "method")
+    @TableField(value = "method")
     private String method;
 
     /**
      * 请求方式
      */
-    @TableId(value = "request_method")
+    @TableField(value = "request_method")
     private String requestMethod;
 
     /**
      * 操作类别（0其它 1后台用户 2手机端用户）
      */
-    @TableId(value = "op_type")
+    @TableField(value = "op_type")
     private Integer opType;
 
     /**
      * 操作人员
      */
-    @TableId(value = "op_name")
+    @TableField(value = "op_name")
     private String opName;
 
     /**
      * 请求url
      */
-    @TableId(value = "op_url")
+    @TableField(value = "op_url")
     private String opUrl;
 
     /**
      * 操作地址
      */
-    @TableId(value = "op_ip")
+    @TableField(value = "op_ip")
     private String opIp;
 
     /**
      * 请求参数
      */
-    @TableId(value = "op_param")
+    @TableField(value = "op_param")
     private String opParam;
 
     /**
      * 返回参数
      */
-    @TableId(value = "op_result")
+    @TableField(value = "op_result")
     private String opResult;
 
     /**
      * 操作状态（0正常 1异常）
      */
-    @TableId(value = "status")
+    @TableField(value = "status")
     private Integer status;
 
     /**
      * 错误消息
      */
-    @TableId(value = "error_msg")
+    @TableField(value = "error_msg")
     private String errorMsg;
 
     /**
      * 操作时间
      */
-    @TableId(value = "op_time")
+    @TableField(value = "op_time")
     private Date opTime;
 
     /**
      * 消耗时间(毫秒)
      */
-    @TableId(value = "costTime")
+    @TableField(value = "cost_time")
     private Long costTime;
 }

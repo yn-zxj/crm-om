@@ -117,11 +117,11 @@ public class LogAspect {
         opLogin.setOpType(log.operatorType().ordinal());
         // 是否需要保存request，参数和值
         if (log.isSaveRequestData()) {
-            // 获取参数的信息，传入到数据库中。
+            // 获取参数的信息，传入到数据库中
             setRequestValue(joinPoint, opLogin, log.excludeParamNames());
         }
         // 是否需要保存response，参数和值
-        if (log.isSaveResponseData() && StringUtils.isNotBlank((CharSequence) jsonResult)) {
+        if (log.isSaveResponseData() && jsonResult != null) {
             opLogin.setOpResult(StringUtils.substring(JSONUtil.toJsonStr(jsonResult), 0, 2000));
         }
     }
