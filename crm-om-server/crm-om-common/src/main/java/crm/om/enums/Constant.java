@@ -16,6 +16,7 @@ public class Constant {
         public final static String BACKQUOTE = "`";
         public final static String COMMA = ",";
         public final static String SPACE = " ";
+        public final static String EMPTY = "";
         public final static String SINGLE_QUOTE = "'";
         public final static String SEMICOLON = ";";
         public final static String LEFT_BRACKET = "(";

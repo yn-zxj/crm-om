@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -102,9 +103,9 @@ public class LogAspect {
             opLogin.setStatus(SUCCESS);
             // 请求的地址
             opLogin.setOpIp(IpUtils.getIpAddr());
-            opLogin.getOpTime("");
+            opLogin.setOpTime(LocalDateTime.now());
             HttpServletRequest request = ServletUtils.getRequest();
-            opLogin.setOpUrl(request != null ? StringUtils.substring(request.getRequestURI(), 0, 255) : "");
+            opLogin.setOpUrl(request != null ? StringUtils.substring(request.getRequestURI(), 0, 255) : Constant.Symbol.EMPTY);
             String userid = (String) StpUtil.getLoginId();
             if (StringUtils.isNotBlank(userid)) {
                 opLogin.setOpName(userid);
