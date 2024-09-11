@@ -1,6 +1,5 @@
 package crm.om.utils;
 
-
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -47,11 +46,11 @@ public class ServletUtils {
      * 获取request
      */
     public static HttpServletRequest getRequest() {
-        try {
+        ServletRequestAttributes requestAttributes = getRequestAttributes();
+        if (requestAttributes != null) {
             return getRequestAttributes().getRequest();
-        } catch (Exception e) {
-            return null;
         }
+        return null;
     }
 
     public static ServletRequestAttributes getRequestAttributes() {

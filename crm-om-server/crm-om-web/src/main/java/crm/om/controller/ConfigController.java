@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.annotation.Log;
-import crm.om.enums.BusinessType;
 import crm.om.model.ConfigInfo;
 import crm.om.param.config.ConfigReq;
 import crm.om.param.config.SaveReq;
@@ -57,7 +56,7 @@ public class ConfigController {
      */
     @Operation(summary = "获取配置参数信息")
     @GetMapping("/all")
-    @Log(title = "获取配置参数信息", businessType = BusinessType.OTHER)
+    @Log(title = "查询配置信息")
     @ApiOperationSupport(order = 405)
     @Parameters({
             @Parameter(name = "platform", description = "系统平台", example = "bss"),
@@ -101,6 +100,7 @@ public class ConfigController {
      * @return 操作反馈
      */
     @Operation(summary = "删除配置信息")
+    @Log(title = "删除配置信息")
     @ApiOperationSupport(order = 420)
     @DeleteMapping("/del/{id}")
     @Parameter(name = "id", description = "参数ID", required = true, example = "1")
@@ -116,6 +116,7 @@ public class ConfigController {
      * @return 操作反馈
      */
     @Operation(summary = "新增配置信息")
+    @Log(title = "新增配置信息")
     @ApiOperationSupport(order = 410)
     @PostMapping("/save")
     public Result<Boolean> save(@Valid @RequestBody SaveReq saveReq) {
@@ -142,6 +143,7 @@ public class ConfigController {
      * @return 操作反馈
      */
     @Operation(summary = "更新配置信息")
+    @Log(title = "更新配置信息")
     @ApiOperationSupport(order = 415)
     @PutMapping("/update")
     public Result<Boolean> update(@Valid @RequestBody UpdateReq updateReq) {

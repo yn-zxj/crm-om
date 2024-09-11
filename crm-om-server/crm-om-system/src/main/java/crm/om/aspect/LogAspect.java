@@ -3,7 +3,9 @@ package crm.om.aspect;
 import ch.qos.logback.core.util.StringUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
 import crm.om.annotation.Log;
+import crm.om.enums.Constant;
 import crm.om.filter.PropertyPreExcludeFilter;
 import crm.om.model.LogInfo;
 import crm.om.service.ILogService;
@@ -28,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 操作日志记录处理
@@ -41,8 +44,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LogAspect {
 
-    /** 排除敏感属性字段 */
-    public static final String[] EXCLUDE_PROPERTIES = { "password", "oldPassword", "newPassword", "confirmPassword" };
+    /**
+     * 排除敏感属性字段
+     */
+    public static final String[] EXCLUDE_PROPERTIES = {"password", "oldPassword", "newPassword", "confirmPassword"};
 
     /**
      * 计算操作消耗时间
@@ -97,7 +102,9 @@ public class LogAspect {
             opLogin.setStatus(SUCCESS);
             // 请求的地址
             opLogin.setOpIp(IpUtils.getIpAddr());
-            opLogin.setOpUrl(StringUtils.substring(ServletUtils.getRequest().getRequestURI(), 0, 255));
+            opLogin.getOpTime("");
+            HttpServletRequest request = ServletUtils.getRequest();
+            opLogin.setOpUrl(request != null ? StringUtils.substring(request.getRequestURI(), 0, 255) : "");
             String userid = (String) StpUtil.getLoginId();
             if (StringUtils.isNotBlank(userid)) {
                 opLogin.setOpName(userid);
@@ -134,7 +141,7 @@ public class LogAspect {
      * @param opLogin  操作日志
      * @param opResult 返回结果
      */
-    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, LogInfo opLogin, Object opResult) throws Exception {
+    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, LogInfo opLogin, Object opResult) {
         // 设置action动作
         opLogin.setBusinessType(log.businessType().ordinal());
         // 设置标题
@@ -156,14 +163,14 @@ public class LogAspect {
     /**
      * 获取请求的参数，放到log中
      *
-     * @param operLog 操作日志
-     * @throws Exception 异常
+     * @param opLog 操作日志
      */
-    private void setRequestValue(JoinPoint joinPoint, LogInfo opLog, String[] excludeParamNames) throws Exception {
+    private void setRequestValue(JoinPoint joinPoint, LogInfo opLog, String[] excludeParamNames) {
         String requestMethod = opLog.getRequestMethod();
+        HttpMethod method = HttpMethod.valueOf(requestMethod);
+        Set<HttpMethod> allowedMethods = Set.of(HttpMethod.PUT, HttpMethod.POST);
         Map<?, ?> paramsMap = ServletUtils.getParamMap(ServletUtils.getRequest());
-        if (StringUtils.isEmpty(paramsMap)
-                && (HttpMethod.PUT.name().equals(requestMethod) || HttpMethod.POST.name().equals(requestMethod))) {
+        if (!paramsMap.isEmpty() && allowedMethods.contains(method)) {
             String params = argsArrayToString(joinPoint.getArgs(), excludeParamNames);
             opLog.setOpParam(StringUtils.substring(params, 0, 2000));
         } else {
@@ -179,11 +186,8 @@ public class LogAspect {
         if (paramsArray != null) {
             for (Object o : paramsArray) {
                 if (!StringUtil.isNullOrEmpty((String) o) && !isFilterObject(o)) {
-                    try {
-                        String jsonObj = JSONUtil.toJsonStr(o, excludePropertyPreFilter(excludeParamNames));
-                        params.append(jsonObj).append(" ");
-                    } catch (Exception e) {
-                    }
+                    String jsonObj = JSON.toJSONString(o, excludePropertyPreFilter(excludeParamNames));
+                    params.append(jsonObj).append(Constant.Symbol.SPACE);
                 }
             }
         }

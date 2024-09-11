@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 日志记录
@@ -117,7 +117,7 @@ public class LogInfo implements Serializable {
      * 操作时间
      */
     @TableField(value = "op_time")
-    private Date opTime;
+    private LocalDateTime opTime;
 
     /**
      * 消耗时间(毫秒)

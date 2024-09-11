@@ -69,7 +69,7 @@ sa-token:
 # 自定义参数
 custom:
   dynamic:
-    enable: false
+    enable: true
 
 # 开启增强
 knife4j:

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * @version 1.0
  */
 @Data
-@Schema(description = "角色属性")
+@Schema(description = "角色信息")
 public class RoleVO {
     @Schema(description = "角色id")
     private String roleId;
