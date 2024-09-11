@@ -106,9 +106,9 @@ public class LogAspect {
             opLogin.setOpTime(LocalDateTime.now());
             HttpServletRequest request = ServletUtils.getRequest();
             opLogin.setOpUrl(request != null ? StringUtils.substring(request.getRequestURI(), 0, 255) : Constant.Symbol.EMPTY);
-            String userid = (String) StpUtil.getLoginId();
-            if (StringUtils.isNotBlank(userid)) {
-                opLogin.setOpName(userid);
+            String loginId = (String) StpUtil.getTokenInfo().loginId;
+            if (loginId != null) {
+                opLogin.setOpName(loginId);
             }
 
             if (e != null) {
