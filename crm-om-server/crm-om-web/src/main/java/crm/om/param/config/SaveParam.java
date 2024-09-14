@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @Schema(description = "新增参数信息")
-public class SaveReq {
+public class SaveParam {
     @Schema(description = "系统平台")
     @NotBlank(message = "系统平台不能为空")
     private Platform platform;

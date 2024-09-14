@@ -22,9 +22,6 @@ public class LogVo {
     @Schema(description = "业务类型（0其它 1新增 2修改 3删除）")
     private Integer businessType;
 
-    @Schema(description = "业务类型（0其它 1新增 2修改 3删除）")
-    private Integer[] businessTypes;
-
     @Schema(description = "请求方法")
     private String method;
 
@@ -57,7 +54,7 @@ public class LogVo {
 
     @Schema(description = "操作时间")
     private Date opTime;
-    
+
     @Schema(description = "消耗时间(毫秒)")
     private Long costTime;
 }

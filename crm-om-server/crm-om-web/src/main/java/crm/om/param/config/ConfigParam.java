@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 @Schema(description = "配置信息")
-public class ConfigReq {
+public class ConfigParam {
     @Schema(description = "配置ID")
     private String configId;
 

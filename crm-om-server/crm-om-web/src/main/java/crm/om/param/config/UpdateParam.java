@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @Schema(description = "更新参数信息")
-public class UpdateReq {
+public class UpdateParam {
     @Schema(description = "配置id", example = "1")
     @NotNull(message = "配置id")
     private Integer configId;

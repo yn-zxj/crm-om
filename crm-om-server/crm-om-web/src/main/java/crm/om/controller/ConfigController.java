@@ -11,9 +11,9 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.annotation.Log;
 import crm.om.model.ConfigInfo;
-import crm.om.param.config.ConfigReq;
-import crm.om.param.config.SaveReq;
-import crm.om.param.config.UpdateReq;
+import crm.om.param.config.ConfigParam;
+import crm.om.param.config.SaveParam;
+import crm.om.param.config.UpdateParam;
 import crm.om.service.IConfigService;
 import crm.om.utils.CheckHelper;
 import crm.om.vo.PageVO;
@@ -64,7 +64,7 @@ public class ConfigController {
             @Parameter(name = "current", description = "当前页", required = true, example = "1"),
             @Parameter(name = "size", description = "每页显示条数", required = true, example = "10")
     })
-    public Result<PageVO<ConfigReq>> fetchAll(
+    public Result<PageVO<ConfigParam>> fetchAll(
             @RequestParam(required = false) String platform,
             @RequestParam(required = false) String env,
             @RequestParam Integer current,
@@ -83,12 +83,12 @@ public class ConfigController {
             return fieldValue;
         });
         // 遍历集合中每个Bean，复制其属性到另一个类型的对象中，最后返回一个新的List
-        List<ConfigReq> configReqs = BeanUtil.copyToList(infoPage.getRecords(), ConfigReq.class, copyOptions);
+        List<ConfigParam> configParams = BeanUtil.copyToList(infoPage.getRecords(), ConfigParam.class, copyOptions);
 
-        PageVO<ConfigReq> pageVO = PageVO.<ConfigReq>builder()
+        PageVO<ConfigParam> pageVO = PageVO.<ConfigParam>builder()
                 .pages(infoPage.getPages())
                 .total(infoPage.getTotal())
-                .records(configReqs)
+                .records(configParams)
                 .build();
         return Result.ok(pageVO);
     }
@@ -112,20 +112,20 @@ public class ConfigController {
     /**
      * 新增配置信息
      *
-     * @param saveReq 配置核心信息
+     * @param saveParam 配置核心信息
      * @return 操作反馈
      */
     @Operation(summary = "新增配置信息")
     @Log(title = "新增配置信息")
     @ApiOperationSupport(order = 410)
     @PostMapping("/save")
-    public Result<Boolean> save(@Valid @RequestBody SaveReq saveReq) {
+    public Result<Boolean> save(@Valid @RequestBody SaveParam saveParam) {
         ConfigInfo build = ConfigInfo.builder()
-                .platform(saveReq.getPlatform())
-                .env(saveReq.getEnv())
-                .paramName(saveReq.getParamName())
-                .paramKey(saveReq.getParamKey())
-                .paramValue(saveReq.getParamValue())
+                .platform(saveParam.getPlatform())
+                .env(saveParam.getEnv())
+                .paramName(saveParam.getParamName())
+                .paramKey(saveParam.getParamKey())
+                .paramValue(saveParam.getParamValue())
                 // 默认启用
                 .status(1)
                 // todo 从头部取用户信息
@@ -139,23 +139,23 @@ public class ConfigController {
     /**
      * 更新配置信息
      *
-     * @param updateReq 配置核心信息
+     * @param updateParam 配置核心信息
      * @return 操作反馈
      */
     @Operation(summary = "更新配置信息")
     @Log(title = "更新配置信息")
     @ApiOperationSupport(order = 415)
     @PutMapping("/update")
-    public Result<Boolean> update(@Valid @RequestBody UpdateReq updateReq) {
+    public Result<Boolean> update(@Valid @RequestBody UpdateParam updateParam) {
         LambdaUpdateWrapper<ConfigInfo> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.set(StringUtils.isNotBlank(updateReq.getParamKey()), ConfigInfo::getParamKey, updateReq.getParamKey())
-                .set(StringUtils.isNotBlank(updateReq.getParamValue()), ConfigInfo::getParamValue,
-                        updateReq.getParamValue())
-                .set(updateReq.getStatus() != null, ConfigInfo::getStatus, updateReq.getStatus())
+        wrapper.set(StringUtils.isNotBlank(updateParam.getParamKey()), ConfigInfo::getParamKey, updateParam.getParamKey())
+                .set(StringUtils.isNotBlank(updateParam.getParamValue()), ConfigInfo::getParamValue,
+                        updateParam.getParamValue())
+                .set(updateParam.getStatus() != null, ConfigInfo::getStatus, updateParam.getStatus())
                 // todo 从头部取用户信息
                 .set(ConfigInfo::getUpdateBy, "system")
                 .set(ConfigInfo::getUpdateTime, DateUtil.now())
-                .eq(ConfigInfo::getConfigId, updateReq.getConfigId());
+                .eq(ConfigInfo::getConfigId, updateParam.getConfigId());
         boolean flag = configService.update(wrapper);
         return Result.ok(flag);
     }
