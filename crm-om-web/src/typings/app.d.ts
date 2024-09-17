@@ -331,6 +331,7 @@ declare namespace App {
         };
         env: string;
         api_document: string;
+        view: string;
       };
       request: {
         logout: string;
@@ -491,6 +492,10 @@ declare namespace App {
               enable: string;
               disable: string;
             };
+            execute: {
+              success: string;
+              exception: string;
+            };
           };
           role: {
             title: string;
@@ -508,6 +513,21 @@ declare namespace App {
             editRole: string;
             menuAuth: string;
             buttonAuth: string;
+          };
+          log: {
+            cardName: string;
+            title: string;
+            opUrl: string;
+            method: string;
+            requestMethod: string;
+            opTime: string;
+            costTime: string;
+            status: string;
+            opType: string;
+            businessType: string;
+            drawerName: string;
+            opParam: string;
+            opResult: string;
           };
           user: {
             title: string;

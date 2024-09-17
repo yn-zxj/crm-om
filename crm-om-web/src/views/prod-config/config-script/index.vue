@@ -9,6 +9,7 @@ import { localStg } from '@/utils/storage';
 const message = useMessage();
 
 const orderCardShow = ref(false);
+const qryLoading = ref(false);
 const ref_prc = ref<string>('');
 
 const prcScript = ref({
@@ -18,8 +19,7 @@ const prcScript = ref({
 
 // 配置脚本查询
 async function fetchPrcInfo() {
-  message.loading('正在获取产品脚本,请稍等...', { duration: 30000 });
-
+  qryLoading.value = true;
   const result = await request({
     url: '/prodConfig/configScript',
     method: 'post',
@@ -32,9 +32,6 @@ async function fetchPrcInfo() {
   });
 
   if (result?.data) {
-    // 数据查询结束,销户提示
-    message.destroyAll();
-
     orderCardShow.value = true;
     prcScript.value.out = result.data;
     prcScript.value.fileName = `${ref_prc.value.replace(',', '-')}-总执行_回滚脚本.sql`;
@@ -42,6 +39,7 @@ async function fetchPrcInfo() {
     orderCardShow.value = false;
     message.error('产品脚本获取失败!');
   }
+  qryLoading.value = false;
 }
 </script>
 
@@ -74,28 +72,32 @@ async function fetchPrcInfo() {
       </NForm>
     </NCard>
     <NCard title="配置脚本" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper" hoverable>
-      <div v-show="orderCardShow">
-        <div
-          class="mt-2.5 max-h-125 min-h-55 overflow-scroll rounded-1.25 bg-[#ecf4fa] p-1.25 dark:bg-[#303033] dark:text-#fff"
-        >
-          <NButtonGroup size="small" class="absolute right-12.5">
-            <NButton secondary round @click="downloadFile(prcScript.out, prcScript.fileName)">
-              <template #icon>
-                <SvgIcon icon="tabler:download" />
-              </template>
-            </NButton>
-            <NButton secondary round @click="handleCopy(prcScript.out)">
-              <template #icon>
-                <SvgIcon icon="uil:clipboard-notes" />
-              </template>
-            </NButton>
-          </NButtonGroup>
-          <NCode :code="prcScript.out" language="sql" />
+      <NSpin :show="qryLoading">
+        <div v-show="orderCardShow">
+          <div
+            class="mt-2.5 max-h-125 min-h-55 overflow-scroll rounded-1.25 bg-[#ecf4fa] p-1.25 dark:bg-[#303033] dark:text-#fff"
+          >
+            <NButtonGroup size="small" class="absolute right-12.5">
+              <NButton secondary round @click="downloadFile(prcScript.out, prcScript.fileName)">
+                <template #icon>
+                  <SvgIcon icon="tabler:download" />
+                </template>
+              </NButton>
+              <NButton secondary round @click="handleCopy(prcScript.out)">
+                <template #icon>
+                  <SvgIcon icon="uil:clipboard-notes" />
+                </template>
+              </NButton>
+            </NButtonGroup>
+            <NCode :code="prcScript.out" language="sql" />
+          </div>
         </div>
-      </div>
-      <div v-show="!orderCardShow">
-        <NEmpty description="无数据"></NEmpty>
-      </div>
+        <div v-show="!orderCardShow">
+          <NEmpty description="无数据"></NEmpty>
+        </div>
+
+        <template #description>正在获取产品脚本,请稍等...</template>
+      </NSpin>
     </NCard>
   </div>
 </template>

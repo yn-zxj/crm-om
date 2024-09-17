@@ -49,7 +49,8 @@ const local: App.I18n.Schema = {
       no: 'No'
     },
     env: 'Environment',
-    api_document: 'API Document'
+    api_document: 'API Document',
+    view: 'View'
   },
   request: {
     logout: 'Logout user after request failed',
@@ -271,6 +272,10 @@ const local: App.I18n.Schema = {
         status: {
           enable: 'Enable',
           disable: 'Disable'
+        },
+        execute: {
+          success: 'Success',
+          exception: 'Exception'
         }
       },
       role: {
@@ -289,6 +294,21 @@ const local: App.I18n.Schema = {
         },
         addRole: 'Add Role',
         editRole: 'Edit Role'
+      },
+      log: {
+        cardName: 'Operate Log',
+        title: 'Operate Module',
+        opUrl: 'Operate URL',
+        method: 'Method',
+        requestMethod: 'Request Method',
+        opTime: 'Request Time',
+        costTime: 'Cost Time(ms)',
+        status: 'Execute Status',
+        opType: 'Operate Type',
+        businessType: 'Business Type',
+        drawerName: 'Detail Information',
+        opParam: 'Request Params',
+        opResult: 'Response'
       },
       user: {
         title: 'User List',

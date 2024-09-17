@@ -1,5 +1,5 @@
-import { computed, effectScope, onScopeDispose, reactive, ref, watch } from 'vue';
 import type { Ref } from 'vue';
+import { computed, effectScope, onScopeDispose, reactive, ref, watch } from 'vue';
 import type { PaginationProps } from 'naive-ui';
 import { jsonClone } from '@sa/utils';
 import { useBoolean, useHookTable } from '@sa/hooks';
@@ -225,9 +225,10 @@ export function useTableOperate<T extends TableData = TableData>(data: Ref<T[]>,
   /** the editing row data */
   const editingData: Ref<T | null> = ref(null);
 
-  function handleEdit(id: T['id']) {
+  function handleEdit(id: T['id'] | string, key?: keyof T) {
     operateType.value = 'edit';
-    const findItem = data.value.find(item => item.id === id) || null;
+    const findKey = key ?? 'id';
+    const findItem = data.value.find(item => item[findKey] === id) || null;
     editingData.value = jsonClone(findItem);
 
     openDrawer();

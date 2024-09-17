@@ -222,5 +222,28 @@ declare namespace Api {
       pId: number;
       children?: MenuTree[];
     };
+
+    /** log */
+    type Log = Common.CommonRecord<{
+      opId: string;
+      title: string;
+      opUrl: string;
+      method: string;
+      costTime: string;
+      opTime: string;
+      businessType: string;
+      requestMethod: string;
+      opType: string;
+      opParam: string;
+      opResult: string;
+    }>;
+
+    /** log search params */
+    type LogSearchParams = CommonType.RecordNullable<
+      Pick<Api.SystemManage.Log, 'businessType', 'requestMethod', 'opType', 'status'> & CommonSearchParams
+    >;
+
+    /** log list */
+    type LogList = Common.PaginatingQueryRecord<Log>;
   }
 }

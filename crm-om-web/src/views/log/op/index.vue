@@ -1,224 +1,189 @@
-<script setup lang="ts">
-import { h, ref } from 'vue';
-import { NButton, NLog } from 'naive-ui';
-import type { TableColumn } from 'naive-ui/es/data-table/src/interface';
-import dayjs from 'dayjs';
+<script setup lang="tsx">
+import { NButton, NPopconfirm, NTag } from 'naive-ui';
+import { useAppStore } from '@/store/modules/app';
+import { useTable, useTableOperate } from '@/hooks/common/table';
+import { $t } from '@/locales';
+import { executeStatusRecord } from '@/constants/business';
 import { request } from '@/service/request';
-import { localStg } from '@/utils/storage';
+import LogOperateDrawer from './modules/log-operate-drawer.vue';
+import LogSearch from './modules/log-search.vue';
 
-const formRef = ref(null);
-const orderData = ref();
+const appStore = useAppStore();
 
-// 订单表格标题
-const orderColumns: TableColumn<any>[] = [
-  {
-    title: '订单编号',
-    key: 'ORDER_ID',
-    align: 'center'
-  },
-  {
-    title: '订单行编号',
-    key: 'ORDER_LINE_ID',
-    align: 'center'
-  },
-  {
-    title: '服务号码',
-    key: 'SERVICE_NO',
-    align: 'center'
-  },
-  {
-    title: '业务名称',
-    key: 'OP_NAME',
-    align: 'center'
-  },
-  {
-    title: '环节名称',
-    key: 'RUN_STEP_NAME',
-    align: 'center'
-  },
-  {
-    title: '受理时间',
-    key: 'HANDLE_TIME',
-    align: 'center',
-    render(record: { HANDLE_TIME: string }) {
-      return dayjs(record.HANDLE_TIME).format('YYYY-MM-DD HH:mm:ss');
-    }
-  },
-  {
-    title: '已交金额',
-    key: 'CURR_PAY',
-    align: 'center',
-    render(record: { CURR_PAY: number }) {
-      return (record.CURR_PAY / 1000).toFixed(2);
-    }
-  },
-  {
-    title: '流转状态',
-    key: 'STATUS_DESC',
-    align: 'center'
-  },
-  {
-    title: '操作',
-    key: 'DETAILS',
-    align: 'center',
-    render(row: { ORDER_LINE_ID: string; STATUS: string }) {
-      return [
-        h(
-          NButton,
-          {
-            size: 'small',
-            round: true,
-            secondary: true,
-            type: 'primary',
-            disabled: row.STATUS === 'C',
-            onClick: () => handleOrder(row.ORDER_LINE_ID, 2)
-          },
-          { default: () => '重发' }
-        ),
-        h(
-          NButton,
-          {
-            style: {
-              marginLeft: '6px'
-            },
-            size: 'small',
-            round: true,
-            secondary: true,
-            type: 'warning',
-            disabled: row.STATUS === 'C',
-            onClick: () => handleOrder(row.ORDER_LINE_ID, 1)
-          },
-          { default: () => '撤单' }
-        )
-      ];
-    }
-  },
-  {
-    type: 'expand',
-    expandable: (rowData: { STATUS: string }) => rowData.STATUS !== 'C',
-    renderExpand: (rowData: { DETAIL_MSG: string; ORDER_LINE_ID: string }) => {
-      return h(
-        NLog,
-        {
-          log: rowData.DETAIL_MSG,
-          'font-size': 10,
-          rows: 20
-        },
-        {}
-      );
-    }
-  }
-];
+function fetchLogList(params?: Api.SystemManage.LogSearchParams) {
+  return request<Api.SystemManage.LogList>({
+    url: '/log/all',
+    method: 'get',
+    params
+  });
+}
 
-const orderForm = ref({
-  type: null,
-  opCode: null,
-  loginNo: null,
-  time: null
+const { columns, columnChecks, data, loading, getData, mobilePagination, searchParams, resetSearchParams } = useTable({
+  apiFn: fetchLogList,
+  apiParams: {
+    current: 1,
+    size: 10,
+    status: null,
+    businessType: null,
+    requestMethod: null,
+    opType: null
+  },
+  columns: () => [
+    {
+      type: 'selection',
+      align: 'center',
+      width: 48
+    },
+    {
+      key: 'title',
+      title: $t('page.manage.log.title'),
+      align: 'center'
+    },
+    {
+      key: 'opUrl',
+      title: $t('page.manage.log.opUrl'),
+      align: 'center'
+    },
+    {
+      key: 'method',
+      title: $t('page.manage.log.method'),
+      width: 300
+    },
+    {
+      key: 'requestMethod',
+      title: $t('page.manage.log.requestMethod'),
+      align: 'center',
+      width: 150,
+      render: row => {
+        if (row.requestMethod === null) {
+          return null;
+        }
+
+        const tagMap: Record<string, NaiveUI.ThemeColor> = {
+          GET: 'success',
+          POST: 'info',
+          PUT: 'warning',
+          DELETE: 'error'
+        };
+
+        return (
+          <NTag size="small" round type={tagMap[row.requestMethod]}>
+            {row.requestMethod}
+          </NTag>
+        );
+      }
+    },
+    {
+      key: 'status',
+      title: $t('page.manage.log.status'),
+      align: 'center',
+      width: 100,
+      render: row => {
+        if (row.status === null) {
+          return null;
+        }
+
+        const tagMap: Record<Api.Common.EnableStatus, NaiveUI.ThemeColor> = {
+          0: 'success',
+          1: 'error'
+        };
+
+        const label = $t(executeStatusRecord[row.status]);
+
+        return (
+          <NTag size="small" round type={tagMap[row.status]}>
+            {label}
+          </NTag>
+        );
+      }
+    },
+    {
+      key: 'costTime',
+      title: $t('page.manage.log.costTime'),
+      align: 'center'
+    },
+    {
+      key: 'opTime',
+      title: $t('page.manage.log.opTime'),
+      align: 'center'
+    },
+    {
+      key: 'operate',
+      title: $t('common.operate'),
+      align: 'center',
+      width: 130,
+      render: row => (
+        <div class="flex-center gap-8px">
+          <NButton type="primary" ghost size="tiny" onClick={() => edit(row.opId)}>
+            {$t('common.view')}
+          </NButton>
+          <NPopconfirm onPositiveClick={() => handleDelete(row.opId)}>
+            {{
+              default: () => $t('common.confirmDelete'),
+              trigger: () => (
+                <NButton type="error" ghost size="tiny">
+                  {$t('common.delete')}
+                </NButton>
+              )
+            }}
+          </NPopconfirm>
+        </div>
+      )
+    }
+  ]
 });
 
-// 订单数据查询
-async function fetchInfo() {
-  const startTime = orderForm.value.time !== null ? dayjs(orderForm.value.time[0]).format('YYYYMMDDHHssmm') : '';
-  const endTime = orderForm.value.time !== null ? dayjs(orderForm.value.time[1]).format('YYYYMMDDHHssmm') : '';
+const { drawerVisible, operateType, editingData, handleEdit, checkedRowKeys, onBatchDeleted, onDeleted } =
+  useTableOperate(data, getData);
 
-  const body = {
-    INPUT_VALUE: orderForm.value.type !== null ? orderForm.value.type : '',
-    HANDLE_TIME_START: startTime,
-    HANDLE_TIME_END: endTime,
-    pageNum: '1',
-    pageSize: '10'
-  };
+async function handleBatchDelete() {
+  // request
+  console.log(checkedRowKeys.value);
 
-  const result = await request({
-    url: '/bssApi/common',
-    method: 'post',
-    data: {
-      env: localStg.get('env'),
-      platform: localStg.get('platform'),
-      type: '1',
-      api: 'com_sitech_crm_order_inter_IOrderQuerySvc_queryOrderLineExceptionList',
-      params: body
-    }
-  });
-  orderData.value = result.data?.ORDER_LINE_INFO_LIST;
+  await onBatchDeleted();
 }
 
-async function handleOrder(orderLineId: string, type: number) {
-  const body = {
-    ORDER_LINE_ID: orderLineId,
-    HANDLE_TYPE: type, // 1撤单，2重发
-    LOGIN_NO: 'Z9MA41'
-  };
+async function handleDelete(id: string) {
+  // request
+  console.log(id);
 
-  const result = await request({
-    url: '/bssApi/common',
-    method: 'post',
-    data: {
-      env: localStg.get('env'),
-      platform: localStg.get('platform'),
-      type: '1',
-      api: 'com_sitech_crm_order_inter_IOrderLineInfoSvc_doOrderLineInfoException',
-      params: body
-    }
-  });
-  orderData.value = result.data.ORDER_LINE_INFO_LIST;
+  await onDeleted();
 }
 
-// 表单重置
-async function resetForm() {
-  orderForm.value.type = null;
-  orderForm.value.time = null;
+function edit(id: string) {
+  handleEdit(id, 'opId');
 }
 </script>
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard title="操作日志" size="small" :bordered="false" class="card-wrapper" hoverable>
-      <!-- 查询条件 -->
-      <NForm ref="formRef" label-placement="left" label-width="80" :model="orderForm" size="small">
-        <NGrid responsive="screen" item-responsive>
-          <NFormItemGi span="24 s:8 m:8" label="查询条件" path="type">
-            <NInput
-              v-model:value="orderForm.type"
-              placeholder="订单号、子订单号、订单行号、服务号，默认查询当月订单..."
-              round
-            />
-          </NFormItemGi>
-          <NFormItemGi span="24 s:10 m:12" label="时间" path="time">
-            <NDatePicker v-model:value="orderForm.time" type="datetimerange" clearable default-time="00:00:00" />
-          </NFormItemGi>
-          <NFormItemGi span="24 m:4" class="pr-24px">
-            <NSpace class="w-full" justify="end">
-              <NButton size="small" round @click="resetForm">
-                <template #icon>
-                  <icon-ic-round-refresh class="text-icon" />
-                </template>
-                {{ $t('common.reset') }}
-              </NButton>
-              <NButton type="success" size="small" round @click="fetchInfo">
-                <template #icon>
-                  <icon-ic-round-search class="text-icon" />
-                </template>
-                {{ $t('common.search') }}
-              </NButton>
-            </NSpace>
-          </NFormItemGi>
-        </NGrid>
-        <NBlockquote class="mb-10px ml-15px mr-15px mt--3.75">
-          <NText depth="3">查询条件可以选择订单号、子订单号、订单行号、服务号</NText>
-        </NBlockquote>
-      </NForm>
-    </NCard>
-    <!-- 数据表格 -->
-    <NCard title="订单列表" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper" hoverable>
+    <LogSearch v-model:model="searchParams" @reset="resetSearchParams" @search="getData" />
+    <NCard :title="$t('page.manage.log.cardName')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
+      <template #header-extra>
+        <TableHeaderOperation
+          v-model:columns="columnChecks"
+          :disabled-delete="checkedRowKeys.length === 0"
+          :loading="loading"
+          @delete="handleBatchDelete"
+          @refresh="getData"
+        />
+      </template>
       <NDataTable
-        :row-key="(row: any) => row.ORDER_ID"
-        :columns="orderColumns"
-        :data="orderData"
+        v-model:checked-row-keys="checkedRowKeys"
+        :columns="columns"
+        :data="data"
         size="small"
+        :flex-height="!appStore.isMobile"
+        :scroll-x="702"
+        :loading="loading"
+        remote
+        :row-key="row => row.opId"
+        :pagination="mobilePagination"
         class="sm:h-full"
       />
+      <LogOperateDrawer v-model:visible="drawerVisible" :operate-type="operateType" :row-data="editingData" />
     </NCard>
   </div>
 </template>
+
+<style scoped></style>

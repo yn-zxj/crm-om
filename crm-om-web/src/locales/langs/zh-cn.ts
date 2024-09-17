@@ -49,7 +49,8 @@ const local: App.I18n.Schema = {
       no: '否'
     },
     env: '环境',
-    api_document: '接口协议'
+    api_document: '接口协议',
+    view: '查看'
   },
   request: {
     logout: '请求失败后登出用户',
@@ -271,6 +272,10 @@ const local: App.I18n.Schema = {
         status: {
           enable: '启用',
           disable: '禁用'
+        },
+        execute: {
+          success: '成功',
+          exception: '异常'
         }
       },
       role: {
@@ -289,6 +294,21 @@ const local: App.I18n.Schema = {
         },
         addRole: '新增角色',
         editRole: '编辑角色'
+      },
+      log: {
+        cardName: '操作日志',
+        title: '操作模块',
+        opUrl: '请求地址',
+        method: '操作方法',
+        requestMethod: '请求方式',
+        opTime: '请求时间',
+        costTime: '耗时(ms)',
+        status: '执行状态',
+        opType: '操作类型',
+        businessType: '业务类型',
+        drawerName: '详细信息',
+        opParam: '请求参数',
+        opResult: '返回结果'
       },
       user: {
         title: '用户列表',

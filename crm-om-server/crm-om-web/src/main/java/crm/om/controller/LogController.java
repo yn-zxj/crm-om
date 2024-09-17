@@ -45,6 +45,7 @@ public class LogController {
     @GetMapping("/all")
     @ApiOperationSupport(order = 705)
     @Parameters({
+            @Parameter(name = "opId", description = "日志ID", example = "100"),
             @Parameter(name = "businessType", description = "业务说明", example = "2"),
             @Parameter(name = "requestMethod", description = "请求方法", example = "GET"),
             @Parameter(name = "opType", description = "操作类型", example = "1"),
@@ -56,15 +57,17 @@ public class LogController {
             @RequestParam(required = false) String businessType,
             @RequestParam(required = false) String requestMethod,
             @RequestParam(required = false) String opType,
+            @RequestParam(required = false) String opId,
             @RequestParam(required = false) String status,
             @RequestParam Integer current,
             @RequestParam Integer size) {
         LambdaQueryWrapper<LogInfo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(businessType), LogInfo::getBusinessType, businessType)
                 .eq(StringUtils.isNotBlank(requestMethod), LogInfo::getRequestMethod, requestMethod)
+                .eq(StringUtils.isNotBlank(opId), LogInfo::getOpId, opId)
                 .eq(StringUtils.isNotBlank(opType), LogInfo::getOpType, opType)
                 .eq(StringUtils.isNotBlank(status), LogInfo::getStatus, status)
-                .orderByAsc(LogInfo::getOpTime);
+                .orderByDesc(LogInfo::getOpTime);
 
         Page<LogInfo> infoPage = logService.page(new Page<>(current, size), wrapper);
 
