@@ -45,31 +45,35 @@ async function fetchPrcInfo() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard title="产品配置脚本" :bordered="false" size="small" class="card-wrapper" hoverable>
-      <NForm label-placement="left" :label-width="80">
-        <NGrid responsive="screen" item-responsive>
-          <!-- 查询条件 -->
-          <NFormItemGi show-require-mark span="24 s:12 m:12" size="small" label="资费ID" class="pr-24px">
-            <NInput
-              v-model:value="ref_prc"
-              placeholder="支持批量查询，如：AA,BB,CC..."
-              clearable
-              round
-              @keypress.enter="fetchPrcInfo"
-            />
-          </NFormItemGi>
-          <NFormItemGi span="24 m:4" class="pr-24px">
-            <NSpace class="w-full" justify="end">
-              <NButton type="success" round size="small" @click="fetchPrcInfo">
-                <template #icon>
-                  <icon-ic-round-search class="text-icon" />
-                </template>
-                {{ $t('common.search') }}
-              </NButton>
-            </NSpace>
-          </NFormItemGi>
-        </NGrid>
-      </NForm>
+    <NCard :bordered="false" size="small" class="card-wrapper" hoverable>
+      <NCollapse :default-expanded-names="['prod-search']">
+        <NCollapseItem :title="$t('common.search')" name="prod-search">
+          <NForm label-placement="left" :label-width="80">
+            <NGrid responsive="screen" item-responsive>
+              <!-- 查询条件 -->
+              <NFormItemGi show-require-mark span="24 s:12 m:12" size="small" label="资费ID" class="pr-24px">
+                <NInput
+                  v-model:value="ref_prc"
+                  placeholder="支持批量查询，如：AA,BB,CC..."
+                  clearable
+                  round
+                  @keypress.enter="fetchPrcInfo"
+                />
+              </NFormItemGi>
+              <NFormItemGi span="24 m:4" class="pr-24px">
+                <NSpace class="w-full" justify="end">
+                  <NButton type="success" round size="small" @click="fetchPrcInfo">
+                    <template #icon>
+                      <icon-ic-round-search class="text-icon" />
+                    </template>
+                    {{ $t('common.search') }}
+                  </NButton>
+                </NSpace>
+              </NFormItemGi>
+            </NGrid>
+          </NForm>
+        </NCollapseItem>
+      </NCollapse>
     </NCard>
     <NCard title="配置脚本" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper" hoverable>
       <NSpin :show="qryLoading">
