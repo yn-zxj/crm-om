@@ -57,8 +57,8 @@ public class LogAspect {
 
     private final ILogService logService;
 
-    private final static Integer SUCCESS = 0;
-    private final static Integer EXCEPTION = 1;
+    private final static Integer SUCCESS = 1;
+    private final static Integer EXCEPTION = 0;
 
     /**
      * 处理请求前执行

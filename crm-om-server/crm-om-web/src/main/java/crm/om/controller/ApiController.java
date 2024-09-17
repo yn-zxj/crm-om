@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import crm.om.annotation.Log;
 import crm.om.enums.ResultCode;
 import crm.om.model.ConfigInfo;
 import crm.om.param.BssParam;
@@ -63,6 +64,7 @@ public class ApiController {
     @PostMapping("/common")
     @ApiOperationSupport(order = 505)
     @Operation(summary = "通用接口")
+    @Log(title = "通用接口调用")
     public Result<Object> common(@RequestBody @Valid BssParam bssParam) {
         String apiUrl = "";
 
@@ -192,6 +194,7 @@ public class ApiController {
     @ApiOperationSupport(order = 525)
     @Operation(summary = "订单信息")
     @Parameter(name = "orderLineId", description = "订单行号", required = true)
+    @Log(title = "查询订单信息", isSaveResponseData = false)
     public Result<Map<String, Object>> orderInfo(@RequestParam String orderLineId) {
         Map<String, Object> orderInfo = orderService.orderInfo("bss-test-obtsdb2", orderLineId);
         return Result.ok(orderInfo);

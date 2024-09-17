@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import crm.om.annotation.Log;
+import crm.om.enums.BusinessType;
 import crm.om.enums.ResultCode;
 import crm.om.enums.Role;
 import crm.om.exception.BaseException;
@@ -48,6 +50,7 @@ public class UserController {
     private final IUserService userService;
     private final IRoleService roleService;
     private final IMenuService menuService;
+    private final ILoginService loginService;
     private final IUserRoleRelService userRoleRelService;
     private final IMenuRoleRelService menuRoleRelService;
 
@@ -67,6 +70,9 @@ public class UserController {
 
         UserInfo login = userService.getOne(wrapper);
         if (login != null) {
+            // 记录登录信息
+            loginService.recordLoginInfo(login.getUserId(), 1, "登录成功");
+
             StpUtil.login(login.getUserId());
             String tokenValue = StpUtil.getTokenInfo().tokenValue;
             TokenVO token = new TokenVO();
@@ -74,6 +80,8 @@ public class UserController {
             token.setRefreshToken(tokenValue);
             return Result.ok(token);
         }
+        // 记录登录信息
+        loginService.recordLoginInfo(loginParam.getUserName(), 0, ResultCode.NO_USER.getMessage());
         throw new BaseException(ResultCode.NO_USER);
     }
 
@@ -85,6 +93,7 @@ public class UserController {
      */
     @Operation(summary = "用户注册")
     @ApiOperationSupport(order = 620)
+    @Log(title = "用户注册", businessType = BusinessType.INSERT)
     @PostMapping("/register")
     public Result<?> register(@Valid @RequestBody RegisterParam registerInfo) {
         // 校验用户是否存在
@@ -136,6 +145,7 @@ public class UserController {
     @Operation(summary = "用户删除")
     @ApiOperationSupport(order = 630)
     @DeleteMapping("/del/{id}")
+    @Log(title = "删除用户", businessType = BusinessType.DELETE)
     @Parameter(name = "id", description = "用户id")
     public Result<Boolean> delUser(@PathVariable String id) {
         // 删除用户表
@@ -154,6 +164,7 @@ public class UserController {
      * @return 更新结果
      */
     @Operation(summary = "用户更新")
+    @Log(title = "更新用户信息", businessType = BusinessType.UPDATE)
     @ApiOperationSupport(order = 625)
     @PutMapping("/update/user")
     public Result<Boolean> updateUser(@Valid @RequestBody UpdateUserParam userInfo) {
@@ -244,6 +255,7 @@ public class UserController {
     @GetMapping("/logout")
     public Result<Object> logout() {
         StpUtil.logout();
+        loginService.recordLoginInfo((String) StpUtil.getLoginId(), 1, "用户退出登录");
         return Result.ok();
     }
 }

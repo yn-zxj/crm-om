@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import crm.om.annotation.Log;
+import crm.om.enums.BusinessType;
 import crm.om.exception.BaseException;
 import crm.om.model.MenuInfo;
 import crm.om.model.RoleInfo;
@@ -98,6 +100,7 @@ public class ManageController {
      * @return 角色信息
      */
     @PostMapping("/save")
+    @Log(title = "新增角色类型", businessType = BusinessType.INSERT)
     @ApiOperationSupport(order = 310)
     @Operation(summary = "新增角色类型", description = "角色类型一般很少新增，新增代码枚举需要一起维护")
     public Result<RoleVO> insert(@RequestBody RoleParam roleParam) {
@@ -126,6 +129,7 @@ public class ManageController {
     @DeleteMapping("/del/role/{id}")
     @ApiOperationSupport(order = 320)
     @Operation(summary = "删除角色")
+    @Log(title = "删除角色", businessType = BusinessType.DELETE)
     @Parameter(name = "id", description = "角色ID", required = true, example = "181828")
     public Result<Boolean> delete(@PathVariable String id) {
         boolean result = roleService.removeById(id);
@@ -139,6 +143,7 @@ public class ManageController {
      * @return 更新结果
      */
     @PostMapping("/role/update")
+    @Log(title = "更新角色信息", businessType = BusinessType.UPDATE)
     @ApiOperationSupport(order = 315)
     @Operation(summary = "更新角色信息")
     public Result<Boolean> update(@RequestBody RoleUpdateParam roleUpdateParam) {

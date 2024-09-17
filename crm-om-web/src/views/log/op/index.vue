@@ -18,6 +18,14 @@ function fetchLogList(params?: Api.SystemManage.LogSearchParams) {
   });
 }
 
+/** 日志删除 */
+function deleteLog(params: Array<string>) {
+  return request<Api.SystemManage.LogList>({
+    url: `/log/del/${params}`,
+    method: 'delete'
+  });
+}
+
 const { columns, columnChecks, data, loading, getData, mobilePagination, searchParams, resetSearchParams } = useTable({
   apiFn: fetchLogList,
   apiParams: {
@@ -84,8 +92,8 @@ const { columns, columnChecks, data, loading, getData, mobilePagination, searchP
         }
 
         const tagMap: Record<Api.Common.EnableStatus, NaiveUI.ThemeColor> = {
-          0: 'success',
-          1: 'error'
+          0: 'error',
+          1: 'success'
         };
 
         const label = $t(executeStatusRecord[row.status]);
@@ -137,16 +145,12 @@ const { drawerVisible, operateType, editingData, handleEdit, checkedRowKeys, onB
   useTableOperate(data, getData);
 
 async function handleBatchDelete() {
-  // request
-  console.log(checkedRowKeys.value);
-
+  deleteLog(checkedRowKeys.value);
   await onBatchDeleted();
 }
 
 async function handleDelete(id: string) {
-  // request
-  console.log(id);
-
+  deleteLog([id]);
   await onDeleted();
 }
 

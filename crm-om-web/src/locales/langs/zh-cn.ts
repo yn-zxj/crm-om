@@ -310,6 +310,12 @@ const local: App.I18n.Schema = {
         opParam: '请求参数',
         opResult: '返回结果'
       },
+      login: {
+        infoId: '日志编码',
+        userId: '用户编码',
+        ip: 'IP地址',
+        msg: '登录信息'
+      },
       user: {
         title: '用户列表',
         userName: '用户名',

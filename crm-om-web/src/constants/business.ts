@@ -29,8 +29,8 @@ export const menuIconTypeRecord: Record<Api.SystemManage.IconType, App.I18n.I18n
 export const menuIconTypeOptions = transformRecordToOption(menuIconTypeRecord);
 
 export const executeStatusRecord: Record<Api.Common.EnableStatus, App.I18n.I18nKey> = {
-  '0': 'page.manage.common.execute.success',
-  '1': 'page.manage.common.execute.exception'
+  '1': 'page.manage.common.execute.success',
+  '0': 'page.manage.common.execute.exception'
 };
 
 export const executeStatusOptions = transformRecordToOption(executeStatusRecord);

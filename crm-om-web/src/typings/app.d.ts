@@ -529,6 +529,12 @@ declare namespace App {
             opParam: string;
             opResult: string;
           };
+          login: {
+            infoId: string;
+            userId: string;
+            ip: string;
+            msg: string;
+          };
           user: {
             title: string;
             userName: string;

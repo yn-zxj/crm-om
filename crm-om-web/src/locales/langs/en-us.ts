@@ -310,6 +310,12 @@ const local: App.I18n.Schema = {
         opParam: 'Request Params',
         opResult: 'Response'
       },
+      login: {
+        infoId: 'Log ID',
+        userId: 'User ID',
+        ip: 'IP Address',
+        msg: 'Information'
+      },
       user: {
         title: 'User List',
         userName: 'User Name',

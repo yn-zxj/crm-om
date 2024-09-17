@@ -5,6 +5,8 @@ import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import crm.om.annotation.Log;
+import crm.om.enums.BusinessType;
 import crm.om.param.datasource.DataSourceParam;
 import crm.om.vo.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,6 +62,7 @@ public class DataSourceController {
     @Operation(summary = "添加数据源")
     @ApiOperationSupport(order = 205)
     @PostMapping("/add")
+    @Log(title = "添加系统数据源", businessType = BusinessType.INSERT)
     public Result<Set<String>> add(@Validated @RequestBody DataSourceParam dataSourceParam) {
         DataSourceProperty dataSourceProperty = new DataSourceProperty();
         BeanUtils.copyProperties(dataSourceParam, dataSourceProperty);
@@ -78,6 +81,7 @@ public class DataSourceController {
     @Operation(summary = "删除数据源")
     @ApiOperationSupport(order = 210)
     @DeleteMapping("/remove/{name}")
+    @Log(title = "删除系统数据源", businessType = BusinessType.DELETE)
     public Result<Objects> remove(@PathVariable String name) {
         DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
         ds.removeDataSource(name);

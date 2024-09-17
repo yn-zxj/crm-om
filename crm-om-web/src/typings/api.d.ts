@@ -240,10 +240,27 @@ declare namespace Api {
 
     /** log search params */
     type LogSearchParams = CommonType.RecordNullable<
-      Pick<Api.SystemManage.Log, 'businessType', 'requestMethod', 'opType', 'status'> & CommonSearchParams
+      Pick<Api.SystemManage.Log, 'businessType' | 'requestMethod' | 'opType' | 'status'> & CommonSearchParams
     >;
 
     /** log list */
     type LogList = Common.PaginatingQueryRecord<Log>;
+
+    /** log */
+    type Login = Common.CommonRecord<{
+      infoId: string;
+      userId: string;
+      ip: string;
+      msg: string;
+      accessTime: string;
+    }>;
+
+    /** login search params */
+    type LoginSearchParams = CommonType.RecordNullable<
+      Pick<Api.SystemManage.Login, 'infoId' | 'userId' | 'ip' | 'msg' | 'accessTime' | 'status'> & CommonSearchParams
+    >;
+
+    /** login list */
+    type LoginList = Common.PaginatingQueryRecord<Login>;
   }
 }
