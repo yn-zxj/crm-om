@@ -10,11 +10,7 @@ import { getRoutePath } from '@/router/elegant/transform';
  * @param homeTab Home tab
  */
 export function getAllTabs(tabs: App.Global.Tab[], homeTab?: App.Global.Tab) {
-  if (!homeTab) {
-    return [];
-  }
-
-  const filterHomeTabs = tabs.filter(tab => tab.id !== homeTab.id);
+  const filterHomeTabs = tabs.filter(tab => tab.id !== homeTab?.id);
 
   const fixedTabs = filterHomeTabs.filter(isFixedTab).sort((a, b) => a.fixedIndex! - b.fixedIndex!);
 
@@ -22,7 +18,7 @@ export function getAllTabs(tabs: App.Global.Tab[], homeTab?: App.Global.Tab) {
 
   const allTabs = [homeTab, ...fixedTabs, ...remainTabs];
 
-  return updateTabsLabel(allTabs);
+  return updateTabsLabel(allTabs.filter(tab => tab !== undefined));
 }
 
 /**
