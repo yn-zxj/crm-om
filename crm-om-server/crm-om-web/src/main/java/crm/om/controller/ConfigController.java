@@ -48,7 +48,7 @@ public class ConfigController {
     private final CheckHelper checkHelper;
     private final IConfigService configService;
 
-    private static final String FIELD_NAME = "paramValue";
+    private static final String FIELD_NAME = "configValue";
 
     /**
      * 获取全部参数配置信息
@@ -59,25 +59,22 @@ public class ConfigController {
     @GetMapping("/all")
     @ApiOperationSupport(order = 405)
     @Parameters({
-            @Parameter(name = "platform", description = "系统平台", example = "bss"),
-            @Parameter(name = "env", description = "环境", example = "test"),
+            @Parameter(name = "configKey", description = "参数键名", example = "bss.test.prod"),
             @Parameter(name = "current", description = "当前页", required = true, example = "1"),
             @Parameter(name = "size", description = "每页显示条数", required = true, example = "10")
     })
     public Result<PageVO<ConfigParam>> fetchAll(
-            @RequestParam(required = false) String platform,
-            @RequestParam(required = false) String env,
+            @RequestParam(required = false) String configKey,
             @RequestParam Integer current,
             @RequestParam Integer size) {
         LambdaQueryWrapper<ConfigInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(StringUtils.isNotBlank(platform), ConfigInfo::getPlatform, platform)
-                .eq(StringUtils.isNotBlank(env), ConfigInfo::getEnv, env);
+        wrapper.like(StringUtils.isNotBlank(configKey), ConfigInfo::getConfigKey, configKey);
 
         Page<ConfigInfo> infoPage = configService.page(new Page<>(current, size), wrapper);
         // 判断类型属于json格式进行类型转换
         CopyOptions copyOptions = new CopyOptions();
         copyOptions.setFieldValueEditor((fieldName, fieldValue) -> {
-            if (FIELD_NAME.equals(fieldName) && checkHelper.isValidJson(fieldValue.toString())) {
+            if (FIELD_NAME.equalsIgnoreCase(fieldName) && checkHelper.isValidJson(fieldValue.toString())) {
                 return JSONUtil.parse(fieldValue);
             }
             return fieldValue;
@@ -121,15 +118,11 @@ public class ConfigController {
     @PostMapping("/save")
     public Result<Boolean> save(@Valid @RequestBody SaveParam saveParam) {
         ConfigInfo build = ConfigInfo.builder()
-                .platform(saveParam.getPlatform())
-                .env(saveParam.getEnv())
-                .paramName(saveParam.getParamName())
-                .paramKey(saveParam.getParamKey())
-                .paramValue(saveParam.getParamValue())
-                // 默认启用
-                .status(1)
-                // todo 从头部取用户信息
-                .createBy("system")
+                .configName(saveParam.getConfigName())
+                .configKey(saveParam.getConfigKey())
+                .configValue(saveParam.getConfigValue())
+                .configType(saveParam.getConfigType())
+                .status("1")
                 .createTime(LocalDateTime.now())
                 .build();
         boolean flag = configService.save(build);
@@ -148,11 +141,13 @@ public class ConfigController {
     @PutMapping("/update")
     public Result<Boolean> update(@Valid @RequestBody UpdateParam updateParam) {
         LambdaUpdateWrapper<ConfigInfo> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.set(StringUtils.isNotBlank(updateParam.getParamKey()), ConfigInfo::getParamKey, updateParam.getParamKey())
-                .set(StringUtils.isNotBlank(updateParam.getParamValue()), ConfigInfo::getParamValue,
-                        updateParam.getParamValue())
-                .set(updateParam.getStatus() != null, ConfigInfo::getStatus, updateParam.getStatus())
-                // todo 从头部取用户信息
+        wrapper.set(StringUtils.isNotBlank(updateParam.getConfigKey()), ConfigInfo::getConfigKey, updateParam.getConfigKey())
+                .set(StringUtils.isNotBlank(updateParam.getConfigValue()), ConfigInfo::getConfigValue, updateParam.getConfigValue())
+                .set(StringUtils.isNotBlank(updateParam.getStatus()), ConfigInfo::getStatus, updateParam.getStatus())
+                .set(StringUtils.isNotBlank(updateParam.getConfigName()), ConfigInfo::getConfigName, updateParam.getConfigName())
+                .set(StringUtils.isNotBlank(updateParam.getRemark()), ConfigInfo::getRemark, updateParam.getRemark())
+                .set(StringUtils.isNotBlank(updateParam.getConfigType()), ConfigInfo::getConfigType, updateParam.getConfigType())
+
                 .set(ConfigInfo::getUpdateBy, "system")
                 .set(ConfigInfo::getUpdateTime, DateUtil.now())
                 .eq(ConfigInfo::getConfigId, updateParam.getConfigId());

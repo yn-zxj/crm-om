@@ -6,8 +6,8 @@ import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
 import com.baomidou.dynamic.datasource.creator.hikaricp.HikariCpConfig;
-import crm.om.enums.BusinessConstant;
 import crm.om.enums.ConfigType;
+import crm.om.enums.Constant;
 import crm.om.model.ConfigInfo;
 import crm.om.service.IConfigService;
 import jakarta.annotation.PostConstruct;
@@ -67,7 +67,7 @@ public class DynamicDataSourceConfig {
      */
     public void addDataSource() {
         List<ConfigInfo> dataSourceInfo = configService.lambdaQuery()
-                .eq(ConfigInfo::getType, ConfigType.DATABASE)
+                .eq(ConfigInfo::getConfigKey, ConfigType.DATABASE)
                 .eq(ConfigInfo::getStatus, 1)
                 .list();
         if (!dataSourceInfo.isEmpty()) {
@@ -75,21 +75,22 @@ public class DynamicDataSourceConfig {
             DynamicRoutingDataSource ds = (DynamicRoutingDataSource) dataSource;
             for (ConfigInfo configInfo : dataSourceInfo) {
                 // 数据源与连接池名称 eg: mvne-prod-basedb
-                String dataSourceName =
-                        configInfo.getPlatform().getCode() + BusinessConstant.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConstant.Symbol.SHORT_LINE + configInfo.getParamKey();
-
-                JSON dataBaseInfo = JSONUtil.parse(configInfo.getParamValue());
+                String dataSourceName = configInfo.getConfigKey().replace(Constant.Symbol.DOT, Constant.Symbol.SHORT_LINE);
+                JSON dataBaseInfo = JSONUtil.parse(configInfo.getConfigValue());
                 // 数据库名
                 String database = (String) dataBaseInfo.getByPath("database");
                 DataSourceProperty dataSourceProperty = new DataSourceProperty();
                 String url =
-                        MYSQL_PREFIX + dataBaseInfo.getByPath("url") + BusinessConstant.Symbol.SPLIT_SLASH + dataBaseInfo.getByPath("database") + MYSQL_SUFFIX;
+                        MYSQL_PREFIX + dataBaseInfo.getByPath("url") + Constant.Symbol.SPLIT_SLASH + dataBaseInfo.getByPath("database") + MYSQL_SUFFIX;
                 dataSourceProperty.setUrl(url);
                 dataSourceProperty.setUsername((String) dataBaseInfo.getByPath("username"));
                 dataSourceProperty.setPassword((String) dataBaseInfo.getByPath("password"));
                 dataSourceProperty.setDriverClassName(MYSQL_DRIVER_NAME);
+
+                // 获取平台与环境结束字符下标
+                int envIndex = dataSourceName.indexOf(Constant.Symbol.SHORT_LINE, dataSourceName.indexOf(Constant.Symbol.SHORT_LINE) + 1);
                 // 取 param_value 中的 database 库名
-                dataSourceProperty.setPoolName(configInfo.getPlatform().getCode() + BusinessConstant.Symbol.SHORT_LINE + configInfo.getEnv().getCode() + BusinessConstant.Symbol.SHORT_LINE + database);
+                dataSourceProperty.setPoolName(dataSourceName.substring(0, envIndex) + database);
 
                 HikariCpConfig hikariCpConfig = new HikariCpConfig();
                 hikariCpConfig.setMaxLifetime(maxLifetime);

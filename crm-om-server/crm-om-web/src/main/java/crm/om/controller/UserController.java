@@ -19,7 +19,7 @@ import crm.om.param.user.UpdateUserParam;
 import crm.om.service.*;
 import crm.om.vo.Result;
 import crm.om.vo.user.TokenVO;
-import crm.om.vo.user.UserInfoVO;
+import crm.om.vo.user.UserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -200,7 +200,7 @@ public class UserController {
     @Operation(summary = "用户信息")
     @ApiOperationSupport(order = 615)
     @GetMapping("/getUserInfo")
-    public Result<UserInfoVO> getUserInfo() {
+    public Result<UserVO> getUserInfo() {
         List<String> roles = new ArrayList<>();
         List<String> buttons = new ArrayList<>();
 
@@ -210,7 +210,7 @@ public class UserController {
         LambdaQueryWrapper<UserInfo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(UserInfo::getUserId, loginId);
         UserInfo userInfo = userService.getOne(wrapper);
-        UserInfoVO userInfoVO = BeanUtil.copyProperties(userInfo, UserInfoVO.class);
+        UserVO userInfoVO = BeanUtil.copyProperties(userInfo, UserVO.class);
 
         // 查询用户具有的角色信息
         LambdaQueryWrapper<UserRoleRel> roleWrapper = new LambdaQueryWrapper<>();

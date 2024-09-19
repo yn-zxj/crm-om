@@ -8,5 +8,4 @@ import crm.om.model.ConfigInfo;
  * @version 1.0
  */
 public interface IConfigService extends IService<ConfigInfo> {
-
 }

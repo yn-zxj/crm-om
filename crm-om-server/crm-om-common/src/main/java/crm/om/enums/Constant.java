@@ -22,6 +22,7 @@ public class Constant {
         public final static String LEFT_BRACKET = "(";
         public final static String RIGHT_BRACKET = ")";
         public final static String NEW_LINE = System.lineSeparator();
+        public static final String DOT = ".";
     }
     
     /**

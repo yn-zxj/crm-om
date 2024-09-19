@@ -38,12 +38,12 @@ public class MenuRoleRel extends BaseInfo {
     /**
      * 菜单id
      */
-    @TableField(value = "menuId")
+    @TableField(value = "menu_id")
     private String menuId;
 
     /**
      * 角色id
      */
-    @TableField(value = "roleId")
+    @TableField(value = "role_d")
     private String roleId;
 }

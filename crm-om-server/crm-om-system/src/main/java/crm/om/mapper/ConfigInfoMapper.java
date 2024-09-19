@@ -12,7 +12,3 @@ import org.springframework.stereotype.Repository;
 public interface ConfigInfoMapper extends BaseMapper<ConfigInfo> {
 
 }
-
-
-
-

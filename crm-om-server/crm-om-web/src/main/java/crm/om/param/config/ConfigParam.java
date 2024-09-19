@@ -15,23 +15,23 @@ public class ConfigParam {
     @Schema(description = "配置ID")
     private String configId;
 
-    @Schema(description = "系统平台")
-    private String platform;
+    @Schema(description = "配置类型")
+    private String configName;
 
-    @Schema(description = "环境")
-    private String env;
-
-    @Schema(description = "参数名称")
-    private String paramName;
-
-    @Schema(description = "参数键")
-    private String paramKey;
+    @Schema(description = "参数名")
+    private String configKey;
 
     @Schema(description = "参数值")
-    private Object paramValue;
+    private String configValue;
+
+    @Schema(description = "备注")
+    private String remark;
+
+    @Schema(description = "参数类型")
+    public String configType;
 
     @Schema(description = "状态")
-    private Integer status;
+    private String status;
 
     @Schema(description = "创建人")
     public String createBy;

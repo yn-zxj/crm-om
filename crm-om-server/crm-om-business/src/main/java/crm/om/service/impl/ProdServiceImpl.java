@@ -10,7 +10,10 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import crm.om.config.DynamicDataSourceConfig;
-import crm.om.enums.*;
+import crm.om.enums.BusinessConstant;
+import crm.om.enums.ConfigType;
+import crm.om.enums.Constant;
+import crm.om.enums.ResultCode;
 import crm.om.exception.BaseException;
 import crm.om.mapper.ProdInfoMapper;
 import crm.om.model.ConfigInfo;
@@ -63,8 +66,9 @@ public class ProdServiceImpl implements IProdService {
      */
     @Override
     public Map<String, Object> prodConfig(ConfigInfo configInfo, LinkedHashSet<String> prcIdList) {
-        String platform = String.valueOf(configInfo.getPlatform().getCode());
-        String env = configInfo.getEnv().getCode();
+        Map<String, Object> convert = convert(configInfo);
+        String platform = (String) convert.get("platform");
+        String env = (String) convert.get("env");
 
         List<ConfigInfo> configInfos = this.tableInfo(platform);
 
@@ -79,7 +83,7 @@ public class ProdServiceImpl implements IProdService {
 
         // 用户库、产品库配置
         for (ConfigInfo info : configInfos) {
-            String database = info.getParamKey();
+            String database = (String) convert.get("database");
             // 产品库、用户库使用 prod_prcid 和 prod_id 查询数据 [判断数据库前缀]
             if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_PROD) || database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_CRM)) {
                 Map<String, Object> prodMap = prodHandler(platform, env, info, prcIdList);
@@ -91,7 +95,7 @@ public class ProdServiceImpl implements IProdService {
 
         // 基础库、营销库配置
         for (ConfigInfo info : configInfos) {
-            String database = info.getParamKey();
+            String database = (String) convert.get("database");
             if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_BASE)) {
                 result.putAll(baseHandler(platform, env, info, baseCodeList));
             }
@@ -111,12 +115,13 @@ public class ProdServiceImpl implements IProdService {
     @Override
     public String templateToStr(ConfigInfo configInfo, LinkedHashSet<String> prcIdList) {
         Map<String, Object> result = prodConfig(configInfo, prcIdList);
-
-        String templateName = switch (configInfo.getPlatform()) {
-            case Platform.BSS -> "prodConfig/bss.ftl";
-            case Platform.MVNE -> "prodConfig/mvne.ftl";
-            case Platform.MVNO -> "prodConfig/mvno.ftl";
-            case Platform.SGP -> "prodConfig/sgp.ftl";
+        String configKey = configInfo.getConfigKey();
+        String templateName = switch (configKey.substring(0, configKey.indexOf(Constant.Symbol.DOT))) {
+            case "bss" -> "prodConfig/bss.ftl";
+            case "mvne" -> "prodConfig/mvne.ftl";
+            case "mvno" -> "prodConfig/mvno.ftl";
+            case "sgp" -> "prodConfig/sgp.ftl";
+            default -> throw new BaseException(ResultCode.TEMPLATE_NOT_FOUND);
         };
 
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates/",
@@ -139,10 +144,10 @@ public class ProdServiceImpl implements IProdService {
         StringBuilder selectSql = new StringBuilder();
         StringBuilder insertSql = new StringBuilder();
 
-        String database = info.getParamKey();
+        String database = (String) convert(info).get("database");
 
         // 校验格式
-        if (checkHelper.isValidJson(info.getParamValue())) {
+        if (checkHelper.isValidJson(info.getConfigValue())) {
             // 查询 element_batch_no
             List<Map<String, Object>> result = queryBuilder(platform, env, database, "mk_meanscontent_info",
                     "element_par_value", prcIdList);
@@ -150,7 +155,7 @@ public class ProdServiceImpl implements IProdService {
                     result.stream().map(out -> out.get("ELEMENT_BATCH_NO").toString()).collect(Collectors.toSet());
 
             if (!elementBatchNoList.isEmpty()) {
-                JSONArray tableInfos = JSONUtil.parseArray(info.getParamValue());
+                JSONArray tableInfos = JSONUtil.parseArray(info.getConfigValue());
                 for (Object tableInfo : tableInfos) {
                     JSONObject table = (JSONObject) tableInfo;
                     String columnName = table.getStr("columnName");
@@ -187,10 +192,10 @@ public class ProdServiceImpl implements IProdService {
         StringBuilder selectSql = new StringBuilder();
         StringBuilder insertSql = new StringBuilder();
 
-        String database = prodInfo.getParamKey();
+        String database = (String) convert(prodInfo).get("database");
         // 校验格式
-        if (checkHelper.isValidJson(prodInfo.getParamValue())) {
-            JSONArray tableInfos = JSONUtil.parseArray(prodInfo.getParamValue());
+        if (checkHelper.isValidJson(prodInfo.getConfigValue())) {
+            JSONArray tableInfos = JSONUtil.parseArray(prodInfo.getConfigValue());
             for (Object tableInfo : tableInfos) {
                 JSONObject table = (JSONObject) tableInfo;
                 String columnName = table.getStr("columnName");
@@ -251,7 +256,7 @@ public class ProdServiceImpl implements IProdService {
         Map<String, Object> result = new HashMap<>(4);
         String keyName;
         // 其第一个的字段名作为结果返回组装字段
-        JSONArray tableInfos = JSONUtil.parseArray(prodInfo.getParamValue());
+        JSONArray tableInfos = JSONUtil.parseArray(prodInfo.getConfigValue());
         JSONObject firstItem = (JSONObject) tableInfos.getFirst();
         String columnName = firstItem.getStr("columnName");
         if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_PROD)) {
@@ -280,9 +285,9 @@ public class ProdServiceImpl implements IProdService {
         StringBuilder insertSql = new StringBuilder();
 
         if (!baseCodeList.isEmpty()) {
-            String database = info.getParamKey();
-            if (checkHelper.isValidJson(info.getParamValue())) {
-                JSONArray tableInfos = JSONUtil.parseArray(info.getParamValue());
+            String database = (String) convert(info).get("database");
+            if (checkHelper.isValidJson(info.getConfigValue())) {
+                JSONArray tableInfos = JSONUtil.parseArray(info.getConfigValue());
                 for (Object tableInfo : tableInfos) {
                     JSONObject table = (JSONObject) tableInfo;
                     String columnName = table.getStr("columnName");
@@ -326,8 +331,7 @@ public class ProdServiceImpl implements IProdService {
         map.put("columnValue", columnValue);
 
         // 手动切换数据源
-        String dataSourceName =
-                platform + BusinessConstant.Symbol.SHORT_LINE + env + BusinessConstant.Symbol.SHORT_LINE + database;
+        String dataSourceName = platform + Constant.Symbol.SHORT_LINE + env + Constant.Symbol.SHORT_LINE + database;
         // 获取当前数据源名称
         String peek = DynamicDataSourceContextHolder.peek();
         // 即将切换数据源与目前不一致则进行切换
@@ -355,15 +359,14 @@ public class ProdServiceImpl implements IProdService {
     /**
      * 查询各系统产品配置需要用到的配置表
      *
-     * @param platform 平台系统
+     * @param configKey 参数键名
      * @return 表配置信息
      */
-    public List<ConfigInfo> tableInfo(String platform) {
+    public List<ConfigInfo> tableInfo(String configKey) {
         List<ConfigInfo> tableInfos = Db.lambdaQuery(ConfigInfo.class)
                 .eq(ConfigInfo::getStatus, 1)
-                .eq(ConfigInfo::getType, ConfigType.TABLE)
-                .eq(ConfigInfo::getPlatform, platform)
-                .eq(ConfigInfo::getEnv, Env.ALL)
+                .eq(ConfigInfo::getConfigType, ConfigType.TABLE)
+                .eq(ConfigInfo::getConfigKey, configKey)
                 .orderByAsc(ConfigInfo::getConfigId)
                 .list();
         if (tableInfos.isEmpty()) {
@@ -394,5 +397,20 @@ public class ProdServiceImpl implements IProdService {
             selectSql.append(select).append(BusinessConstant.Symbol.NEW_LINE);
             insertSql.append(insert).append(BusinessConstant.Symbol.NEW_LINE);
         }
+    }
+
+    /**
+     * 转换配置信息
+     * @param configInfo 配置信息
+     * @return 平台与环境信息
+     */
+    private Map<String, Object> convert(ConfigInfo configInfo){
+        String configKey = configInfo.getConfigKey();
+        String[] configList = configKey.split("\\.");
+        return switch (configList.length) {
+            case 2 -> Map.of("platform", configList[0], "env", configList[1]);
+            case 3 -> Map.of("platform", configList[0], "env", configList[1], "database", configList[2]);
+            default -> throw new BaseException(ResultCode.DATA_ERROR);
+        };
     }
 }

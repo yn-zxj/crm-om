@@ -27,21 +27,21 @@ public class BaseInfo implements Serializable {
     /**
      * 创建人
      */
-    @TableField(value = "createBy")
+    @TableField(value = "create_by")
     public String createBy;
     /**
      * 创建时间
      */
-    @TableField(value = "createTime", fill = FieldFill.INSERT)
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     public LocalDateTime createTime;
     /**
      * 修改人
      */
-    @TableField(value = "updateBy", update = "false")
+    @TableField(value = "update_by", update = "false")
     public String updateBy;
     /**
      * 修改时间
      */
-    @TableField(value = "updateTime", fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     public LocalDateTime updateTime;
 }

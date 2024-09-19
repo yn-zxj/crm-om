@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import crm.om.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
-import java.util.List;
 
 /**
  * 菜单信息
@@ -33,31 +31,31 @@ public class MenuInfo extends BaseInfo {
     /**
      * 菜单id
      */
-    @TableId(value = "menuId", type = IdType.ASSIGN_ID)
+    @TableId(value = "menu_id", type = IdType.ASSIGN_ID)
     private String menuId;
 
     /**
      * 菜单类型 (0-目录 1-菜单 2-按钮)
      */
-    @TableField(value = "menuType")
+    @TableField(value = "menu_type")
     private String menuType;
 
     /**
      * 菜单名称
      */
-    @TableField(value = "menuName")
+    @TableField(value = "menu_name")
     private String menuName;
 
     /**
      * 路由名称
      */
-    @TableField(value = "routeName")
+    @TableField(value = "route_name")
     private String routeName;
 
     /**
      * 路由地址
      */
-    @TableField(value = "routePath")
+    @TableField(value = "route_path")
     private String routePath;
 
     /**
@@ -81,7 +79,7 @@ public class MenuInfo extends BaseInfo {
     /**
      * 缓存路由(0-否 1-是)
      */
-    @TableField(value = "keepAlive")
+    @TableField(value = "keep_alive")
     private Boolean keepAlive;
 
     /**
@@ -99,19 +97,19 @@ public class MenuInfo extends BaseInfo {
     /**
      * 隐藏路由(0-否 1-是)
      */
-    @TableField(value = "hideInMenu")
+    @TableField(value = "hide_menu")
     private Boolean hideInMenu;
 
     /**
      * 国际化编码
      */
-    @TableField(value = "i18nKey")
+    @TableField(value = "i18n_key")
     private String i18nKey;
 
     /**
      * 图标类型(0-iconify 1-local)
      */
-    @TableField(value = "iconType")
+    @TableField(value = "icon_type")
     private Boolean iconType;
 
     /**
@@ -123,7 +121,7 @@ public class MenuInfo extends BaseInfo {
     /**
      * 共享标签页(0-否 1-是)
      */
-    @TableField(value = "multiTab")
+    @TableField(value = "multi_tab")
     private Boolean multiTab;
 
     /**
@@ -135,6 +133,6 @@ public class MenuInfo extends BaseInfo {
     /**
      * 父级菜单id
      */
-    @TableField(value = "parentId")
+    @TableField(value = "parent_id")
     private String parentId;
 }

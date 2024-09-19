@@ -1,7 +1,5 @@
 package crm.om.param.config;
 
-import crm.om.enums.Env;
-import crm.om.enums.Platform;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -13,23 +11,21 @@ import lombok.Data;
 @Data
 @Schema(description = "新增参数信息")
 public class SaveParam {
-    @Schema(description = "系统平台")
-    @NotBlank(message = "系统平台不能为空")
-    private Platform platform;
-
-    @Schema(description = "系统环境")
-    @NotBlank(message = "系统环境不能为空")
-    private Env env;
-
     @Schema(description = "配置类型")
     @NotBlank(message = "配置类型不能为空")
-    private String paramName;
+    private String configName;
 
     @Schema(description = "参数名")
     @NotBlank(message = "参数名不能为空")
-    private String paramKey;
+    private String configKey;
 
     @Schema(description = "参数值")
     @NotBlank(message = "参数值不能为空")
-    private String paramValue;
+    private String configValue;
+
+    @Schema(description = "备注")
+    private String remark;
+
+    @Schema(description = "参数类型")
+    public String configType;
 }

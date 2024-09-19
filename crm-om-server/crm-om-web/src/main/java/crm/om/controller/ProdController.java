@@ -3,6 +3,7 @@ package crm.om.controller;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.annotation.Log;
+import crm.om.enums.Constant;
 import crm.om.model.ConfigInfo;
 import crm.om.param.prod.ProdParam;
 import crm.om.service.IProdService;
@@ -42,9 +43,9 @@ public class ProdController {
     @Operation(summary = "配置脚本")
     @Log(title = "查询资费配置脚本")
     public Result<String> prodConfig(@RequestBody ProdParam prodParam) {
+       String configKey = prodParam.getPlatform() + Constant.Symbol.SHORT_LINE + prodParam.getEnv();
         ConfigInfo info = ConfigInfo.builder()
-                .platform(prodParam.getPlatform())
-                .env(prodParam.getEnv())
+                .configKey(configKey)
                 .build();
 
         String result = prodService.templateToStr(info, prodParam.getPrcId());

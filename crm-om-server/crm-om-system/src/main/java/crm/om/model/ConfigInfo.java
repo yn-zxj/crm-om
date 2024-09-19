@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import crm.om.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serial;
 
 /**
- * 角色信息
+ * 系统参数配置表
  *
  * @author zhangxiaojun
  * @version 1.0
@@ -24,40 +23,50 @@ import java.io.Serial;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@TableName(value = "sys_role_info")
-public class RoleInfo extends BaseInfo {
+@TableName(value = "sys_config_info")
+public class ConfigInfo extends BaseInfo {
     @Serial
-    private static final long serialVersionUID = -7828012155736840191L;
+    private static final long serialVersionUID = -1599765406324125816L;
 
     /**
-     * 角色id
+     * 主键ID
      */
-    @TableId(value = "role_id", type = IdType.ASSIGN_ID)
-    private String roleId;
+    @TableId(value = "config_id", type = IdType.ASSIGN_ID)
+    private String configId;
 
     /**
-     * 角色名称
+     * 参数名称
      */
-    @TableField(value = "role_name")
-    private String roleName;
+    @TableField(value = "config_name")
+    private String configName;
 
     /**
-     * 角色编码
-     *
-     * @see Role
+     * 参数键名
      */
-    @TableField(value = "role_code")
-    private String roleCode;
+    @TableField(value = "config_key")
+    private String configKey;
 
     /**
-     * 角色描述
+     * 参数键值
      */
-    @TableField(value = "role_desc")
-    private String roleDesc;
+    @TableField(value = "config_value")
+    private String configValue;
+
+    /**
+     * 参数类型
+     */
+    @TableField(value = "config_type")
+    private String configType;
 
     /**
      * 状态(0-弃用 1-启用)
      */
     @TableField(value = "status")
     private String status;
+
+    /**
+     * 备注
+     */
+    @TableField(value = "remark")
+    private String remark;
 }

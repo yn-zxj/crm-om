@@ -8,6 +8,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.annotation.Log;
 import crm.om.enums.BusinessType;
 import crm.om.model.LoginInfo;
+import crm.om.param.log.LogParam;
 import crm.om.service.ILoginService;
 import crm.om.vo.PageVO;
 import crm.om.vo.Result;
@@ -20,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -87,15 +87,13 @@ public class LoginController {
      */
     @Operation(summary = "删除日志信息")
     @ApiOperationSupport(order = 820)
-    @DeleteMapping("/del/{ids}")
+    @PostMapping("/del")
     @Log(title = "删除访问日志", businessType = BusinessType.DELETE)
-    @Parameter(name = "ids", description = "日志ID", required = true, example = "1")
-    public Result<Boolean> delById(@PathVariable("ids") String ids) {
+    public Result<Boolean> delById(@RequestBody LogParam logParam) {
         boolean flag = false;
 
-        String[] list = ids.split(",");
-        if (list.length > 0) {
-            flag = loginService.removeBatchByIds(Arrays.asList(list));
+        if (!logParam.getId().isEmpty()) {
+            flag = loginService.removeBatchByIds(logParam.getId());
         }
         return Result.ok(flag);
     }

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import crm.om.enums.Gender;
-import crm.om.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
-import java.util.List;
 
 /**
  * 用户信息
@@ -34,13 +32,13 @@ public class UserInfo extends BaseInfo {
     /**
      * 用户id
      */
-    @TableId(value = "userId", type = IdType.ASSIGN_ID)
+    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
     private String userId;
 
     /**
      * 用户名
      */
-    @TableField(value = "userName")
+    @TableField(value = "user_name")
     private String userName;
 
     /**
@@ -48,25 +46,25 @@ public class UserInfo extends BaseInfo {
      *
      * @see Gender
      */
-    @TableField(value = "userGender")
+    @TableField(value = "user_gender")
     private String userGender;
 
     /**
      * 昵称
      */
-    @TableField(value = "nickName")
+    @TableField(value = "nick_name")
     private String nickName;
 
     /**
      * 手机号码
      */
-    @TableField(value = "userPhone")
+    @TableField(value = "user_phone")
     private String userPhone;
 
     /**
      * 邮箱地址
      */
-    @TableField(value = "userEmail")
+    @TableField(value = "user_email")
     private String userEmail;
 
     /**

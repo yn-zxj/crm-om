@@ -3,11 +3,13 @@ package crm.om.controller;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.annotation.Log;
+import crm.om.enums.Constant;
 import crm.om.enums.ResultCode;
 import crm.om.model.ConfigInfo;
 import crm.om.param.BssParam;
@@ -25,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ import java.util.Map;
 public class ApiController {
 
     private final ApiBodyBuilder apiCommon;
-    private final IConfigService service;
+    private final IConfigService configService;
     private final ObjectMapper objectMapper;
     private final IBaseService baseService;
     private final IOrderService orderService;
@@ -74,20 +75,20 @@ public class ApiController {
         String params = apiCommon.buildParamIn(bssParam.getTenantId(), bssParam.getLang(), reqParams);
         log.info("> Api 请求接口:{}, 入参:{}", api, params);
 
-        Map<String, Object> map = new HashMap<>(4);
-        map.put("env", bssParam.getEnv());
-        map.put("platform", bssParam.getPlatform());
-        map.put("type", bssParam.getType());
-        List<ConfigInfo> configInfos = service.listByMap(map);
+        LambdaQueryWrapper<ConfigInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ConfigInfo::getConfigKey, bssParam.getPlatform() + Constant.Symbol.SHORT_LINE + bssParam.getEnv())
+                .eq(ConfigInfo::getConfigType, String.valueOf(bssParam.getType()));
+        List<ConfigInfo> configInfos = configService.list(wrapper);
+
         // 数据库无配置
         if (configInfos.isEmpty()) {
             return Result.build(null, ResultCode.CONFIG_NOTFOUND);
         }
         for (ConfigInfo configInfo : configInfos) {
-            String paramKey = configInfo.getParamKey();
+            String paramKey = configInfo.getConfigKey();
             if ("api_url".equals(paramKey)) {
-                apiUrl = configInfo.getParamValue().endsWith("/") ? configInfo.getParamValue() :
-                        configInfo.getParamValue() + "/";
+                apiUrl = configInfo.getConfigValue().endsWith("/") ? configInfo.getConfigValue() :
+                        configInfo.getConfigValue() + "/";
             }
         }
 
@@ -129,18 +130,18 @@ public class ApiController {
 
         log.info("> NocInfo Api 请求接口:{}, 入参:{}", api, reqParams);
 
-        Map<String, Object> map = new HashMap<>(4);
-        map.put("env", bssParam.getEnv());
-        map.put("platform", bssParam.getPlatform());
-        map.put("type", bssParam.getType());
-        List<ConfigInfo> configInfos = service.listByMap(map);
+        LambdaQueryWrapper<ConfigInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ConfigInfo::getConfigKey, bssParam.getPlatform() + Constant.Symbol.SHORT_LINE + bssParam.getEnv())
+                .eq(ConfigInfo::getConfigType, String.valueOf(bssParam.getType()));
+        List<ConfigInfo> configInfos = configService.list(wrapper);
+
         // 数据库无配置
         if (configInfos.isEmpty()) {
             return Result.build(null, ResultCode.CONFIG_NOTFOUND);
         }
         for (ConfigInfo configInfo : configInfos) {
-            apiUrl = configInfo.getParamValue().endsWith("/") ? configInfo.getParamValue() :
-                    configInfo.getParamValue() + "/";
+            apiUrl = configInfo.getConfigValue().endsWith("/") ? configInfo.getConfigValue() :
+                    configInfo.getConfigValue() + "/";
         }
 
         // apiUrl 值不存在
