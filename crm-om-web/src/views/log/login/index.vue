@@ -132,6 +132,7 @@ async function handleDelete(id: string) {
         <TableHeaderOperation
           v-model:columns="columnChecks"
           :disabled-delete="checkedRowKeys.length === 0"
+          :hidden-add="true"
           :loading="loading"
           @delete="handleBatchDelete"
           @refresh="getData"

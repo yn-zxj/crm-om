@@ -166,6 +166,7 @@ function edit(id: string) {
       <template #header-extra>
         <TableHeaderOperation
           v-model:columns="columnChecks"
+          :hidden-add="true"
           :disabled-delete="checkedRowKeys.length === 0"
           :loading="loading"
           @delete="handleBatchDelete"
