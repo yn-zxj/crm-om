@@ -41,11 +41,11 @@ public class ProdController {
     @PostMapping("/configScript")
     @ApiOperationSupport(order = 905)
     @Operation(summary = "配置脚本")
-    @Log(title = "查询资费配置脚本")
+    @Log(title = "查询资费配置脚本", isSaveResponseData = false)
     public Result<String> prodConfig(@RequestBody ProdParam prodParam) {
-       String configKey = prodParam.getPlatform() + Constant.Symbol.SHORT_LINE + prodParam.getEnv();
+        String configKey = prodParam.getPlatform() + Constant.Symbol.SHORT_LINE + prodParam.getEnv();
         ConfigInfo info = ConfigInfo.builder()
-                .configKey(configKey)
+                .configKey(configKey.toLowerCase())
                 .build();
 
         String result = prodService.templateToStr(info, prodParam.getPrcId());
