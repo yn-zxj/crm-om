@@ -1,7 +1,6 @@
-package crm.om.param.config;
+package crm.om.vo.config;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,9 +8,8 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-@Builder
 @Schema(description = "配置信息")
-public class ConfigParam {
+public class ConfigVo {
     @Schema(description = "配置ID")
     private String configId;
 
@@ -22,7 +20,7 @@ public class ConfigParam {
     private String configKey;
 
     @Schema(description = "参数值")
-    private String configValue;
+    private Object configValue;
 
     @Schema(description = "备注")
     private String remark;

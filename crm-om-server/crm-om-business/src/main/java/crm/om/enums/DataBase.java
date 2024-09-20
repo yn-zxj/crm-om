@@ -11,11 +11,12 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum Env {
-    // 环境枚举
-    TEST("test", "测试"),
-    PROD("prod", "生产"),
-    ALL("all", "全部");
+public enum DataBase {
+    // 数据库前缀
+    PROD("proddb", "产品库"),
+    CRM("crmdb", "用户库"),
+    BASE("basedb", "基础库"),
+    MARKET("marketdb", "营销库");
 
     @EnumValue
     @JsonValue

@@ -27,4 +27,14 @@ public interface IProdService {
      * @return 模版字符串
      */
     String templateToStr(ConfigInfo configInfo, LinkedHashSet<String> prcIdList);
+
+    /**
+     * 字符串与枚举匹配返回
+     *
+     * @param value     字符串值
+     * @param enumClass 枚举类
+     * @param <T>       枚举类型
+     * @return 枚举值
+     */
+    <T extends Enum<T>> T convertToEnum(String value, Class<T> enumClass);
 }

@@ -10,10 +10,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import crm.om.config.DynamicDataSourceConfig;
-import crm.om.enums.BusinessConstant;
-import crm.om.enums.ConfigType;
-import crm.om.enums.Constant;
-import crm.om.enums.ResultCode;
+import crm.om.enums.*;
 import crm.om.exception.BaseException;
 import crm.om.mapper.ProdInfoMapper;
 import crm.om.model.ConfigInfo;
@@ -41,6 +38,11 @@ public class ProdServiceImpl implements IProdService {
     private final CheckHelper checkHelper;
     private final ProdInfoMapper prodInfoMapper;
 
+    public final static String DATABASE_SUFFIX_PROD = "proddb";
+    public final static String DATABASE_SUFFIX_CRM = "crmdb";
+    public final static String DATABASE_SUFFIX_BASE = "basedb";
+    public final static String DATABASE_SUFFIX_MARKET = "marketdb";
+
     /**
      * 国际化需要排除的表
      */
@@ -66,11 +68,12 @@ public class ProdServiceImpl implements IProdService {
      */
     @Override
     public Map<String, Object> prodConfig(ConfigInfo configInfo, LinkedHashSet<String> prcIdList) {
-        Map<String, Object> convert = convert(configInfo);
-        String platform = (String) convert.get("platform");
-        String env = (String) convert.get("env");
+        String platform = convertToEnum(configInfo.getConfigKey(), Platform.class).getCode();
+        String env = convertToEnum(configInfo.getConfigKey(), Env.class).getCode();
 
-        List<ConfigInfo> configInfos = this.tableInfo(platform);
+        // eg: bss.all.test
+        String configKey = platform + Constant.Symbol.DOT + "all";
+        List<ConfigInfo> configInfos = this.tableInfo(configKey);
 
         log.info("==> 产品配置读表开始");
         long startTime = System.currentTimeMillis();
@@ -83,9 +86,9 @@ public class ProdServiceImpl implements IProdService {
 
         // 用户库、产品库配置
         for (ConfigInfo info : configInfos) {
-            String database = (String) convert.get("database");
+            String database = convertToEnum(info.getConfigKey(), DataBase.class).getCode();
             // 产品库、用户库使用 prod_prcid 和 prod_id 查询数据 [判断数据库前缀]
-            if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_PROD) || database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_CRM)) {
+            if (database.startsWith(DATABASE_SUFFIX_PROD) || database.startsWith(DATABASE_SUFFIX_CRM)) {
                 Map<String, Object> prodMap = prodHandler(platform, env, info, prcIdList);
                 if (prodMap != null) {
                     result.putAll(prodMap);
@@ -95,12 +98,12 @@ public class ProdServiceImpl implements IProdService {
 
         // 基础库、营销库配置
         for (ConfigInfo info : configInfos) {
-            String database = (String) convert.get("database");
-            if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_BASE)) {
+            String database = convertToEnum(info.getConfigKey(), DataBase.class).getCode();
+            if (database.startsWith(DATABASE_SUFFIX_BASE)) {
                 result.putAll(baseHandler(platform, env, info, baseCodeList));
             }
 
-            if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_MARKET)) {
+            if (database.startsWith(DATABASE_SUFFIX_MARKET)) {
                 result.putAll(marketHandler(platform, env, info, prcIdList));
             }
         }
@@ -115,13 +118,12 @@ public class ProdServiceImpl implements IProdService {
     @Override
     public String templateToStr(ConfigInfo configInfo, LinkedHashSet<String> prcIdList) {
         Map<String, Object> result = prodConfig(configInfo, prcIdList);
-        String configKey = configInfo.getConfigKey();
-        String templateName = switch (configKey.substring(0, configKey.indexOf(Constant.Symbol.DOT))) {
-            case "bss" -> "prodConfig/bss.ftl";
-            case "mvne" -> "prodConfig/mvne.ftl";
-            case "mvno" -> "prodConfig/mvno.ftl";
-            case "sgp" -> "prodConfig/sgp.ftl";
-            default -> throw new BaseException(ResultCode.TEMPLATE_NOT_FOUND);
+
+        String templateName = switch (convertToEnum(configInfo.getConfigKey(), Platform.class)) {
+            case Platform.BSS -> "prodConfig/bss.ftl";
+            case Platform.MVNE -> "prodConfig/mvne.ftl";
+            case Platform.MVNO -> "prodConfig/mvno.ftl";
+            case Platform.SGP -> "prodConfig/sgp.ftl";
         };
 
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates/",
@@ -144,7 +146,7 @@ public class ProdServiceImpl implements IProdService {
         StringBuilder selectSql = new StringBuilder();
         StringBuilder insertSql = new StringBuilder();
 
-        String database = (String) convert(info).get("database");
+        String database = convertToEnum(info.getConfigKey(), DataBase.class).getCode();
 
         // 校验格式
         if (checkHelper.isValidJson(info.getConfigValue())) {
@@ -192,7 +194,7 @@ public class ProdServiceImpl implements IProdService {
         StringBuilder selectSql = new StringBuilder();
         StringBuilder insertSql = new StringBuilder();
 
-        String database = (String) convert(prodInfo).get("database");
+        String database = convertToEnum(prodInfo.getConfigKey(), DataBase.class).getCode();
         // 校验格式
         if (checkHelper.isValidJson(prodInfo.getConfigValue())) {
             JSONArray tableInfos = JSONUtil.parseArray(prodInfo.getConfigValue());
@@ -233,8 +235,8 @@ public class ProdServiceImpl implements IProdService {
                 }
 
                 String columnStr =
-                        columnValue.stream().map(column -> BusinessConstant.Symbol.SINGLE_QUOTE + column + BusinessConstant.Symbol.SINGLE_QUOTE)
-                                .collect(Collectors.joining(BusinessConstant.Symbol.COMMA + BusinessConstant.Symbol.SPACE));
+                        columnValue.stream().map(column -> Constant.Symbol.SINGLE_QUOTE + column + Constant.Symbol.SINGLE_QUOTE)
+                                .collect(Collectors.joining(Constant.Symbol.COMMA + Constant.Symbol.SPACE));
                 String select = sqlUtil.select(tableName, columnName, columnStr);
                 String insert = sqlUtil.insert(tableName, result);
 
@@ -244,8 +246,8 @@ public class ProdServiceImpl implements IProdService {
                 }
 
                 if (StringUtils.isNotBlank(insert)) {
-                    selectSql.append(select).append(BusinessConstant.Symbol.NEW_LINE);
-                    insertSql.append(insert).append(BusinessConstant.Symbol.NEW_LINE);
+                    selectSql.append(select).append(Constant.Symbol.NEW_LINE);
+                    insertSql.append(insert).append(Constant.Symbol.NEW_LINE);
                 }
             }
         } else {
@@ -259,7 +261,7 @@ public class ProdServiceImpl implements IProdService {
         JSONArray tableInfos = JSONUtil.parseArray(prodInfo.getConfigValue());
         JSONObject firstItem = (JSONObject) tableInfos.getFirst();
         String columnName = firstItem.getStr("columnName");
-        if (database.startsWith(BusinessConstant.DataBase.DATABASE_SUFFIX_PROD)) {
+        if (database.startsWith(DATABASE_SUFFIX_PROD)) {
             keyName = columnName.toLowerCase().contains("prod_prcid") ? "prc" : "prod";
         } else {
             keyName = columnName.toLowerCase().contains("prod_prcid") ? "crmPrc" : "crmProd";
@@ -285,7 +287,7 @@ public class ProdServiceImpl implements IProdService {
         StringBuilder insertSql = new StringBuilder();
 
         if (!baseCodeList.isEmpty()) {
-            String database = (String) convert(info).get("database");
+            String database = convertToEnum(info.getConfigKey(), DataBase.class).getCode();
             if (checkHelper.isValidJson(info.getConfigValue())) {
                 JSONArray tableInfos = JSONUtil.parseArray(info.getConfigValue());
                 for (Object tableInfo : tableInfos) {
@@ -366,7 +368,7 @@ public class ProdServiceImpl implements IProdService {
         List<ConfigInfo> tableInfos = Db.lambdaQuery(ConfigInfo.class)
                 .eq(ConfigInfo::getStatus, 1)
                 .eq(ConfigInfo::getConfigType, ConfigType.TABLE)
-                .eq(ConfigInfo::getConfigKey, configKey)
+                .like(ConfigInfo::getConfigKey, configKey)
                 .orderByAsc(ConfigInfo::getConfigId)
                 .list();
         if (tableInfos.isEmpty()) {
@@ -388,29 +390,32 @@ public class ProdServiceImpl implements IProdService {
     private void conditionToStr(String tableName, String columnName, Set<String> conditionList,
                                 StringBuilder insertSql, StringBuilder selectSql, List<Map<String, Object>> mapList) {
         String columnStr =
-                conditionList.stream().map(column -> BusinessConstant.Symbol.SINGLE_QUOTE + column + BusinessConstant.Symbol.SINGLE_QUOTE)
-                        .collect(Collectors.joining(BusinessConstant.Symbol.COMMA + BusinessConstant.Symbol.SPACE));
+                conditionList.stream().map(column -> Constant.Symbol.SINGLE_QUOTE + column + Constant.Symbol.SINGLE_QUOTE)
+                        .collect(Collectors.joining(Constant.Symbol.COMMA + Constant.Symbol.SPACE));
         String select = sqlUtil.select(tableName, columnName, columnStr);
         String insert = sqlUtil.insert(tableName, mapList);
 
         if (StringUtils.isNotBlank(insert)) {
-            selectSql.append(select).append(BusinessConstant.Symbol.NEW_LINE);
-            insertSql.append(insert).append(BusinessConstant.Symbol.NEW_LINE);
+            selectSql.append(select).append(Constant.Symbol.NEW_LINE);
+            insertSql.append(insert).append(Constant.Symbol.NEW_LINE);
         }
     }
 
     /**
-     * 转换配置信息
-     * @param configInfo 配置信息
-     * @return 平台与环境信息
+     * 字符串与枚举匹配返回
+     *
+     * @param value     字符串值
+     * @param enumClass 枚举类
+     * @param <T>       枚举类型
+     * @return 枚举值
      */
-    private Map<String, Object> convert(ConfigInfo configInfo){
-        String configKey = configInfo.getConfigKey();
-        String[] configList = configKey.split("\\.");
-        return switch (configList.length) {
-            case 2 -> Map.of("platform", configList[0], "env", configList[1]);
-            case 3 -> Map.of("platform", configList[0], "env", configList[1], "database", configList[2]);
-            default -> throw new BaseException(ResultCode.DATA_ERROR);
-        };
+    @Override
+    public <T extends Enum<T>> T convertToEnum(String value, Class<T> enumClass) {
+        for (T each : enumClass.getEnumConstants()) {
+            if (value.toLowerCase().contains(each.name().toLowerCase())) {
+                return each;
+            }
+        }
+        throw new BaseException(ResultCode.DATA_ERROR);
     }
 }

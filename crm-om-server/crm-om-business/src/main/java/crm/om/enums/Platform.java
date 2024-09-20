@@ -19,6 +19,7 @@ public enum Platform {
     SGP("sgp", "sgp");
 
     private final String code;
+
     @EnumValue
     @JsonValue
     private final String desc;

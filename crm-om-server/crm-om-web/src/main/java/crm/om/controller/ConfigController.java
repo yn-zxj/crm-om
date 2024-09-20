@@ -12,13 +12,13 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.annotation.Log;
 import crm.om.enums.BusinessType;
 import crm.om.model.ConfigInfo;
-import crm.om.param.config.ConfigParam;
 import crm.om.param.config.SaveParam;
 import crm.om.param.config.UpdateParam;
 import crm.om.service.IConfigService;
 import crm.om.utils.CheckHelper;
 import crm.om.vo.PageVO;
 import crm.om.vo.Result;
+import crm.om.vo.config.ConfigVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -63,7 +63,7 @@ public class ConfigController {
             @Parameter(name = "current", description = "当前页", required = true, example = "1"),
             @Parameter(name = "size", description = "每页显示条数", required = true, example = "10")
     })
-    public Result<PageVO<ConfigParam>> fetchAll(
+    public Result<PageVO<ConfigVo>> fetchAll(
             @RequestParam(required = false) String configKey,
             @RequestParam Integer current,
             @RequestParam Integer size) {
@@ -80,9 +80,9 @@ public class ConfigController {
             return fieldValue;
         });
         // 遍历集合中每个Bean，复制其属性到另一个类型的对象中，最后返回一个新的List
-        List<ConfigParam> configParams = BeanUtil.copyToList(infoPage.getRecords(), ConfigParam.class, copyOptions);
+        List<ConfigVo> configParams = BeanUtil.copyToList(infoPage.getRecords(), ConfigVo.class, copyOptions);
 
-        PageVO<ConfigParam> pageVO = PageVO.<ConfigParam>builder()
+        PageVO<ConfigVo> pageVO = PageVO.<ConfigVo>builder()
                 .pages(infoPage.getPages())
                 .total(infoPage.getTotal())
                 .records(configParams)

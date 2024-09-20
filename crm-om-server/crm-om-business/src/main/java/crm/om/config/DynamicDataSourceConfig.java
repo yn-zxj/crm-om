@@ -8,8 +8,11 @@ import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
 import com.baomidou.dynamic.datasource.creator.hikaricp.HikariCpConfig;
 import crm.om.enums.ConfigType;
 import crm.om.enums.Constant;
+import crm.om.enums.Env;
+import crm.om.enums.Platform;
 import crm.om.model.ConfigInfo;
 import crm.om.service.IConfigService;
+import crm.om.service.IProdService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +44,7 @@ public class DynamicDataSourceConfig {
     private Long maxLifetime;
 
     private final DataSource dataSource;
+    private final IProdService prodService;
     private final IConfigService configService;
     private final DefaultDataSourceCreator dataSourceCreator;
 
@@ -67,7 +71,7 @@ public class DynamicDataSourceConfig {
      */
     public void addDataSource() {
         List<ConfigInfo> dataSourceInfo = configService.lambdaQuery()
-                .eq(ConfigInfo::getConfigKey, ConfigType.DATABASE)
+                .eq(ConfigInfo::getConfigType, ConfigType.DATABASE)
                 .eq(ConfigInfo::getStatus, 1)
                 .list();
         if (!dataSourceInfo.isEmpty()) {
@@ -87,10 +91,10 @@ public class DynamicDataSourceConfig {
                 dataSourceProperty.setPassword((String) dataBaseInfo.getByPath("password"));
                 dataSourceProperty.setDriverClassName(MYSQL_DRIVER_NAME);
 
-                // 获取平台与环境结束字符下标
-                int envIndex = dataSourceName.indexOf(Constant.Symbol.SHORT_LINE, dataSourceName.indexOf(Constant.Symbol.SHORT_LINE) + 1);
+                String platform = prodService.convertToEnum(dataSourceName, Platform.class).getCode();
+                String env = prodService.convertToEnum(dataSourceName, Env.class).getCode();
                 // 取 param_value 中的 database 库名
-                dataSourceProperty.setPoolName(dataSourceName.substring(0, envIndex) + database);
+                dataSourceProperty.setPoolName(platform + Constant.Symbol.SHORT_LINE + env + Constant.Symbol.SHORT_LINE + database);
 
                 HikariCpConfig hikariCpConfig = new HikariCpConfig();
                 hikariCpConfig.setMaxLifetime(maxLifetime);
