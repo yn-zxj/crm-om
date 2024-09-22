@@ -60,15 +60,24 @@ public class ConfigController {
     @ApiOperationSupport(order = 405)
     @Parameters({
             @Parameter(name = "configKey", description = "参数键名", example = "bss.test.prod"),
+            @Parameter(name = "configName", description = "参数名", example = "数据库配置"),
+            @Parameter(name = "configType", description = "参数类型", example = "1"),
+            @Parameter(name = "status", description = "状态", example = "1"),
             @Parameter(name = "current", description = "当前页", required = true, example = "1"),
             @Parameter(name = "size", description = "每页显示条数", required = true, example = "10")
     })
     public Result<PageVO<ConfigVo>> fetchAll(
             @RequestParam(required = false) String configKey,
+            @RequestParam(required = false) String configName,
+            @RequestParam(required = false) String configType,
+            @RequestParam(required = false) String status,
             @RequestParam Integer current,
             @RequestParam Integer size) {
         LambdaQueryWrapper<ConfigInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StringUtils.isNotBlank(configKey), ConfigInfo::getConfigKey, configKey);
+        wrapper.like(StringUtils.isNotBlank(configKey), ConfigInfo::getConfigKey, configKey)
+                .like(StringUtils.isNotBlank(configName), ConfigInfo::getConfigName, configName)
+                .eq(StringUtils.isNotBlank(configType), ConfigInfo::getConfigType, configType)
+                .eq(StringUtils.isNotBlank(status), ConfigInfo::getStatus, status);
 
         Page<ConfigInfo> infoPage = configService.page(new Page<>(current, size), wrapper);
         // 判断类型属于json格式进行类型转换

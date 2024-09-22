@@ -496,6 +496,10 @@ declare namespace App {
               success: string;
               exception: string;
             };
+            createBy: string;
+            createTime: string;
+            updateBy: string;
+            updateTime: string;
           };
           role: {
             title: string;
@@ -534,6 +538,28 @@ declare namespace App {
             userId: string;
             ip: string;
             msg: string;
+          };
+          config: {
+            title: string;
+            configId: string;
+            configName: string;
+            configKey: string;
+            configValue: string;
+            remark: string;
+            configType: string;
+            status: string;
+          };
+          dict: {
+            dictData: string;
+            dictId: string;
+            dictCode: string;
+            dictSort: string;
+            dictName: string;
+            dictType: string;
+            dictLabel: string;
+            dictValue: string;
+            remark: string;
+            status: string;
           };
           user: {
             title: string;

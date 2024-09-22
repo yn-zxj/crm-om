@@ -44,6 +44,6 @@ public class MenuRoleRel extends BaseInfo {
     /**
      * 角色id
      */
-    @TableField(value = "role_d")
+    @TableField(value = "role_id")
     private String roleId;
 }

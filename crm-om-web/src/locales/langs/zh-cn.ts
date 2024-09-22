@@ -276,7 +276,11 @@ const local: App.I18n.Schema = {
         execute: {
           success: '成功',
           exception: '异常'
-        }
+        },
+        createBy: '创建人',
+        createTime: '创建时间',
+        updateBy: '更新人',
+        updateTime: '更新时间'
       },
       role: {
         title: '角色列表',
@@ -315,6 +319,28 @@ const local: App.I18n.Schema = {
         userId: '用户编码',
         ip: 'IP地址',
         msg: '登录信息'
+      },
+      config: {
+        title: '参数信息',
+        configId: '配置ID',
+        configName: '参数名称',
+        configKey: '参数键',
+        configValue: '参数值',
+        remark: '备注',
+        configType: '参数类型',
+        status: '状态'
+      },
+      dict: {
+        dictData: '字典数据',
+        dictId: '字典类型编码',
+        dictCode: '字典数据类型',
+        dictSort: '字典数据排序',
+        dictName: '字典名称',
+        dictType: '字典类型',
+        dictLabel: '字典标签',
+        dictValue: '字典值',
+        remark: '备注',
+        status: '状态'
       },
       user: {
         title: '用户列表',

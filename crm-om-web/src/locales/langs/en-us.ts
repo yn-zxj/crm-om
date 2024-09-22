@@ -276,7 +276,11 @@ const local: App.I18n.Schema = {
         execute: {
           success: 'Success',
           exception: 'Exception'
-        }
+        },
+        createBy: 'Create By',
+        createTime: 'Create Time',
+        updateBy: 'Update By',
+        updateTime: 'Update Time'
       },
       role: {
         title: 'Role List',
@@ -315,6 +319,28 @@ const local: App.I18n.Schema = {
         userId: 'User ID',
         ip: 'IP Address',
         msg: 'Information'
+      },
+      config: {
+        title: 'Config List',
+        configId: 'Config ID',
+        configName: 'Config Name',
+        configKey: 'Config Key',
+        configValue: 'Config Value',
+        remark: 'Remark',
+        configType: 'Config Type',
+        status: 'Status'
+      },
+      dict: {
+        dictData: 'Dict Data',
+        dictId: 'Dict ID',
+        dictCode: 'Dict Code',
+        dictSort: 'Dict Sort',
+        dictName: 'Dict Name',
+        dictType: 'Dict Type',
+        dictLabel: 'Dict Label',
+        dictValue: 'Dict Value',
+        remark: 'Remark',
+        status: 'Status'
       },
       user: {
         title: 'User List',

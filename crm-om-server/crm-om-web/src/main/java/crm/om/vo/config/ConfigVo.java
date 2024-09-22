@@ -1,22 +1,25 @@
 package crm.om.vo.config;
 
+import crm.om.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author zhangxiaojun
  * @version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Schema(description = "配置信息")
-public class ConfigVo {
+public class ConfigVo extends BaseVo {
     @Schema(description = "配置ID")
     private String configId;
 
-    @Schema(description = "配置类型")
+    @Schema(description = "参数名称")
     private String configName;
 
-    @Schema(description = "参数名")
+    @Schema(description = "参数键")
     private String configKey;
 
     @Schema(description = "参数值")
@@ -30,16 +33,4 @@ public class ConfigVo {
 
     @Schema(description = "状态")
     private String status;
-
-    @Schema(description = "创建人")
-    public String createBy;
-
-    @Schema(description = "创建时间")
-    public String createTime;
-
-    @Schema(description = "更新人")
-    public String updateBy;
-
-    @Schema(description = "更新时间")
-    public String updateTime;
 }

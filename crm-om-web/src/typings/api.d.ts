@@ -262,5 +262,69 @@ declare namespace Api {
 
     /** login list */
     type LoginList = Common.PaginatingQueryRecord<Login>;
+
+    /** config */
+    type Config = Common.CommonRecord<{
+      configId: string;
+      configName: string;
+      configKey: string;
+      configValue: string;
+      remark: string;
+      configType: string;
+    }>;
+
+    /** config search params */
+    type ConfigSearchParams = CommonType.RecordNullable<
+      Pick<Api.SystemManage.Config, 'configName' | 'configKey' | 'configType' | 'status'> & CommonSearchParams
+    >;
+
+    /** config list */
+    type ConfigList = Common.PaginatingQueryRecord<Config>;
+
+    /** dict type */
+    type DictType = Common.CommonRecord<{
+      /* 主键 */
+      dictId: string;
+      /* 字典名称 */
+      dictName: string;
+      /* 字典类型 */
+      dictType: string;
+      /* 备注 */
+      remark: string;
+    }>;
+
+    /** dict type search params */
+    type DictTypeSearchParams = CommonType.RecordNullable<
+      Pick<Api.SystemManage.DictType, 'dictName' | 'dictType' | 'status'> & CommonSearchParams
+    >;
+
+    /** dict type list */
+    type DictTypeList = Common.PaginatingQueryRecord<DictType>;
+
+    /** dict data */
+    type DictData = Common.CommonRecord<{
+      /* 主键 */
+      dictCode: string;
+      /* 字典类型 */
+      dictType: string;
+      /* 字典排序 */
+      dictSort: string;
+      /* 字典标签 */
+      dictLabel: string;
+      /* 字典键值 */
+      dictValue: string;
+      /* 状态 */
+      status: string;
+      /* 备注 */
+      remark: string;
+    }>;
+
+    /** dict data search params */
+    type DictDataSearchParams = CommonType.RecordNullable<
+      Pick<Api.SystemManage.DictData, 'dictCode' | 'dictType'> & CommonSearchParams
+    >;
+
+    /** dict data list */
+    type DictDataList = Common.PaginatingQueryRecord<DictData>;
   }
 }

@@ -37,12 +37,12 @@ public class UserRoleRel extends BaseInfo {
     /**
      * 用户id
      */
-    @TableField(value = "user_d")
+    @TableField(value = "user_id")
     private String userid;
 
     /**
      * 角色id
      */
-    @TableField(value = "role_d")
+    @TableField(value = "role_id")
     private String roleId;
 }
