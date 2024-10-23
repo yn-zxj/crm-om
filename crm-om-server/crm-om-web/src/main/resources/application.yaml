@@ -44,9 +44,9 @@ mybatis-plus:
 
 # logger 打印调整
 logging:
-  level:
-    com.zaxxer.hikari.HikariConfig: debug
-#  config: classpath:logback-spring-a.xml
+  #  level:
+  #    com.zaxxer.hikari.HikariConfig: debug
+  config: classpath:logback-spring.xml
 
 sa-token:
   # token 名称
@@ -69,7 +69,7 @@ sa-token:
 # 自定义参数
 custom:
   dynamic:
-    enable: false
+    enable: true
 
 # 开启增强
 knife4j:
