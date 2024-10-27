@@ -9,6 +9,8 @@ server:
 
 # 数据源
 spring:
+  profiles:
+    active: dev
   application:
     name: crm-om
   jackson:
@@ -41,12 +43,6 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     call-setters-on-nulls: true
-
-# logger 打印调整
-logging:
-  #  level:
-  #    com.zaxxer.hikari.HikariConfig: debug
-  config: classpath:logback-spring.xml
 
 sa-token:
   # token 名称

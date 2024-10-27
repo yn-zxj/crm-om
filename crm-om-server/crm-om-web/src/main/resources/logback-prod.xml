@@ -2,9 +2,9 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <contextName>logback</contextName>
     <!-- 日志存放路径 -->
-    <property name="log.path" value="./logs" />
+    <property name="log.path" value="./logs"/>
     <!-- 日志输出格式: https://logback.qos.ch/manual/layouts.html -->
-    <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%21thread] %-5level %logger{20} - [%method: %line] - %msg%n" />
+    <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%21thread] %-5level %logger{20} - [%method: %line] - %msg%n"/>
 
     <!-- 控制台输出 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">

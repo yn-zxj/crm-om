@@ -1,0 +1,4 @@
+# logger 打印调整
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: debug
