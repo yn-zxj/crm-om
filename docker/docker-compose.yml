@@ -1,0 +1,30 @@
+name: crm-om
+version: '3'
+services:
+  server:
+    # 镜像tag可能需要修改
+    image: crm-om-server:${IMAGE_TAG}
+    container_name: crm-om-server
+    ports:
+      - "8848:8848"
+    restart: always
+    networks:
+      - crm-om
+    volumes:
+      - /Volumes/Others/docker_run/crm_om/server:/usr/src/crm-om-server
+  web:
+    # 镜像tag可能需要修改
+    image: crm-om-web:${IMAGE_TAG}
+    container_name: crm-om-web
+    depends_on:
+      - server
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - crm-om
+    volumes:
+      - /Volumes/Others/docker_run/crm_om/web/default.conf:/etc/nginx/conf.d/default.conf
+
+networks:
+  crm-om:
