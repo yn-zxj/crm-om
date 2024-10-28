@@ -74,9 +74,10 @@ if [ "$selected_env" = "frontend" ] || [ "$selected_env" = "all" ]; then
 fi
 
 #### 3.是否使用服务编排
-echo "[crm_om.sh] 是否使用服务编排(y/n)?"
+echo -n "[crm_om.sh] 是否使用服务编排(y/n):"
 read user_input
 if [[ $user_input == "y" || $user_input == "Y" ]]; then
+  cd ../docker
   docker compose up -d
 else
   echo "[crm_om.sh] 无需服务编排!"
