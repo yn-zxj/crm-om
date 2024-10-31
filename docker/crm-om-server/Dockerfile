@@ -1,4 +1,4 @@
-FROM openjdk:21-jdk
+FROM eclipse-temurin:21-jdk-alpine
 LABEL authors="zhangxiaojun"
 
 # 设置工作目录
