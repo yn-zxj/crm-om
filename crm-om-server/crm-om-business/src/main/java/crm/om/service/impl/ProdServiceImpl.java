@@ -206,14 +206,9 @@ public class ProdServiceImpl implements IProdService {
                 // 第一次查询使用资费ID，取值赋值给prodIdList，之后根据字段需要进行赋值
                 Set<String> columnValue = new HashSet<>();
                 List<String> keys = List.of("cata_item_id", "prod_id");
-                if (keys.contains(columnName) && !prodIdList.isEmpty()) {
-                    columnValue.addAll(prodIdList);
-                } else {
-                    columnValue.addAll(prcIdList);
-                }
 
                 // 特殊处理 eg:code_value.prod_id 拆分 前者为查询字段，后者为查询值说明
-                if (columnName.contains(".")) {
+                if (columnName.contains(Constant.Symbol.DOT)) {
                     String[] split = columnName.split("\\.");
                     String column = split[1];
                     if ("prod_id".equalsIgnoreCase(column)) {
@@ -221,6 +216,13 @@ public class ProdServiceImpl implements IProdService {
                         columnValue.addAll(prodIdList);
                     } else if ("prod_prcid".equalsIgnoreCase(column)) {
                         columnName = split[0];
+                        columnValue.addAll(prcIdList);
+                    }
+                } else {
+                    // columnName 中不包含"."，则正常解析，无需拆分
+                    if (keys.contains(columnName) && !prodIdList.isEmpty()) {
+                        columnValue.addAll(prodIdList);
+                    } else {
                         columnValue.addAll(prcIdList);
                     }
                 }
