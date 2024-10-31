@@ -11,7 +11,7 @@ services:
     networks:
       - crm-om
     volumes:
-      - /Volumes/Others/docker_run/crm_om/server:/usr/src/crm-om-server
+      - /Volumes/Others/docker_run/crm_om/server/logs:/usr/src/crm-om-server/logs
   web:
     # 镜像tag可能需要修改
     image: crm-om-web:${IMAGE_TAG}
