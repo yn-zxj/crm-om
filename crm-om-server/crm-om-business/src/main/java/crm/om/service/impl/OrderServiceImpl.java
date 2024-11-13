@@ -21,7 +21,7 @@ public class OrderServiceImpl implements IOrderService {
     private final OrderInfoMapper orderInfoMapper;
 
     @Override
-    public Map<String, Object> orderInfo(String dataSource, String orderLineId) {
+    public Map<String, Object> orderInfo(String orderLineId) {
         Map<String, Object> resultMap = new HashMap<>(8);
         // 查询正常订单
         resultMap.put("type", "A");

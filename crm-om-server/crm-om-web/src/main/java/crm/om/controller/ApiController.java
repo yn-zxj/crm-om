@@ -166,7 +166,7 @@ public class ApiController {
     @Operation(summary = "国际化配置数据查询", description = "单个基础域国际化编码数据查询")
     @Parameter(name = "code", description = "国际化编码", required = true)
     public Result<List<Map<String, Object>>> baseInfo(@RequestParam String code) {
-        List<Map<String, Object>> basedInfo = baseService.baseInfo("bss-test-basedb", code);
+        List<Map<String, Object>> basedInfo = baseService.baseInfo(code);
         return Result.ok(basedInfo);
     }
 
@@ -181,7 +181,7 @@ public class ApiController {
     @Operation(summary = "指定前缀国际化数据查询", description = "基础域国际化特定前缀前120条逆序数据")
     @Parameter(name = "prefixCode", description = "国际化编码", required = true)
     public Result<List<Map<String, Object>>> baseMaxInfo(@RequestParam String prefixCode) {
-        List<Map<String, Object>> basedInfo = baseService.baseMaxInfo("bss-test-basedb", prefixCode);
+        List<Map<String, Object>> basedInfo = baseService.baseMaxInfo(prefixCode);
         return Result.ok(basedInfo);
     }
 
@@ -197,7 +197,7 @@ public class ApiController {
     @Parameter(name = "orderLineId", description = "订单行号", required = true)
     @Log(title = "查询订单信息", isSaveResponseData = false)
     public Result<Map<String, Object>> orderInfo(@RequestParam String orderLineId) {
-        Map<String, Object> orderInfo = orderService.orderInfo("bss-test-obtsdb2", orderLineId);
+        Map<String, Object> orderInfo = orderService.orderInfo(orderLineId);
         return Result.ok(orderInfo);
     }
 }
