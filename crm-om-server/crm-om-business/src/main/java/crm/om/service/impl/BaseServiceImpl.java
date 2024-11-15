@@ -24,9 +24,4 @@ public class BaseServiceImpl implements IBaseService {
     public List<Map<String, Object>> baseInfo(String code) {
         return baseInfoMapper.qryBaseInfo(code);
     }
-
-    @Override
-    public List<Map<String, Object>> baseMaxInfo(String prefixCode) {
-        return baseInfoMapper.qryBaseMax(prefixCode);
-    }
 }

@@ -15,12 +15,4 @@ public interface IBaseService {
      * @return 结果
      */
     List<Map<String, Object>> baseInfo(String code);
-
-    /**
-     * 基础域国际化特定前缀前120条逆序数据
-     *
-     * @param prefixCode 特定前缀
-     * @return 国际化数据
-     */
-    List<Map<String, Object>> baseMaxInfo(String prefixCode);
 }

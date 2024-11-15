@@ -5,17 +5,13 @@
 
 <mapper namespace="crm.om.mapper.BaseInfoMapper">
 
-    <select id="qryBaseMax" parameterType="String" resultType="java.util.Map">
-        select *
-        from bs_i18n_config
-        where `code` like concat(#{prefixCode}, '%')
-        order by `code` desc, `language` desc
-        limit 120
-    </select>
-
     <select id="qryBaseInfo" parameterType="String" resultType="java.util.Map">
         select *
-        from bs_i18n_config
-        where `code` = #{code}
+        from
+            bs_i18n_config
+        where
+            `code` like concat('%', #{code}, '%')
+        order by
+            `code` desc, `language` desc
     </select>
 </mapper>

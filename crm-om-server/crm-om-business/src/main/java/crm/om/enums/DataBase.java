@@ -16,7 +16,8 @@ public enum DataBase {
     PROD("proddb", "产品库"),
     CRM("crmdb", "用户库"),
     BASE("basedb", "基础库"),
-    MARKET("marketdb", "营销库");
+    MARKET("marketdb", "营销库"),
+    ORDER("obtsdb", "订单库");
 
     @EnumValue
     @JsonValue
