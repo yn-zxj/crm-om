@@ -66,7 +66,7 @@ const orderColumns: TableColumn<any>[] = [
         h(
           NButton,
           {
-            size: 'small',
+            size: 'tiny',
             round: true,
             secondary: true,
             type: 'primary',
@@ -81,7 +81,7 @@ const orderColumns: TableColumn<any>[] = [
             style: {
               marginLeft: '6px'
             },
-            size: 'small',
+            size: 'tiny',
             round: true,
             secondary: true,
             type: 'warning',
@@ -174,41 +174,45 @@ async function resetForm() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard title="订单查询" size="small" :bordered="false" class="card-wrapper" hoverable>
-      <!-- 查询条件 -->
-      <NForm ref="formRef" label-placement="left" label-width="80" :model="orderForm" size="small">
-        <NGrid responsive="screen" item-responsive>
-          <NFormItemGi span="24 s:8 m:8" label="查询条件" path="type">
-            <NInput
-              v-model:value="orderForm.type"
-              placeholder="订单号、子订单号、订单行号、服务号，默认查询当月订单..."
-              round
-            />
-          </NFormItemGi>
-          <NFormItemGi span="24 s:10 m:12" label="时间" path="time">
-            <NDatePicker v-model:value="orderForm.time" type="datetimerange" clearable default-time="00:00:00" />
-          </NFormItemGi>
-          <NFormItemGi span="24 m:4" class="pr-24px">
-            <NSpace class="w-full" justify="end">
-              <NButton size="small" round @click="resetForm">
-                <template #icon>
-                  <icon-ic-round-refresh class="text-icon" />
-                </template>
-                {{ $t('common.reset') }}
-              </NButton>
-              <NButton type="success" size="small" round @click="fetchInfo">
-                <template #icon>
-                  <icon-ic-round-search class="text-icon" />
-                </template>
-                {{ $t('common.search') }}
-              </NButton>
-            </NSpace>
-          </NFormItemGi>
-        </NGrid>
-        <NBlockquote class="mb-10px ml-15px mr-15px mt--3.75">
-          <NText depth="3">查询条件可以选择订单号、子订单号、订单行号、服务号</NText>
-        </NBlockquote>
-      </NForm>
+    <NCard size="small" :bordered="false" class="card-wrapper" hoverable>
+      <NCollapse :default-expanded-names="['search']">
+        <NCollapseItem :title="$t('common.search')" name="search">
+          <!-- 查询条件 -->
+          <NForm ref="formRef" label-placement="left" label-width="80" :model="orderForm" size="small">
+            <NGrid responsive="screen" item-responsive>
+              <NFormItemGi span="24 s:8 m:8" label="查询条件" path="type">
+                <NInput
+                  v-model:value="orderForm.type"
+                  placeholder="订单号、子订单号、订单行号、服务号，默认查询当月订单..."
+                  round
+                />
+              </NFormItemGi>
+              <NFormItemGi span="24 s:10 m:12" label="时间" path="time">
+                <NDatePicker v-model:value="orderForm.time" type="datetimerange" clearable default-time="00:00:00" />
+              </NFormItemGi>
+              <NFormItemGi span="24 m:4" class="pr-24px">
+                <NSpace class="w-full" justify="end">
+                  <NButton size="small" round @click="resetForm">
+                    <template #icon>
+                      <icon-ic-round-refresh class="text-icon" />
+                    </template>
+                    {{ $t('common.reset') }}
+                  </NButton>
+                  <NButton type="success" size="small" round @click="fetchInfo">
+                    <template #icon>
+                      <icon-ic-round-search class="text-icon" />
+                    </template>
+                    {{ $t('common.search') }}
+                  </NButton>
+                </NSpace>
+              </NFormItemGi>
+            </NGrid>
+            <NBlockquote class="mb-10px ml-15px mr-15px mt--3.75">
+              <NText depth="3">查询条件可以选择订单号、子订单号、订单行号、服务号</NText>
+            </NBlockquote>
+          </NForm>
+        </NCollapseItem>
+      </NCollapse>
     </NCard>
     <!-- 数据表格 -->
     <NCard title="订单列表" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper" hoverable>

@@ -57,7 +57,7 @@ async function fetchPrcInfo() {
                   placeholder="支持批量查询，如：AA,BB,CC..."
                   clearable
                   round
-                  @keypress.enter="fetchPrcInfo"
+                  @keydown.enter="fetchPrcInfo"
                 />
               </NFormItemGi>
               <NFormItemGi span="24 m:4" class="pr-24px">

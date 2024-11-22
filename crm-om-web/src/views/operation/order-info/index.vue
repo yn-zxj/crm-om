@@ -5,6 +5,7 @@ import type { PaginationProps, StepsProps } from 'naive-ui';
 import { NButton, NDescriptions, NDescriptionsItem, NFormItemGi } from 'naive-ui';
 import dayjs from 'dayjs';
 import type { TableColumn } from 'naive-ui/es/data-table/src/interface';
+import { trim } from 'lodash-es';
 import { request } from '@/service/request';
 import { localStg } from '@/utils/storage';
 
@@ -76,7 +77,7 @@ const orderColumns: TableColumn<any>[] = [
       return h(
         NButton,
         {
-          size: 'small',
+          size: 'tiny',
           strong: true,
           round: true,
           secondary: true,
@@ -225,13 +226,12 @@ async function orderDetails(info: { SUB_ORDER_ID: string }) {
 // 订单报文查询
 async function fetchOrderJSON(orderLineId: string) {
   const result = await request({
-    url: '',
-    method: 'post',
-    params: { orderLineId }
+    url: `/bssApi/orderInfo?platform=${localStg.get('platform')}&env=${localStg.get('env')}&orderLineId=${trim(orderLineId)}`,
+    method: 'get'
   });
 
-  if (result?.data.length > 0) {
-    orderJSON.value = result.data[0];
+  if (result?.data) {
+    orderJSON.value = result.data;
   }
   showContent.value = true;
 }
@@ -245,43 +245,47 @@ async function resetForm() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard title="订单查询" size="small" :bordered="false" class="card-wrapper" hoverable>
+    <NCard size="small" :bordered="false" class="card-wrapper" hoverable>
       <!-- 查询条件 -->
-      <NForm ref="formRef" label-placement="left" label-width="80" :model="orderForm" size="small">
-        <NGrid responsive="screen" item-responsive>
-          <NFormItemGi span="24 s:8 m:8" label="查询条件" path="type">
-            <NInput
-              id="type"
-              v-model:value="orderForm.type"
-              placeholder="请输入..."
-              round
-              @keypress.enter="fetchInfo"
-            />
-          </NFormItemGi>
-          <NFormItemGi span="24 s:10 m:12" label="时间" path="time">
-            <NDatePicker v-model:value="orderForm.time" type="datetimerange" clearable default-time="00:00:00" />
-          </NFormItemGi>
-          <NFormItemGi span="24 m:4" class="pr-24px">
-            <NSpace class="w-full" justify="end">
-              <NButton size="small" round @click="resetForm">
-                <template #icon>
-                  <icon-ic-round-refresh class="text-icon" />
-                </template>
-                {{ $t('common.reset') }}
-              </NButton>
-              <NButton type="success" round size="small" @click="fetchInfo">
-                <template #icon>
-                  <icon-ic-round-search class="text-icon" />
-                </template>
-                {{ $t('common.search') }}
-              </NButton>
-            </NSpace>
-          </NFormItemGi>
-        </NGrid>
-        <NBlockquote class="mb-10px ml-15px mr-15px mt--3.75">
-          <NText depth="3">查询条件可以选择订单号、子订单号、订单行号、服务号</NText>
-        </NBlockquote>
-      </NForm>
+      <NCollapse :default-expanded-names="['search']">
+        <NCollapseItem :title="$t('common.search')" name="search">
+          <NForm ref="formRef" label-placement="left" label-width="80" :model="orderForm" size="small">
+            <NGrid responsive="screen" item-responsive>
+              <NFormItemGi span="24 s:8 m:8" label="查询条件" path="type">
+                <NInput
+                  id="type"
+                  v-model:value="orderForm.type"
+                  placeholder="请输入..."
+                  round
+                  @keypress.enter="fetchInfo"
+                />
+              </NFormItemGi>
+              <NFormItemGi span="24 s:10 m:12" label="时间" path="time">
+                <NDatePicker v-model:value="orderForm.time" type="datetimerange" clearable default-time="00:00:00" />
+              </NFormItemGi>
+              <NFormItemGi span="24 m:4" class="pr-24px">
+                <NSpace class="w-full" justify="end">
+                  <NButton size="small" round @click="resetForm">
+                    <template #icon>
+                      <icon-ic-round-refresh class="text-icon" />
+                    </template>
+                    {{ $t('common.reset') }}
+                  </NButton>
+                  <NButton type="success" round size="small" @click="fetchInfo">
+                    <template #icon>
+                      <icon-ic-round-search class="text-icon" />
+                    </template>
+                    {{ $t('common.search') }}
+                  </NButton>
+                </NSpace>
+              </NFormItemGi>
+            </NGrid>
+            <NBlockquote class="mb-10px ml-15px mr-15px mt--3.75">
+              <NText depth="3">查询条件可以选择订单号、子订单号、订单行号、服务号</NText>
+            </NBlockquote>
+          </NForm>
+        </NCollapseItem>
+      </NCollapse>
     </NCard>
 
     <!-- 数据选项卡 -->
@@ -398,7 +402,7 @@ async function resetForm() {
           <NDivider v-show="showContent" dashed title-placement="left">订单报文</NDivider>
           <div
             v-show="showContent"
-            class="mt-2.5 max-h-125 min-h-55 rounded-1.25 bg-[#ecf4fa] p-1.25 dark:bg-[#303033] dark:text-#fff"
+            class="mt-2.5 max-h-125 min-h-55 overflow-scroll rounded-1.25 bg-[#ecf4fa] p-1.25 dark:bg-[#303033] dark:text-#fff"
           >
             <NButtonGroup size="small" class="absolute right-12.5">
               <NButton secondary round @click="showContent = false">

@@ -184,6 +184,7 @@ const routeMap: RouteMap = {
   "operation_abnormal-order": "/operation/abnormal-order",
   "operation_noc-info": "/operation/noc-info",
   "operation_order-info": "/operation/order-info",
+  "operation_order-msg": "/operation/order-msg",
   "other": "/other",
   "other_data": "/other/data",
   "other_string": "/other/string",

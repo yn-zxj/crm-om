@@ -79,59 +79,63 @@ async function fetchNocInfo() {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard title="网元指令查询" :bordered="false" size="small" class="card-wrapper" hoverable>
-      <NForm label-placement="left" :label-width="80">
-        <NGrid responsive="screen" item-responsive>
-          <NFormItemGi show-require-mark span="24 s:12 m:5" size="small" label="网元" class="pr-24px">
-            <NSelect v-model:value="option" :options="selectOptions" />
-          </NFormItemGi>
-          <NFormItemGi
-            v-if="option !== 'smsc' && option !== 'sacp'"
-            show-require-mark
-            span="24 s:12 m:12"
-            size="small"
-            label="IMSI"
-            :rule="imsiRule"
-            class="pr-24px"
-          >
-            <NInput v-model:value="imsi" placeholder="请输入..." round clearable @keypress.enter="fetchNocInfo" />
-          </NFormItemGi>
+    <NCard :bordered="false" size="small" class="card-wrapper" hoverable>
+      <NCollapse :default-expanded-names="['search']">
+        <NCollapseItem :title="$t('common.search')" name="search">
+          <NForm label-placement="left" :label-width="80">
+            <NGrid responsive="screen" item-responsive>
+              <NFormItemGi show-require-mark span="24 s:12 m:5" size="small" label="网元" class="pr-24px">
+                <NSelect v-model:value="option" :options="selectOptions" />
+              </NFormItemGi>
+              <NFormItemGi
+                v-if="option !== 'smsc' && option !== 'sacp'"
+                show-require-mark
+                span="24 s:12 m:12"
+                size="small"
+                label="IMSI"
+                :rule="imsiRule"
+                class="pr-24px"
+              >
+                <NInput v-model:value="imsi" placeholder="请输入..." round clearable @keydown.enter="fetchNocInfo" />
+              </NFormItemGi>
 
-          <NFormItemGi
-            v-if="option === 'smsc' || option === 'sacp'"
-            show-require-mark
-            span="24 s:12 m:6"
-            size="small"
-            label="香港号码"
-            :rule="imsiRule"
-            class="pr-24px"
-          >
-            <NInput v-model:value="isdn" placeholder="请输入..." round clearable @keypress.enter="fetchNocInfo" />
-          </NFormItemGi>
-          <NFormItemGi
-            v-if="option === 'smsc'"
-            show-require-mark
-            span="24 s:12 m:6"
-            size="small"
-            label="内地号码"
-            :rule="imsiRule"
-            class="pr-24px"
-          >
-            <NInput v-model:value="imsi" placeholder="请输入..." round clearable @keypress.enter="fetchNocInfo" />
-          </NFormItemGi>
+              <NFormItemGi
+                v-if="option === 'smsc' || option === 'sacp'"
+                show-require-mark
+                span="24 s:12 m:6"
+                size="small"
+                label="香港号码"
+                :rule="imsiRule"
+                class="pr-24px"
+              >
+                <NInput v-model:value="isdn" placeholder="请输入..." round clearable @keydown.enter="fetchNocInfo" />
+              </NFormItemGi>
+              <NFormItemGi
+                v-if="option === 'smsc'"
+                show-require-mark
+                span="24 s:12 m:6"
+                size="small"
+                label="内地号码"
+                :rule="imsiRule"
+                class="pr-24px"
+              >
+                <NInput v-model:value="imsi" placeholder="请输入..." round clearable @keydown.enter="fetchNocInfo" />
+              </NFormItemGi>
 
-          <NFormItemGi span="24 m:4" class="pr-24px">
-            <NSpace class="w-full" justify="end">
-              <NButton type="success" round size="small" @click="fetchNocInfo">
-                <template #icon>
-                  <icon-ic-round-search class="text-icon" />
-                </template>
-                {{ $t('common.search') }}
-              </NButton>
-            </NSpace>
-          </NFormItemGi>
-        </NGrid>
-      </NForm>
+              <NFormItemGi span="24 m:4" class="pr-24px">
+                <NSpace class="w-full" justify="end">
+                  <NButton type="success" round size="small" @click="fetchNocInfo">
+                    <template #icon>
+                      <icon-ic-round-search class="text-icon" />
+                    </template>
+                    {{ $t('common.search') }}
+                  </NButton>
+                </NSpace>
+              </NFormItemGi>
+            </NGrid>
+          </NForm>
+        </NCollapseItem>
+      </NCollapse>
     </NCard>
     <NCard title="返回信息" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper" hoverable>
       <div v-show="orderCardShow">

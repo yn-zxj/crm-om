@@ -172,6 +172,7 @@ const local: App.I18n.Schema = {
     'operation_abnormal-order': '异常订单',
     'operation_noc-info': '网元指令',
     'operation_order-info': '订单查询',
+    'operation_order-msg': '订单报文',
     'user-center': '个人中心',
     about: '关于',
     manage: '系统管理',

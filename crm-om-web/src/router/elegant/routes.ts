@@ -213,6 +213,15 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'operation_order-info',
           i18nKey: 'route.operation_order-info'
         }
+      },
+      {
+        name: 'operation_order-msg',
+        path: '/operation/order-msg',
+        component: 'view.operation_order-msg',
+        meta: {
+          title: 'operation_order-msg',
+          i18nKey: 'route.operation_order-msg'
+        }
       }
     ]
   },

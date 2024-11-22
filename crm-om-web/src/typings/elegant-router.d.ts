@@ -38,6 +38,7 @@ declare module "@elegant-router/types" {
     "operation_abnormal-order": "/operation/abnormal-order";
     "operation_noc-info": "/operation/noc-info";
     "operation_order-info": "/operation/order-info";
+    "operation_order-msg": "/operation/order-msg";
     "other": "/other";
     "other_data": "/other/data";
     "other_string": "/other/string";
@@ -122,6 +123,7 @@ declare module "@elegant-router/types" {
     | "operation_abnormal-order"
     | "operation_noc-info"
     | "operation_order-info"
+    | "operation_order-msg"
     | "other_data"
     | "other_string"
     | "prod-config_config-script"

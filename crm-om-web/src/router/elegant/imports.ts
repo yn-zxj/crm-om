@@ -33,6 +33,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   "operation_abnormal-order": () => import("@/views/operation/abnormal-order/index.vue"),
   "operation_noc-info": () => import("@/views/operation/noc-info/index.vue"),
   "operation_order-info": () => import("@/views/operation/order-info/index.vue"),
+  "operation_order-msg": () => import("@/views/operation/order-msg/index.vue"),
   other_data: () => import("@/views/other/data/index.vue"),
   other_string: () => import("@/views/other/string/index.vue"),
   "prod-config_config-script": () => import("@/views/prod-config/config-script/index.vue"),
