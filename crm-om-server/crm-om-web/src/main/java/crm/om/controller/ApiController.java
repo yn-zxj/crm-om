@@ -3,6 +3,7 @@ package crm.om.controller;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,13 +11,18 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import crm.om.annotation.Log;
 import crm.om.enums.Constant;
+import crm.om.enums.DataBase;
 import crm.om.enums.ResultCode;
 import crm.om.model.ConfigInfo;
 import crm.om.param.BssParam;
 import crm.om.service.IConfigService;
+import crm.om.service.IOrderService;
 import crm.om.utils.ApiBodyBuilder;
+import crm.om.utils.DataSourceUtils;
 import crm.om.vo.Result;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +51,8 @@ public class ApiController {
     private final ApiBodyBuilder apiCommon;
     private final IConfigService configService;
     private final ObjectMapper objectMapper;
+    private final IOrderService orderService;
+    private final DataSourceUtils dataSourceUtils;
 
     /**
      * 接口调用成功状态码
@@ -71,8 +79,8 @@ public class ApiController {
         log.info("> Api 请求接口:{}, 入参:{}", api, params);
 
         LambdaQueryWrapper<ConfigInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ConfigInfo::getConfigKey, bssParam.getPlatform() + Constant.Symbol.SHORT_LINE + bssParam.getEnv())
-                .eq(ConfigInfo::getConfigType, String.valueOf(bssParam.getType()));
+        wrapper.eq(ConfigInfo::getConfigKey, bssParam.getPlatform().getCode() + Constant.Symbol.DOT + bssParam.getEnv().getCode())
+                .eq(ConfigInfo::getConfigType, String.valueOf(bssParam.getType().getCode()));
         List<ConfigInfo> configInfos = configService.list(wrapper);
 
         // 数据库无配置
@@ -80,7 +88,7 @@ public class ApiController {
             return Result.build(null, ResultCode.CONFIG_NOTFOUND);
         }
         for (ConfigInfo configInfo : configInfos) {
-            String paramKey = configInfo.getConfigKey();
+            String paramKey = configInfo.getRemark();
             if ("api_url".equals(paramKey)) {
                 apiUrl = configInfo.getConfigValue().endsWith("/") ? configInfo.getConfigValue() :
                         configInfo.getConfigValue() + "/";
@@ -126,8 +134,8 @@ public class ApiController {
         log.info("> NocInfo Api 请求接口:{}, 入参:{}", api, reqParams);
 
         LambdaQueryWrapper<ConfigInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ConfigInfo::getConfigKey, bssParam.getPlatform() + Constant.Symbol.SHORT_LINE + bssParam.getEnv())
-                .eq(ConfigInfo::getConfigType, String.valueOf(bssParam.getType()));
+        wrapper.eq(ConfigInfo::getConfigKey, bssParam.getPlatform().getCode() + Constant.Symbol.DOT + bssParam.getEnv().getCode())
+                .eq(ConfigInfo::getConfigType, String.valueOf(bssParam.getType().getCode()));
         List<ConfigInfo> configInfos = configService.list(wrapper);
 
         // 数据库无配置
@@ -148,6 +156,30 @@ public class ApiController {
         log.info("< NocInfo Api 响应:{}", result);
 
         return Result.ok(result);
+    }
+
+    /**
+     * 订单信息
+     *
+     * @param orderLineId 订单行号
+     * @param platform    平台
+     * @param env         环境
+     * @return 结果
+     */
+    @GetMapping("/orderInfo")
+    @ApiOperationSupport(order = 515)
+    @Operation(summary = "订单信息")
+    @Parameters({
+            @Parameter(name = "orderLineId", description = "订单行号", required = true),
+            @Parameter(name = "platform", description = "平台", required = true),
+            @Parameter(name = "env", description = "环境", required = true)
+    })
+    @Log(title = "查询订单信息", isSaveResponseData = false)
+    public Result<Map<String, Object>> orderInfo(@RequestParam String orderLineId, @RequestParam String platform, @RequestParam String env) {
+        DynamicDataSourceContextHolder.push(dataSourceUtils.buildEnvInfo(platform, env, DataBase.ORDER.getCode()));
+        Map<String, Object> orderInfo = orderService.orderInfo(orderLineId);
+        DynamicDataSourceContextHolder.poll();
+        return Result.ok(orderInfo);
     }
 }
 

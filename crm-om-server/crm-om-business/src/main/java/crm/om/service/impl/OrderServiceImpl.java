@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +33,9 @@ public class OrderServiceImpl implements IOrderService {
             // 异常类型
             resultMap.put("type", "E");
         }
+
         resultMap.put("bizcont_key", orderMap.get("bizcont_key"));
-        resultMap.put("bizcont_value", orderMap.get("bizcont_value"));
+        resultMap.put("bizcont_value", new String((byte[]) orderMap.get("bizcont_value"), StandardCharsets.UTF_8));
         resultMap.put("create_time", orderMap.get("create_time"));
         return resultMap;
     }

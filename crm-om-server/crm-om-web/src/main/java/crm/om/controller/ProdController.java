@@ -9,7 +9,6 @@ import crm.om.enums.DataBase;
 import crm.om.model.ConfigInfo;
 import crm.om.param.prod.ProdParam;
 import crm.om.service.IBaseService;
-import crm.om.service.IOrderService;
 import crm.om.service.IProdService;
 import crm.om.utils.DataSourceUtils;
 import crm.om.vo.Result;
@@ -41,9 +40,8 @@ public class ProdController {
 
     private final IProdService prodService;
     private final IBaseService baseService;
-    private final IOrderService orderService;
     private final DataSourceUtils dataSourceUtils;
-    
+
     @PostMapping("/configScript")
     @ApiOperationSupport(order = 905)
     @Operation(summary = "配置脚本")
@@ -79,29 +77,5 @@ public class ProdController {
         List<Map<String, Object>> basedInfo = baseService.baseInfo(code);
         DynamicDataSourceContextHolder.poll();
         return Result.ok(basedInfo);
-    }
-
-    /**
-     * 订单信息
-     *
-     * @param orderLineId 订单行号
-     * @param platform    平台
-     * @param env         环境
-     * @return 结果
-     */
-    @GetMapping("/orderInfo")
-    @ApiOperationSupport(order = 925)
-    @Operation(summary = "订单信息")
-    @Parameters({
-            @Parameter(name = "orderLineId", description = "订单行号", required = true),
-            @Parameter(name = "platform", description = "平台", required = true),
-            @Parameter(name = "env", description = "环境", required = true)
-    })
-    @Log(title = "查询订单信息", isSaveResponseData = false)
-    public Result<Map<String, Object>> orderInfo(@RequestParam String orderLineId, @RequestParam String platform, @RequestParam String env) {
-        DynamicDataSourceContextHolder.push(dataSourceUtils.buildEnvInfo(platform, env, DataBase.ORDER.getCode()));
-        Map<String, Object> orderInfo = orderService.orderInfo(orderLineId);
-        DynamicDataSourceContextHolder.poll();
-        return Result.ok(orderInfo);
     }
 }

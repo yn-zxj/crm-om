@@ -1,6 +1,7 @@
 package crm.om.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,6 +19,7 @@ public enum ConfigType {
     NOC_URL("4", "网元地址");
 
     @EnumValue
+    @JsonValue
     private final String code;
     private final String desc;
 }
