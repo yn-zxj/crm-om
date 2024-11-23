@@ -174,6 +174,7 @@ const local: App.I18n.Schema = {
     'operation_order-info': '订单查询',
     'operation_order-msg': '订单报文',
     'user-center': '个人中心',
+    'prod-config_prod-info': '基础信息',
     about: '关于',
     manage: '系统管理',
     manage_user: '用户管理',

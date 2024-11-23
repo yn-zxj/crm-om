@@ -271,6 +271,15 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'prod-config_config-script',
           i18nKey: 'route.prod-config_config-script'
         }
+      },
+      {
+        name: 'prod-config_prod-info',
+        path: '/prod-config/prod-info',
+        component: 'view.prod-config_prod-info',
+        meta: {
+          title: 'prod-config_prod-info',
+          i18nKey: 'route.prod-config_prod-info'
+        }
       }
     ]
   },

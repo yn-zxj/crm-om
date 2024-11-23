@@ -37,5 +37,6 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   other_data: () => import("@/views/other/data/index.vue"),
   other_string: () => import("@/views/other/string/index.vue"),
   "prod-config_config-script": () => import("@/views/prod-config/config-script/index.vue"),
+  "prod-config_prod-info": () => import("@/views/prod-config/prod-info/index.vue"),
   "user-center": () => import("@/views/user-center/index.vue"),
 };

@@ -107,14 +107,14 @@ const { columns, columnChecks, data, loading, getData, mobilePagination, searchP
       width: 130,
       render: row => (
         <div class="flex-center gap-8px">
-          <NButton type="primary" ghost size="tiny" onClick={() => edit(row.dictId)}>
+          <NButton type="primary" round ghost size="tiny" onClick={() => edit(row.dictId)}>
             {$t('common.view')}
           </NButton>
           <NPopconfirm onPositiveClick={() => handleDelete(row.dictId)}>
             {{
               default: () => $t('common.confirmDelete'),
               trigger: () => (
-                <NButton type="error" ghost size="tiny">
+                <NButton type="error" round ghost size="tiny">
                   {$t('common.delete')}
                 </NButton>
               )

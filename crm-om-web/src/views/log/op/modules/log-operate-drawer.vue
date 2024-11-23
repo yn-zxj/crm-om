@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive, watch } from 'vue';
 import { $t } from '@/locales';
+import { str2JSON } from '@/utils/common';
 import { executeStatusRecord } from '@/constants/business';
 import { useThemeStore } from '@/store/modules/theme';
 
@@ -20,9 +21,8 @@ const props = defineProps<Props>();
 const visible = defineModel<boolean>('visible', { default: false });
 
 const themeStore = useThemeStore();
-const lightStyle = 'padding:0 0.3125rem 0 0.3125rem;border-radius: 0.3125rem;background-color: rgb(236 244 250);';
-const darkStyle =
-  'padding:0 0.3125rem 0 0.3125rem;border-radius: 0.3125rem;background-color: rgb(236 244 250);background-color: rgb(48 48 51);';
+const lightStyle = 'width: 100%; padding: 0.4rem; border-radius: 0.4rem; background-color: #ECF4FA;';
+const darkStyle = 'width: 100%; padding: 0.4rem; border-radius: 0.4rem; background-color: #303033;';
 
 type Model = Pick<
   Api.SystemManage.Log,
@@ -116,14 +116,14 @@ watch(visible, () => {
           :label="$t('page.manage.log.opParam')"
           :span="3"
         >
-          <NCode :code="model.opParam" language="json" />
+          <NCode :code="str2JSON(model.opParam)" language="json" />
         </NDescriptionsItem>
         <NDescriptionsItem
           :content-style="themeStore.darkMode ? darkStyle : lightStyle"
           :label="$t('page.manage.log.opResult')"
           :span="3"
         >
-          <NCode word-wrap :code="model.opResult" language="json" />
+          <NCode word-wrap :code="str2JSON(model.opResult)" language="json" />
         </NDescriptionsItem>
       </NDescriptions>
     </NDrawerContent>

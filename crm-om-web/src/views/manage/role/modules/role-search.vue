@@ -9,6 +9,7 @@ defineOptions({
 
 interface Emits {
   (e: 'reset'): void;
+
   (e: 'search'): void;
 }
 
@@ -53,7 +54,7 @@ function search() {
                   </template>
                   {{ $t('common.reset') }}
                 </NButton>
-                <NButton size="small" round type="primary" ghost @click="search">
+                <NButton size="small" round type="success" @click="search">
                   <template #icon>
                     <icon-ic-round-search class="text-icon" />
                   </template>

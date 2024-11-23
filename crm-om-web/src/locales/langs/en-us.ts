@@ -168,6 +168,7 @@ const local: App.I18n.Schema = {
     other_string: 'String Compression',
     'prod-config': 'Prod Config',
     'prod-config_config-script': 'Config Script',
+    'prod-config_prod-info': 'Base Info',
     operation: 'Operation',
     'operation_abnormal-order': 'Abnormal Order',
     'operation_noc-info': 'NOC Info',

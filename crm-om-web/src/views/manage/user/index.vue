@@ -61,7 +61,7 @@ const { columns, columnChecks, data, getData, loading, mobilePagination, searchP
         const label = $t(userGenderRecord[row.userGender]);
 
         return (
-          <NTag size="small" type={tagMap[row.userGender]}>
+          <NTag size="small" round type={tagMap[row.userGender]}>
             {label}
           </NTag>
         );
@@ -103,7 +103,7 @@ const { columns, columnChecks, data, getData, loading, mobilePagination, searchP
         const label = $t(enableStatusRecord[row.status]);
 
         return (
-          <NTag size="small" type={tagMap[row.status]}>
+          <NTag size="small" round type={tagMap[row.status]}>
             {label}
           </NTag>
         );
@@ -116,14 +116,14 @@ const { columns, columnChecks, data, getData, loading, mobilePagination, searchP
       width: 130,
       render: row => (
         <div class="flex-center gap-8px">
-          <NButton type="primary" ghost size="tiny" onClick={() => edit(row.id)}>
+          <NButton type="primary" round ghost size="tiny" onClick={() => edit(row.id)}>
             {$t('common.edit')}
           </NButton>
           <NPopconfirm onPositiveClick={() => handleDelete(row.id)}>
             {{
               default: () => $t('common.confirmDelete'),
               trigger: () => (
-                <NButton type="error" ghost size="tiny">
+                <NButton type="error" round ghost size="tiny">
                   {$t('common.delete')}
                 </NButton>
               )

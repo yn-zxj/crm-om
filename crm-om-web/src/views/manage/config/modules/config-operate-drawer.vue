@@ -20,9 +20,8 @@ const props = defineProps<Props>();
 const visible = defineModel<boolean>('visible', { default: false });
 
 const themeStore = useThemeStore();
-const lightStyle = 'padding:0 0.3125rem 0 0.3125rem;border-radius: 0.3125rem;background-color: rgb(236 244 250);';
-const darkStyle =
-  'padding:0 0.3125rem 0 0.3125rem;border-radius: 0.3125rem;background-color: rgb(236 244 250);background-color: rgb(48 48 51);';
+const lightStyle = 'width: 100%; padding: 0.4rem; border-radius: 0.4rem; background-color: #ECF4FA;';
+const darkStyle = 'width: 100%; padding: 0.4rem; border-radius: 0.4rem; background-color: #303033;';
 
 type Model = Pick<
   Api.SystemManage.Config,
@@ -73,7 +72,7 @@ watch(visible, () => {
 </script>
 
 <template>
-  <NDrawer v-model:show="visible" display-directive="show" :width="800">
+  <NDrawer v-model:show="visible" display-directive="show" :width="600">
     <NDrawerContent :title="$t('page.manage.log.drawerName')" :native-scrollbar="false" closable>
       <NDescriptions label-placement="left" label-style="font-weight: bold">
         <NDescriptionsItem :label="$t('page.manage.config.configId')">
@@ -106,7 +105,7 @@ watch(visible, () => {
           :label="$t('page.manage.config.configValue')"
           :span="3"
         >
-          <NCode word-wrap :code="JSON.stringify(model.configValue, null, 2)" />
+          <NCode word-wrap :code="JSON.stringify(model.configValue, null, 2)" language="json" />
         </NDescriptionsItem>
       </NDescriptions>
     </NDrawerContent>

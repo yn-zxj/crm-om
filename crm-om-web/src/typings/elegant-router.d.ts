@@ -44,6 +44,7 @@ declare module "@elegant-router/types" {
     "other_string": "/other/string";
     "prod-config": "/prod-config";
     "prod-config_config-script": "/prod-config/config-script";
+    "prod-config_prod-info": "/prod-config/prod-info";
     "user-center": "/user-center";
   };
 
@@ -127,6 +128,7 @@ declare module "@elegant-router/types" {
     | "other_data"
     | "other_string"
     | "prod-config_config-script"
+    | "prod-config_prod-info"
     | "user-center"
   >;
 

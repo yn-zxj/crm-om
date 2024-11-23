@@ -120,3 +120,37 @@ export function isWindowsOs(): boolean {
   const windowsRegex = /windows|win32/i;
   return windowsRegex.test(navigator.userAgent);
 }
+
+/**
+ * 判断是否是json字符串
+ *
+ * @param str 字符串
+ */
+export function isJSON(str: string) {
+  try {
+    const obj = JSON.parse(str);
+    return Boolean(typeof obj === 'object' && obj);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * 将字符串转换为json字符串，如果转换失败，返回原字符串
+ *
+ * @param str 字符串
+ */
+export function str2JSON(str: string) {
+  let result;
+  try {
+    const obj = JSON.parse(str);
+    if (typeof obj === 'object' && obj) {
+      result = JSON.stringify(obj, null, 2);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    result = str;
+  }
+  return result;
+}

@@ -11,6 +11,7 @@ defineOptions({
 
 interface Emits {
   (e: 'reset'): void;
+
   (e: 'search'): void;
 }
 
@@ -98,13 +99,13 @@ async function search() {
         </NFormItemGi>
         <NFormItemGi span="24 m:12" class="pr-24px">
           <NSpace class="w-full" justify="end">
-            <NButton size="small" @click="reset">
+            <NButton size="small" round @click="reset">
               <template #icon>
                 <icon-ic-round-refresh class="text-icon" />
               </template>
               {{ $t('common.reset') }}
             </NButton>
-            <NButton type="primary" ghost size="small" @click="search">
+            <NButton type="success" round size="small" @click="search">
               <template #icon>
                 <icon-ic-round-search class="text-icon" />
               </template>

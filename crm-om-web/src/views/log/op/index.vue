@@ -75,7 +75,7 @@ const { columns, columnChecks, data, loading, getData, mobilePagination, searchP
         };
 
         return (
-          <NTag size="small" round type={tagMap[row.requestMethod]}>
+          <NTag size="tiny" round type={tagMap[row.requestMethod]}>
             {row.requestMethod}
           </NTag>
         );
@@ -99,7 +99,7 @@ const { columns, columnChecks, data, loading, getData, mobilePagination, searchP
         const label = $t(executeStatusRecord[row.status]);
 
         return (
-          <NTag size="small" round type={tagMap[row.status]}>
+          <NTag size="tiny" round type={tagMap[row.status]}>
             {label}
           </NTag>
         );
