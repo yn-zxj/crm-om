@@ -2,7 +2,6 @@ package crm.om.aspect;
 
 import ch.qos.logback.core.util.StringUtil;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSON;
 import crm.om.annotation.Log;
 import crm.om.enums.Constant;
@@ -156,7 +155,7 @@ public class LogAspect {
         }
         // 是否需要保存response，参数和值
         if (log.isSaveResponseData() && opResult != null) {
-            opLogin.setOpResult(StringUtils.substring(JSONUtil.toJsonStr(opResult), 0, 2000));
+            opLogin.setOpResult(JSON.toJSONString(opResult));
         }
     }
 
@@ -173,9 +172,9 @@ public class LogAspect {
         Map<?, ?> paramsMap = ServletUtils.getParamMap(ServletUtils.getRequest());
         if (!paramsMap.isEmpty() && allowedMethods.contains(method)) {
             String params = argsArrayToString(joinPoint.getArgs(), excludeParamNames);
-            opLog.setOpParam(StringUtils.substring(params, 0, 2000));
+            opLog.setOpParam(params);
         } else {
-            opLog.setOpParam(StringUtils.substring(JSON.toJSONString(paramsMap, excludePropertyPreFilter(excludeParamNames)), 0, 2000));
+            opLog.setOpParam(JSON.toJSONString(paramsMap, excludePropertyPreFilter(excludeParamNames)));
         }
     }
 

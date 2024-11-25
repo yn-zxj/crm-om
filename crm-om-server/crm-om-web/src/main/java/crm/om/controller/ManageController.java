@@ -1,7 +1,11 @@
 package crm.om.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.tree.Tree;
+import cn.hutool.core.lang.tree.TreeNodeConfig;
+import cn.hutool.core.lang.tree.TreeUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -20,6 +24,7 @@ import crm.om.service.IRoleService;
 import crm.om.service.IUserService;
 import crm.om.vo.PageVO;
 import crm.om.vo.Result;
+import crm.om.vo.menu.MenuVO;
 import crm.om.vo.menu.Route;
 import crm.om.vo.role.RoleVO;
 import crm.om.vo.user.UserInfoVO;
@@ -242,5 +247,57 @@ public class ManageController {
         String trees = menuService.qryMenu(menuWrapper);
 
         return Result.ok(JSONUtil.toList(trees, Route.class));
+    }
+
+    @Operation(summary = "获取菜单列表")
+    @ApiOperationSupport(order = 315)
+    @GetMapping("/getMenuList/v2")
+    public Result<MenuVO> getMenuList() {
+        LambdaQueryWrapper<MenuInfo> menuWrapper = new LambdaQueryWrapper<>();
+        menuWrapper.orderByAsc(MenuInfo::getMenuId);
+
+        List<MenuInfo> list = menuService.list(menuWrapper);
+
+        TreeNodeConfig treeNodeConfig = new TreeNodeConfig();
+        // 自定义属性名
+        treeNodeConfig.setWeightKey("priority");
+        treeNodeConfig.setParentIdKey("parentId");
+        // 最大递归深度
+        treeNodeConfig.setDeep(3);
+        treeNodeConfig.setChildrenKey("children");
+
+        // 转换器 (含义:找出父节点为字符串零的所有子节点, 并递归查找对应的子节点, 深度最多为 3)
+        List<Tree<String>> build = TreeUtil.build(list, "0", treeNodeConfig,
+                (treeNode, tree) -> {
+                    tree.setId(treeNode.getMenuId());
+                    tree.setParentId(treeNode.getParentId());
+                    tree.putExtra("status", treeNode.getStatus());
+                    tree.putExtra("menuType", treeNode.getMenuType());
+                    tree.putExtra("menuName", treeNode.getMenuName());
+                    tree.putExtra("routeName", treeNode.getRouteName());
+                    tree.putExtra("routePath", treeNode.getRoutePath());
+                    tree.putExtra("component", treeNode.getComponent());
+                    tree.putExtra("i18nKey", treeNode.getI18nKey());
+                    tree.putExtra("icon", treeNode.getIcon());
+                    tree.putExtra("iconType", treeNode.getIconType());
+                    tree.putExtra("multiTab", treeNode.getMultiTab());
+                    tree.putExtra("hideInMenu", treeNode.getHideInMenu());
+                    tree.putExtra("order", treeNode.getPriority());
+                    tree.putExtra("createBy", treeNode.getCreateBy());
+                    tree.putExtra("createTime", treeNode.getCreateTime());
+                    tree.putExtra("updateBy", treeNode.getUpdateBy());
+                    tree.putExtra("updateTime", treeNode.getUpdateTime());
+                });
+
+        System.out.println("JSONUtil.toJsonStr(build) = " + JSONUtil.toJsonStr(build));
+        List<MenuVO.Route> result = BeanUtil.copyToList(build, MenuVO.Route.class);
+        System.out.println("result = " + JSON.toJSONString(result));
+        MenuVO menuVO = new MenuVO();
+        menuVO.setTotal(30L);
+        menuVO.setCurrent(1L);
+        menuVO.setSize(10L);
+        menuVO.setRecords(result);
+
+        return Result.ok(menuVO);
     }
 }
