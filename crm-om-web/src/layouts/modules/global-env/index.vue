@@ -1,16 +1,32 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useMagicKeys, whenever } from '@vueuse/core';
 import { localStg } from '@/utils/storage';
 import { useSvgIcon } from '@/hooks/common/icon';
+import { request } from '@/service/request';
 
 defineOptions({
   name: 'GlobalEnv'
 });
 
+const envOptions = ref<[{ label: string; key: string; icon?: string; disabled?: boolean }]>();
+
 const mode = ref(`${localStg.get('platform') || 'bss'}-${localStg.get('env') || 'test'}`);
 
 const keys = useMagicKeys();
+
+/**
+ * 查询平台环境信息
+ *
+ * @param params
+ */
+async function fetchEnv(params?: Api.SystemManage.DictTypeSearchParams) {
+  return request<Api.SystemManage.DictDataList>({
+    url: '/dict/data',
+    method: 'get',
+    params
+  });
+}
 
 /**
  * 环境按键复制
@@ -41,65 +57,27 @@ keyBindings.forEach(({ key, platform, env }) => {
 
 const { SvgIconVNode } = useSvgIcon();
 
-const envOptions = [
-  {
-    label: 'BSS',
-    key: 'bss',
-    icon: SvgIconVNode({ icon: 'tabler:square-rounded-letter-b' }),
-    children: [
-      {
-        label: '测试',
-        key: 'bss-test',
-        icon: SvgIconVNode({ icon: 'tabler:circle-letter-t' })
-      },
-      {
-        label: '生产',
-        key: 'bss-prod',
-        icon: SvgIconVNode({ icon: 'tabler:circle-letter-p' })
-      }
-    ]
-  },
-  {
-    label: 'MVNE',
-    key: 'mvne',
-    icon: SvgIconVNode({ icon: 'tabler:square-rounded-letter-e' }),
-    children: [
-      {
-        label: '测试',
-        key: 'mvne-test',
-        icon: SvgIconVNode({ icon: 'tabler:circle-letter-t' })
-      },
-      {
-        label: '生产',
-        key: 'mvne-prod',
-        icon: SvgIconVNode({ icon: 'tabler:circle-letter-p' })
-      }
-    ]
-  },
-  {
-    label: 'MVNO',
-    key: 'mvno',
-    icon: SvgIconVNode({ icon: 'tabler:square-rounded-letter-o' }),
-    children: [
-      {
-        label: '测试',
-        key: 'mvno-test',
-        icon: SvgIconVNode({ icon: 'tabler:circle-letter-t' })
-      },
-      {
-        label: '生产',
-        key: 'mvno-prod',
-        icon: SvgIconVNode({ icon: 'tabler:circle-letter-p' })
-      }
-    ]
-  }
-];
-
 const envSelect = (key: string) => {
   mode.value = key;
   localStg.set('platform', key.split('-')[0]);
   localStg.set('env', key.split('-')[1]);
 };
+
+onMounted(async () => {
+  const envInfo = await fetchEnv({ dictType: 'sys_platform_env' });
+  envOptions.value = envInfo.data.map(item => ({
+    label: item.dictValue.label,
+    key: item.dictValue.key,
+    icon: SvgIconVNode(item.dictValue.icon),
+    children: item.dictValue.children.map(item => ({
+      label: item.label,
+      key: item.key,
+      icon: SvgIconVNode(item.icon)
+    }))
+  }));
+  console.log(envInfo);
+  console.log(envOptions.value);
+});
 </script>
 
 <template>

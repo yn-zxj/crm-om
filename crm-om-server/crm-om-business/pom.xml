@@ -6,17 +6,13 @@
     <artifactId>om-business</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>crm-om-business</name>
-    <description>core business module</description>
+    <description>business core module</description>
 
     <parent>
         <groupId>cn.crm</groupId>
         <artifactId>om</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-
-    <properties>
-        <dubbo.version>3.2.6</dubbo.version>
-    </properties>
 
     <dependencies>
         <dependency>

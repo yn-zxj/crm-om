@@ -12,23 +12,23 @@ const baseTab = ref('test');
 const columns: TableColumn<any>[] = [
   {
     title: '编码',
-    key: 'code',
+    key: 'CODE',
     align: 'center'
   },
   {
     title: '语言',
-    key: 'language',
+    key: 'LANGUAGE',
     align: 'center'
   },
   {
     title: '值',
-    key: 'code_value',
-    align: 'center'
+    key: 'VALUE',
+    align: 'left'
   },
   {
     title: '键',
-    key: 'code_key',
-    align: 'center'
+    key: 'KEY',
+    align: 'left'
   }
 ];
 
@@ -54,7 +54,7 @@ async function fetchBaseMax(codePrefix: string) {
     method: 'get'
   });
   if (out) {
-    dataSource.value = out;
+    dataSource.value = out.data;
   } else {
     dataSource.value = [];
   }

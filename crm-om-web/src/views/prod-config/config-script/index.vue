@@ -9,6 +9,7 @@ import { localStg } from '@/utils/storage';
 const message = useMessage();
 
 const orderCardShow = ref(false);
+const emptyTip = ref(true);
 const qryLoading = ref(false);
 const ref_prc = ref<string>('');
 
@@ -19,7 +20,9 @@ const prcScript = ref({
 
 // 配置脚本查询
 async function fetchPrcInfo() {
+  emptyTip.value = false;
   qryLoading.value = true;
+
   const result = await request({
     url: '/prodConfig/configScript',
     method: 'post',
@@ -27,7 +30,7 @@ async function fetchPrcInfo() {
     data: {
       env: localStg.get('env'),
       platform: localStg.get('platform'),
-      prcId: ref_prc.value.split(',')
+      prcId: ref_prc.value.trim().split(',')
     }
   });
 
@@ -37,6 +40,7 @@ async function fetchPrcInfo() {
     prcScript.value.fileName = `${ref_prc.value.replace(',', '-')}-总执行_回滚脚本.sql`;
   } else {
     orderCardShow.value = false;
+    emptyTip.value = true;
     message.error('产品脚本获取失败!');
   }
   qryLoading.value = false;
@@ -96,7 +100,7 @@ async function fetchPrcInfo() {
             <NCode :code="prcScript.out" language="sql" />
           </div>
         </div>
-        <div v-show="!orderCardShow">
+        <div v-show="emptyTip">
           <NEmpty description="无数据"></NEmpty>
         </div>
 

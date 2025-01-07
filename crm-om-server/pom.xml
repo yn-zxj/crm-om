@@ -6,11 +6,11 @@
     <groupId>cn.crm</groupId>
     <artifactId>om</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
     <name>crm-om</name>
     <description>crm-om</description>
 
-    <packaging>pom</packaging>
-    
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -24,6 +24,22 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <satoken.version>1.38.0</satoken.version>
+        <knife4j.version>4.5.0</knife4j.version>
+        <validation.version>3.2.4</validation.version>
+        <hutool.version>5.8.31</hutool.version>
+        <commons.version>3.13.0</commons.version>
+        <jackson.version>2.17.1</jackson.version>
+        <fastjson2.version>2.0.52</fastjson2.version>
+        <slf4j.version>2.0.13</slf4j.version>
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
+        <dynamic-datasource.version>4.3.0</dynamic-datasource.version>
+        <mysql-connector.version>8.3.0</mysql-connector.version>
+        <freemarker.version>2.3.33</freemarker.version>
+        <servlet.version>6.1.0</servlet.version>
+        <spring-web.version>6.1.12</spring-web.version>
+        <dubbo.version>3.2.6</dubbo.version>
     </properties>
 
     <modules>

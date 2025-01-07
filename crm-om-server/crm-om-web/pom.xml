@@ -46,14 +46,14 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-            <version>4.5.0</version>
+            <version>${knife4j.version}</version>
         </dependency>
 
         <!-- 参数校验 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-            <version>3.2.4</version>
+            <version>${validation.version}</version>
         </dependency>
 
         <dependency>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-core</artifactId>
-            <version>1.38.0</version>
+            <version>${satoken.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

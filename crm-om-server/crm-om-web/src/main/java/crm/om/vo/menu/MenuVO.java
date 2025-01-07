@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import crm.om.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -28,12 +29,14 @@ public class MenuVO {
     @Schema(description = "总记录数")
     private Long total;
 
-    public class Route extends BaseVo {
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class Route extends BaseVo {
         @Schema(description = "菜单ID")
-        private String id;
+        private Integer id;
 
         @Schema(description = "父级菜单ID")
-        private String parentId;
+        private Integer parentId;
 
         @Schema(description = "状态")
         private String status;
@@ -68,11 +71,11 @@ public class MenuVO {
         @Schema(description = "是否隐藏菜单")
         private Boolean hideInMenu;
 
-        @Schema(description = "是否激活菜单")
+        @Schema(description = "激活菜单")
         private String activeMenu;
 
         @Schema(description = "菜单排序")
-        private long order;
+        private Long order;
 
         @Schema(description = "子菜单")
         private List<Route> children;

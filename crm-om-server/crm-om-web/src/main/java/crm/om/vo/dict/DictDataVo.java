@@ -27,11 +27,11 @@ public class DictDataVo extends BaseVo {
     private String dictLabel;
 
     @Schema(description = "字典键值")
-    private String dictValue;
+    private Object dictValue;
 
     @Schema(description = "状态")
     private String status;
 
     @Schema(description = "备注")
-    private String remark;
+    private Object remark;
 }

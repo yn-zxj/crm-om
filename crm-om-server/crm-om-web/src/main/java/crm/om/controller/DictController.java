@@ -1,6 +1,8 @@
 package crm.om.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,6 +15,7 @@ import crm.om.model.DictTypeInfo;
 import crm.om.param.dict.*;
 import crm.om.service.IDictDataService;
 import crm.om.service.IDictTypeService;
+import crm.om.utils.CheckHelper;
 import crm.om.vo.PageVO;
 import crm.om.vo.Result;
 import crm.om.vo.dict.DictDataVo;
@@ -41,8 +44,11 @@ import java.util.List;
 @RequestMapping(value = "/dict", produces = "application/json;charset=UTF-8")
 public class DictController {
 
+    private final CheckHelper checkHelper;
     private final IDictTypeService dictTypeService;
     private final IDictDataService dictDataService;
+
+    private static final List<String> FIELD_NAME = List.of("dictValue", "remark");
 
     /**
      * 获取全部字典类型
@@ -129,7 +135,15 @@ public class DictController {
 
         List<DictDataInfo> list = dictDataService.list(wrapper);
 
-        List<DictDataVo> dictDataVo = BeanUtil.copyToList(list, DictDataVo.class);
+        // 判断类型属于json格式进行类型转换
+        CopyOptions copyOptions = new CopyOptions();
+        copyOptions.setFieldValueEditor((fieldName, fieldValue) -> {
+            if (FIELD_NAME.contains(fieldName) && checkHelper.isValidJson(fieldValue.toString())) {
+                return JSONUtil.parse(fieldValue);
+            }
+            return fieldValue;
+        });
+        List<DictDataVo> dictDataVo = BeanUtil.copyToList(list, DictDataVo.class, copyOptions);
         return Result.ok(dictDataVo);
     }
 

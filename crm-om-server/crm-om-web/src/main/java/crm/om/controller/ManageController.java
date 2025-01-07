@@ -271,7 +271,7 @@ public class ManageController {
                 (treeNode, tree) -> {
                     tree.setId(treeNode.getMenuId());
                     tree.setParentId(treeNode.getParentId());
-                    tree.putExtra("status", treeNode.getStatus());
+                    tree.putExtra("status", treeNode.getStatus() ? "1" : "0");
                     tree.putExtra("menuType", treeNode.getMenuType());
                     tree.putExtra("menuName", treeNode.getMenuName());
                     tree.putExtra("routeName", treeNode.getRouteName());
@@ -279,7 +279,7 @@ public class ManageController {
                     tree.putExtra("component", treeNode.getComponent());
                     tree.putExtra("i18nKey", treeNode.getI18nKey());
                     tree.putExtra("icon", treeNode.getIcon());
-                    tree.putExtra("iconType", treeNode.getIconType());
+                    tree.putExtra("iconType", treeNode.getIconType() ? "0" : "1");
                     tree.putExtra("multiTab", treeNode.getMultiTab());
                     tree.putExtra("hideInMenu", treeNode.getHideInMenu());
                     tree.putExtra("order", treeNode.getPriority());
@@ -290,6 +290,7 @@ public class ManageController {
                 });
 
         System.out.println("JSONUtil.toJsonStr(build) = " + JSONUtil.toJsonStr(build));
+
         List<MenuVO.Route> result = BeanUtil.copyToList(build, MenuVO.Route.class);
         System.out.println("result = " + JSON.toJSONString(result));
         MenuVO menuVO = new MenuVO();
